@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration>
+
+    <appender name="LogFile" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="logs/sp.log" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d{ISO8601}] %-5p - %t - %C %M - %m %n" />
+        </layout>
+    </appender>
+
+
+    <logger name="org.springframework.security">
+    	<level value="info"/>
+    </logger>
+    
+      <logger name="jcox">
+        <level value="debug" />
+    </logger>
+    
+
+    <root>
+        <priority value="warn" />
+        <appender-ref ref="LogFile"/>
+        
+    </root>
+    
+</log4j:configuration>
