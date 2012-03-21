@@ -67,7 +67,7 @@ public class AuthnResponseGenerator {
 		
 		Assertion assertion = assertionGenerator.generateAssertion(authToken, recepientAssertionConsumerURL, validForInSeconds, inResponseTo, authnInstant);
 		
-		
+
 		authResponse.setIssuer(responseIssuer);
 		authResponse.setID(idService.generateID());
 		authResponse.setIssueInstant(timeService.getCurrentDateTime());

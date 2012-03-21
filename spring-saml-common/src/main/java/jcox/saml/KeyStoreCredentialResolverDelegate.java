@@ -16,11 +16,22 @@
 
 package jcox.saml;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.security.KeyFactory;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
@@ -47,15 +58,8 @@ public class KeyStoreCredentialResolverDelegate implements CredentialResolver, I
 	
 	private KeyStoreCredentialResolver  keyStoreCredentialResolver;
 	
-	private String b64EncodedKeystore; 
 	private String keystorePassword;
 	private Map<String,String> privateKeyPasswordsByAlias;
-	
-	
-	@Required
-	public void setB64EncodedKeystore(String b64EncodedKeystore) {
-		this.b64EncodedKeystore = b64EncodedKeystore;
-	}
 
 	@Required
 	public void setKeystorePassword(String keystorePassword) {
@@ -81,14 +85,64 @@ public class KeyStoreCredentialResolverDelegate implements CredentialResolver, I
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
-		KeyStore ks = KeyStore.getInstance("JKS");
-		
-		ks.load(new ByteArrayInputStream(Base64.decodeBase64(b64EncodedKeystore.getBytes())), keystorePassword.toCharArray());
-
-		keyStoreCredentialResolver = new KeyStoreCredentialResolver(ks, privateKeyPasswordsByAlias);
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+        keyStore.load(null, keystorePassword.toCharArray()); // otherwise you get an uninitialized keystore exception
+		appendToKeyStore(keyStore, "idp", "idp-crt.pem", "idp-key.pkcs8.der", "secret".toCharArray());
+        appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", "secret".toCharArray());
+        keyStoreCredentialResolver = new KeyStoreCredentialResolver(keyStore, privateKeyPasswordsByAlias);
 	}
 
+    /**
+     * Append a certificate and private key to a keystore.
+     *
+     * @param keyStore where to append the certificate and private key to
+     * @param keyAlias the alias of the key
+     * @param certificateFile the file containing the certificate in the PEM format
+     * @param privatekeyFile the file containing the private key in the DER format
+     * @param password the password on the key
+     *
+     * Generate your private key:
+     * openssl genrsa -out something.key 1024
+     *
+     * Show the PEM private key:
+     * openssl asn1parse -inform pem -dump -i -in something.key
+     *
+     * Translate the key to pkcs8 DER format:
+     * openssl pkcs8 -topk8 -inform PEM -outform DER -in something.key -nocrypt > something.pkcs8.der
+     *
+     * Show the DER private key:
+     * openssl asn1parse -inform der -dump -i -in something.pkcs8.der
+     *
+     * Generate a certificate request:
+     * openssl req -new -key something.key -out something.csr
+     *
+     * Generate a certificate:
+     * openssl x509 -req -days 365 -in something.csr -signkey something.key -out something.crt
+     */
+    private void appendToKeyStore(KeyStore keyStore, String keyAlias, String certificateFile, String privatekeyFile, char[] password) throws Exception {
+        BufferedInputStream bis = null;
+        bis = new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(certificateFile));
+        CertificateFactory certFact = null;
+        Certificate cert = null;
+        try {
+            certFact = CertificateFactory.getInstance("X.509");
+            cert = certFact.generateCertificate(bis);
+        } catch(CertificateException e) {
+            throw new Exception("Could not instantiate cert", e);
+        }
+        bis.close();
+        ArrayList<Certificate> certs = new ArrayList<Certificate>();
+        certs.add(cert);
 
+        final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(privatekeyFile);
+        byte[] privKeyBytes = IOUtils.toByteArray(inputStream);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+        RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(ks);
 
+        final Certificate[] certificates = new Certificate[1];
+        certificates[0] = certs.get(0);
+
+        keyStore.setKeyEntry(keyAlias, privKey, password, certificates);
+    }
 }

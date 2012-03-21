@@ -15,6 +15,11 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>nl.surfnet.coin</groupId>
       <artifactId>spring-saml-common</artifactId>
       <version>${project.parent.version}</version>

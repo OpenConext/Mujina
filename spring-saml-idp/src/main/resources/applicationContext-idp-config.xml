@@ -98,17 +98,17 @@
 	</bean>
 
 	<bean id="keyStoreCredentialResolverDelegate" class="jcox.saml.KeyStoreCredentialResolverDelegate">
-	
-		<property name="privateKeyPasswordsByAlias">
-			<map>
-				<entry key="${ISSUING_ENTITY_ID}" value="${KESTORE_PRIVATE_KEY_PASSWORD}" />				
-			</map>
-		</property>
-		
-		<property name="keystorePassword" value="${KEYSTORE_PASSWORD}" /> 
-		<property name="b64EncodedKeystore" value="${B64_ENCODED_KEYSTORE}"/>
-	
-	</bean>
+
+    <property name="privateKeyPasswordsByAlias">
+      <map>
+        <entry key="sp" value="secret" />
+        <entry key="idp" value="secret" />
+      </map>
+    </property>
+
+    <property name="keystorePassword" value="secret" />
+
+  </bean>
 
 
 </beans>

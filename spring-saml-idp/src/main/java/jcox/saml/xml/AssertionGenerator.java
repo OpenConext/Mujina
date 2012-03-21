@@ -73,7 +73,8 @@ public class AssertionGenerator {
 		assertion.setSubject(subject);
 
 		assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(authToken.getAuthorities()));
-		
+
+
 		assertion.setID(idService.generateID());
 		assertion.setIssueInstant(timeService.getCurrentDateTime());
 		return assertion;
