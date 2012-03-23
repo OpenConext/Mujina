@@ -82,9 +82,12 @@ public class AssertionGenerator {
 	}
 	
 	public  Assertion generateAssertion (UsernamePasswordAuthenticationToken authToken, String recepientAssertionConsumerURL, int validForInSeconds,  String inResponseTo, DateTime authnInstant) {
-		
-		
-		UserDetails principal =	(UserDetails) authToken.getPrincipal();
+
+
+        // org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(namespaceURI, prefix).
+
+
+                UserDetails principal =	(UserDetails) authToken.getPrincipal();
 		WebAuthenticationDetails details = (WebAuthenticationDetails) authToken.getDetails();
 		
 		AssertionBuilder assertionBuilder = (AssertionBuilder)builderFactory.getBuilder(Assertion.DEFAULT_ELEMENT_NAME);
@@ -133,7 +136,7 @@ public class AssertionGenerator {
 
         signature.setSigningCredential(signingCredential);
         signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
-        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_OMIT_COMMENTS);
+        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
         assertion.setSignature(signature);
 

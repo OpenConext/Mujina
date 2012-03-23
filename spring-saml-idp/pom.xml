@@ -18,6 +18,7 @@
       <groupId>org.apache.santuario</groupId>
       <artifactId>xmlsec</artifactId>
       <version>1.4.4</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
