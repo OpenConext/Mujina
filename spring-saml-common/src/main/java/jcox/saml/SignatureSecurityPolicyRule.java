@@ -78,11 +78,12 @@ public class SignatureSecurityPolicyRule  implements InitializingBean, SecurityP
 		}
 		
 		SignableSAMLObject samlMessage = (SignableSAMLObject) messageContext.getInboundMessage();
-		
+
+        /*
 		if( !samlMessage.isSigned()) {
 			throw new SecurityPolicyException("InboundMessage was not signed.");
-		}
-				
+		} */
+
 		checkSignatureProfile(samlMessage);
 
 		checkMessageSignature(messageContext, samlMessage);

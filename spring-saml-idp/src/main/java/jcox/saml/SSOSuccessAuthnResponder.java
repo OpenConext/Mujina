@@ -96,16 +96,16 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		
-		authnResponseGenerator = new AuthnResponseGenerator(issuingEntityName, timeService, idService);
-		endpointGenerator = new EndpointGenerator();
-		
-		CriteriaSet criteriaSet = new CriteriaSet();
-		criteriaSet.add(new EntityIDCriteria(issuingEntityName));
-		criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
 
-		signingCredential = credentialResolver.resolveSingle(criteriaSet);
-		Validate.notNull(signingCredential);
+        CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new EntityIDCriteria(issuingEntityName));
+        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+        signingCredential = credentialResolver.resolveSingle(criteriaSet);
+        Validate.notNull(signingCredential);
+
+		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService);
+		endpointGenerator = new EndpointGenerator();
+
 	}
 
 

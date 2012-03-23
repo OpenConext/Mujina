@@ -29,7 +29,6 @@ import jcox.util.IDService;
 import jcox.util.TimeService;
 
 import org.apache.commons.lang.Validate;
-import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml2.metadata.Endpoint;
@@ -44,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -98,7 +96,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		authnResponseGenerator = new AuthnResponseGenerator(issuingEntityName, timeService, idService);
+		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService);
 		endpointGenerator = new EndpointGenerator();
 		
 		CriteriaSet criteriaSet = new CriteriaSet();

@@ -30,7 +30,11 @@ public class AuthnRequestInfo implements Serializable {
 	       append("assertionConumerURL", assertionConumerURL).
 	       append("authnRequestID",authnRequestID).
 	       toString();
+        
+
 	}
+
+
 	
 	
 }

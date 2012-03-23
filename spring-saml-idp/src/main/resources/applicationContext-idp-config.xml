@@ -62,7 +62,7 @@
 	<bean id="securityPolicy" class="jcox.saml.SecurityPolicyDelegate">
 		<constructor-arg>
 			<list>
-				<ref bean="signatureSecurityPolicyRule"/>
+				<!-- <ref bean="signatureSecurityPolicyRule"/> -->
 				<ref bean="issueInstantRule"/>
 				<ref bean="messageReplayRule"/>
 			</list>

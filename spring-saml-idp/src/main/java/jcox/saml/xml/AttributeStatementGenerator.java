@@ -17,6 +17,7 @@
 package jcox.saml.xml;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.opensaml.Configuration;
 import org.opensaml.saml2.core.Attribute;
@@ -32,8 +33,8 @@ import org.springframework.security.core.GrantedAuthority;
 public class AttributeStatementGenerator {
 
 	private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
-	
-	
+
+    /*
 	public AttributeStatement generateAttributeStatement(Collection<GrantedAuthority> authorities) {
 		
 		AttributeStatementBuilder attributeStatementBuilder = (AttributeStatementBuilder) builderFactory.getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
@@ -63,6 +64,25 @@ public class AttributeStatementGenerator {
 		attributeStatement.getAttributes().add(attribute);
 		
 		return attributeStatement;
-	}
-	
+	} */
+
+    public AttributeStatement generateAttributeStatement(final Map<String, String> attributes) {
+        AttributeStatementBuilder attributeStatementBuilder = (AttributeStatementBuilder) builderFactory.getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
+        AttributeStatement attributeStatement = attributeStatementBuilder.buildObject();
+
+        AttributeBuilder attributeBuilder = (AttributeBuilder)  builderFactory.getBuilder(Attribute.DEFAULT_ELEMENT_NAME);
+        XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+
+        for (Map.Entry<String, String> entry : attributes.entrySet()) {
+            Attribute attribute = attributeBuilder.buildObject();
+            attribute.setName(entry.getKey());
+            // attribute.setNameFormat(Attribute.BASIC);
+            XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+            stringValue.setValue(entry.getValue());
+            attribute.getAttributeValues().add(stringValue);
+            attributeStatement.getAttributes().add(attribute);
+        }
+
+        return attributeStatement;
+    }
 }

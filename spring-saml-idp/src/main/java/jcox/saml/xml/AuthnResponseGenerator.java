@@ -28,6 +28,7 @@ import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.core.impl.ResponseBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.opensaml.xml.security.credential.Credential;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,13 +46,13 @@ public class AuthnResponseGenerator {
 	
 	StatusGenerator statusGenerator;
 	
-	public AuthnResponseGenerator(String issuingEntityName, TimeService timeService, IDService idService) {
+	public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService) {
 		super();
 		this.issuingEntityName = issuingEntityName;
 		this.idService = idService;
 		this.timeService = timeService;
 		issuerGenerator = new IssuerGenerator(issuingEntityName);
-		assertionGenerator = new AssertionGenerator(issuingEntityName, timeService, idService);
+		assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService);
 		statusGenerator = new StatusGenerator();
 	}
 
@@ -66,7 +67,6 @@ public class AuthnResponseGenerator {
 		Issuer responseIssuer = issuerGenerator.generateIssuer();
 		
 		Assertion assertion = assertionGenerator.generateAssertion(authToken, recepientAssertionConsumerURL, validForInSeconds, inResponseTo, authnInstant);
-		
 
 		authResponse.setIssuer(responseIssuer);
 		authResponse.setID(idService.generateID());
@@ -75,6 +75,7 @@ public class AuthnResponseGenerator {
 		authResponse.getAssertions().add(assertion);
 		authResponse.setDestination(recepientAssertionConsumerURL);
 		authResponse.setStatus(statusGenerator.generateStatus(StatusCode.SUCCESS_URI));
+
 		return authResponse;
 	}
 	

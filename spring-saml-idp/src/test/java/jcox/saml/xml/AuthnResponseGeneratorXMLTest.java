@@ -21,17 +21,14 @@ import static org.mockito.Mockito.*;
 import java.util.Collection;
 import java.util.HashSet;
 
-import jcox.saml.xml.SAML2ValidatorSuite;
 import jcox.util.IDService;
 import jcox.util.TimeService;
-import jcox.saml.xml.AbstractXMLTest;
 
 import org.joda.time.DateTime;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opensaml.saml2.core.Response;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.validation.ValidatorSuite;
+import org.opensaml.xml.security.credential.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -85,8 +82,9 @@ public class AuthnResponseGeneratorXMLTest extends AbstractXMLTest {
 		
 		MockitoAnnotations.initMocks(this);
 
+        Credential signingCredential = null;
 		
-		generator = new AuthnResponseGenerator(issuerName, timeService, idService);
+		generator = new AuthnResponseGenerator(signingCredential, issuerName, timeService, idService);
 		
 		authorities = new HashSet<GrantedAuthorityImpl>();
 		authorities.add(new GrantedAuthorityImpl(role1));
