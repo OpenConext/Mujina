@@ -37,7 +37,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"file:WebContent/WEB-INF/spring/applicationContext-property-mappings.xml","file:WebContent/WEB-INF/spring/applicationContext-sp-config.xml","file:WebContent/WEB-INF/spring/applicationContext-spring-security.xml"})
+@ContextConfiguration(locations={
+        "classpath:applicationContext-property-mappings.xml",
+        "classpath:applicationContext-sp-config.xml",
+        "classpath:applicationContext-spring-security.xml"})
 
 public class SAMLAuthenticationEntryPointIntTest {
 

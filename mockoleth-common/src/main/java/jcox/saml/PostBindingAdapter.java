@@ -52,8 +52,7 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean{
 	
 	
 	
-	public PostBindingAdapter(SAMLMessageDecoder decoder,
-			String issuingEntityName, SecurityPolicyResolver resolver) {
+	public PostBindingAdapter(SAMLMessageDecoder decoder, String issuingEntityName, SecurityPolicyResolver resolver) {
 		super();
 		this.decoder = decoder;
 		this.issuingEntityName = issuingEntityName;

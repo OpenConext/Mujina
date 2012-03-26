@@ -36,17 +36,13 @@ public class IssuerGenerator {
 
 
 	public Issuer generateIssuer() {
-	
-		///Issuer
+		// Issuer
 		IssuerBuilder issuerBuilder = (IssuerBuilder) builderFactory.getBuilder(Issuer.DEFAULT_ELEMENT_NAME);
 		Issuer issuer = issuerBuilder.buildObject();
-		
 
 		issuer.setValue(issuingEntityName);
 		issuer.setFormat(NameIDType.ENTITY);
 		
 		return issuer;
-	
 	}
-	
 }

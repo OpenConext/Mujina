@@ -46,8 +46,7 @@ import org.springframework.beans.factory.InitializingBean;
 */
 public class SignatureSecurityPolicyRule  implements InitializingBean, SecurityPolicyRule {
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(SignatureSecurityPolicyRule.class);
+	private final static Logger logger = LoggerFactory.getLogger(SignatureSecurityPolicyRule.class);
 	
 	private final CredentialResolver credentialResolver;	
 	private final SAMLSignatureProfileValidator samlSignatureProfileValidator;
@@ -94,8 +93,8 @@ public class SignatureSecurityPolicyRule  implements InitializingBean, SecurityP
 			SignableSAMLObject samlMessage) throws SecurityPolicyException {
 		CriteriaSet criteriaSet = new CriteriaSet();
 		logger.debug("Inbound issuer is {}", messageContext.getInboundMessageIssuer());
-		criteriaSet.add( new EntityIDCriteria(messageContext.getInboundMessageIssuer()));		
-		criteriaSet.add( new UsageCriteria(UsageType.SIGNING) );
+		criteriaSet.add(new EntityIDCriteria(messageContext.getInboundMessageIssuer()));
+		criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
 
 		try {
 			if (!trustEngine.validate( samlMessage.getSignature(), criteriaSet)) {

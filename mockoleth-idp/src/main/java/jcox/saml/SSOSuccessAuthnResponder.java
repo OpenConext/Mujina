@@ -27,11 +27,10 @@ import jcox.saml.xml.EndpointGenerator;
 import jcox.spring.AuthnRequestInfo;
 import jcox.util.IDService;
 import jcox.util.TimeService;
-import jcox.saml.BindingAdapter;
+import nl.surfnet.mockoleth.model.Configuration;
 
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
@@ -44,11 +43,11 @@ import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
-import org.springframework.web.context.support.HttpRequestHandlerServlet;
 
 /**
  * HttpRequestHandler that will generate an AuthnResponse to a service provider.
@@ -69,6 +68,9 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
 	Credential signingCredential;
 	EndpointGenerator endpointGenerator;
 	AuthnResponseGenerator authnResponseGenerator;
+
+    @Autowired
+    Configuration configuration;
 	
 	private final static Logger logger = LoggerFactory
 			.getLogger(SSOSuccessAuthnResponder.class);
@@ -103,7 +105,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
         signingCredential = credentialResolver.resolveSingle(criteriaSet);
         Validate.notNull(signingCredential);
 
-		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService);
+		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
 		endpointGenerator = new EndpointGenerator();
 
 	}

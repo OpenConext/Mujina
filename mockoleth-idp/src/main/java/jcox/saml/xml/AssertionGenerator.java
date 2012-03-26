@@ -16,52 +16,31 @@
 
 package jcox.saml.xml;
 
-import java.io.BufferedInputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 import jcox.util.IDService;
 import jcox.util.TimeService;
-import jcox.saml.xml.IssuerGenerator;
+import nl.surfnet.mockoleth.model.Configuration;
 
-import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
-import org.opensaml.Configuration;
-import org.opensaml.common.SignableSAMLObject;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnStatement;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.Subject;
 import org.opensaml.saml2.core.impl.AssertionBuilder;
-import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.XMLObjectBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
-import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.*;
 import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.security.keyinfo.KeyInfoHelper;
-import org.opensaml.xml.security.x509.BasicX509Credential;
-import org.opensaml.xml.signature.KeyInfo;
 import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureConstants;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
-import org.opensaml.xml.signature.impl.KeyInfoBuilder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 public class AssertionGenerator {
 
-	private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+	private final XMLObjectBuilderFactory builderFactory = org.opensaml.Configuration.getBuilderFactory();
 
 	private final IssuerGenerator issuerGenerator;
 	private final SubjectGenerator subjectGenerator;
@@ -70,13 +49,14 @@ public class AssertionGenerator {
 	private final AuthnStatementGenerator authnStatementGenerator = new AuthnStatementGenerator();
 	private final AttributeStatementGenerator attributeStatementGenerator = new AttributeStatementGenerator();
     private Credential signingCredential;
+    private Configuration configuration;
 
-
-    public AssertionGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService) {
+    public AssertionGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, Configuration configuration) {
 		super();
 	    this.signingCredential = signingCredential;
 		this.timeService = timeService;
 		this.idService = idService;
+        this.configuration = configuration;
 		issuerGenerator = new IssuerGenerator(issuingEntityName);
 		subjectGenerator = new SubjectGenerator(timeService);
 	}
@@ -106,19 +86,7 @@ public class AssertionGenerator {
         // extends this
 		// assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(authToken.getAuthorities()));
 
-        Map<String, String> attributes = new TreeMap<String,String>();
-        attributes.put("urn:mace:dir:attribute-def:uid", "alle.veenstra");
-        attributes.put("urn:mace:dir:attribute-def:cn", "Alle Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:givenName", "Alle");
-        attributes.put("urn:mace:dir:attribute-def:sn", "Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:displayName", "Alle Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:mail", "a.veenstra@onehippo.com");
-        attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "test.surfguest.nl");
-        attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "alle.veenstra@SURFguest.nl");
-        attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
-
-        assertion.getAttributeStatements().add(
-                attributeStatementGenerator.generateAttributeStatement(attributes));
+        assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(configuration.getAttributes()));
 
         assertion.setID(idService.generateID());
 		assertion.setIssueInstant(timeService.getCurrentDateTime());
@@ -130,7 +98,7 @@ public class AssertionGenerator {
 
     private void signAssertion(final Assertion assertion) {
 
-        Signature signature = (Signature) Configuration.getBuilderFactory()
+        Signature signature = (Signature) org.opensaml.Configuration.getBuilderFactory()
                 .getBuilder(Signature.DEFAULT_ELEMENT_NAME)
                 .buildObject(Signature.DEFAULT_ELEMENT_NAME);
 
@@ -141,7 +109,7 @@ public class AssertionGenerator {
         assertion.setSignature(signature);
 
         try {
-            Configuration.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
+            org.opensaml.Configuration.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
         } catch (MarshallingException e) {
             e.printStackTrace();
         }

@@ -15,10 +15,18 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.santuario</groupId>
-      <artifactId>xmlsec</artifactId>
-      <version>1.4.4</version>
-      <scope>compile</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
     </dependency>
 
     <dependency>
@@ -117,12 +125,13 @@
   <build>
     <testResources>
       <testResource>
-        <directory>src/main/webapp/WEB-INF</directory>
+        <directory>${project.basedir}/src/main/webapp/WEB-INF</directory>
       </testResource>
       <testResource>
-        <directory>src/main/resources</directory>
+        <directory>${project.basedir}/src/main/resources</directory>
       </testResource>
     </testResources>
+
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

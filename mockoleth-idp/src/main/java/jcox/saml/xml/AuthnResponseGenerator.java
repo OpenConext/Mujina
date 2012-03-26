@@ -18,10 +18,9 @@ package jcox.saml.xml;
 
 import jcox.util.IDService;
 import jcox.util.TimeService;
-import jcox.saml.xml.IssuerGenerator;
+import nl.surfnet.mockoleth.model.Configuration;
 
 import org.joda.time.DateTime;
-import org.opensaml.Configuration;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.Response;
@@ -35,7 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class AuthnResponseGenerator {
 	
-	private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+	private final XMLObjectBuilderFactory builderFactory = org.opensaml.Configuration.getBuilderFactory();
 
 	private final String issuingEntityName;
 	
@@ -46,13 +45,13 @@ public class AuthnResponseGenerator {
 	
 	StatusGenerator statusGenerator;
 	
-	public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService) {
+	public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, Configuration configuration) {
 		super();
 		this.issuingEntityName = issuingEntityName;
 		this.idService = idService;
 		this.timeService = timeService;
 		issuerGenerator = new IssuerGenerator(issuingEntityName);
-		assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService);
+		assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
 		statusGenerator = new StatusGenerator();
 	}
 

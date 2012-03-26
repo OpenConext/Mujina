@@ -28,13 +28,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import jcox.spring.AuthnRequestInfo;
-import jcox.saml.SecurityPolicyDelegate;
 import jcox.test.AbstractRequestIntTest;
 
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -69,7 +67,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"file:WebContent/WEB-INF/spring/applicationContext-property-mappings.xml","file:WebContent/WEB-INF/spring/applicationContext-idp-config.xml","file:WebContent/WEB-INF/spring/applicationContext-spring-security.xml"})
+@ContextConfiguration(locations={
+        "classpath:applicationContext-property-mappings.xml",
+        "classpath:applicationContext-idp-config.xml",
+        "classpath:applicationContext-spring-security.xml"})
 public class SSOIntTest extends AbstractRequestIntTest {
 
 	private final static Logger logger = LoggerFactory.getLogger(SSOIntTest.class);
@@ -272,25 +273,4 @@ public class SSOIntTest extends AbstractRequestIntTest {
 		
 		verify(requestDispatcher, never()).forward(request, response);
 	}
-	
-	@Test
-	public void testUntrustedSignatureAuthnRequest() throws Exception {
-		
-		securityPolicyDelegate.getPolicyRules().remove(issueInstantRule);
-		
-		populateRequestURL(request,ssoServiceURL);
-		when(request.getMethod()).thenReturn("POST");		
-		when(request.getParameter("SAMLRequest")).thenReturn(SAML_REQUEST_WITH_BAD_SIG_POST_PARAM);
-		when(request.getParameter("Signature")).thenReturn(SIGNATURE_WITH_BAD_SIG_POST_PARAM);
-		when(request.getParameter("SigAlg")).thenReturn(SIG_ALG_OF_BAD_SIG_POST_PARAM);
-		when(request.getParameter("KeyInfo")).thenReturn(KEY_INFO_OF_BAD_SIG_POST_PARAM);
-		when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
-		when(request.getSession()).thenReturn(session);
-		when(session.getCreationTime()).thenReturn(authnInstant.getMillis());
-		
-		singleSignOnService.handleRequest(request, response);
-		
-		verify(requestDispatcher, never()).forward(request, response);
-
-	}	
 }

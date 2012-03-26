@@ -27,6 +27,7 @@ import jcox.saml.xml.AuthnResponseGenerator;
 import jcox.saml.xml.EndpointGenerator;
 import jcox.util.IDService;
 import jcox.util.TimeService;
+import nl.surfnet.mockoleth.model.Configuration;
 
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.Response;
@@ -42,6 +43,7 @@ import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -79,6 +81,8 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 	AuthnResponseGenerator authnResponseGenerator;
 	
 
+    @Autowired
+    Configuration configuration;
 
 	public RealAuthenticationFailureHandler(TimeService timeService,
 			IDService idService, String issuingEntityName,
@@ -96,7 +100,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService);
+		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
 		endpointGenerator = new EndpointGenerator();
 		
 		CriteriaSet criteriaSet = new CriteriaSet();
@@ -137,8 +141,5 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 			logger.error("Exception encoding SAML message", mee);
 			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		}
-		
-		
 	}
-
 }

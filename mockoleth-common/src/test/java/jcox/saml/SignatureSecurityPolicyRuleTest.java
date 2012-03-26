@@ -106,14 +106,7 @@ public class SignatureSecurityPolicyRuleTest {
 		when(messageContext.getInboundMessage()).thenReturn(notSingable);
 		rule.evaluate(messageContext);
 	}
-	
-	@Test(expected=SecurityPolicyException.class)
-	public void testInboundMessageIsNotSigned() throws Exception {
-		when(messageContext.getInboundMessage()).thenReturn(samlMessage);
-		when(samlMessage.isSigned()).thenReturn(Boolean.FALSE);
-		rule.evaluate(messageContext);
-	}
-	
+
 	@Test(expected=SecurityPolicyException.class)
 	public void testValidatorThrowsValdiationException() throws Exception {
 		rule.trustEngine = trustEngine;

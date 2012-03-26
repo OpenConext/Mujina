@@ -16,7 +16,6 @@
 
 package jcox.saml.xml;
 
-
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,7 +43,7 @@ public class EndpointGenerator {
 		
         samlEndpoint.setLocation(location);
         
-        //this does not have to be set
+        // this does not have to be set
         if( StringUtils.isNotEmpty(responseLocation))
         	samlEndpoint.setResponseLocation(responseLocation);
         

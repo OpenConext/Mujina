@@ -92,5 +92,6 @@
 	<bean id="assertionConsumer" class="jcox.saml.RealAssertionConsumer">
 	</bean>
 
+  <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration" />
 
 </beans>
