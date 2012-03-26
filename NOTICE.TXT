@@ -1,0 +1,17 @@
+SURFconext
+Copyright 2012 SURFnet bv, The Netherlands
+
+Portions of this software were developed at SURFnet, as part of the SURFworks
+project.  This project was made possible by the support of the SURF, the
+higher education and research partnership organisation for Information and
+Communications Technology (ICT) in The Netherlands.  For more information
+about SURF, please visit www.surf.nl.
+
+NOTICE: Only our own original work is licensed under the terms of the Apache
+License Version 2.0. The licenses of some libraries might impose different
+redistribution or general licensing terms than those stated in the Apache
+License. Users and redistributors are hereby requested to verify these
+conditions and agree upon them.
+
+This project is based on spring saml recipe from Jim Cox. You can find his
+excellent project here: http://sourceforge.net/projects/spring-saml/
