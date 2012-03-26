@@ -32,7 +32,7 @@ public class RestApiController {
     @ResponseBody
     public String setAttribute(@RequestBody Attribute attribute) throws UnsupportedEncodingException {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
-        configuration.getAttributes().put(attribute.getValue(), attribute.getName());
+        configuration.getAttributes().put(attribute.getName(), attribute.getValue());
         return "success";
     }
 
