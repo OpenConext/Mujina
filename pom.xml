@@ -1,15 +1,28 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.surfnet.coin</groupId>
-  <artifactId>spring-saml</artifactId>
+  <artifactId>mockoleth</artifactId>
   <version>2.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
-    <module>spring-saml-common</module>
-    <module>spring-saml-sp</module>
-    <module>spring-saml-idp</module>
+    <module>mockoleth-common</module>
+    <module>mockoleth-sp</module>
+    <module>mockoleth-idp</module>
   </modules>
+
+  <properties>
+    <spring.version>3.0.5.RELEASE</spring.version>
+    <opensaml.version>2.5.1</opensaml.version>
+    <servlet.version>2.4</servlet.version>
+    <jstl.version>1.2</jstl.version>
+    <junit.version>4.10</junit.version>
+    <mockito.version>1.9.0</mockito.version>
+    <xmlunit.version>1.3</xmlunit.version>
+    <slf4j.version>1.6.4</slf4j.version>
+    <apache-commons.version>1.3.2</apache-commons.version>
+    <xml-apis.version>1.4.01</xml-apis.version>
+  </properties>
 
   <dependencyManagement>
     <dependencies>
@@ -17,102 +30,102 @@
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-webmvc</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-core</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-web</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-config</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.springframework.security</groupId>
         <artifactId>spring-security-taglibs</artifactId>
-        <version>3.0.5.RELEASE</version>
+        <version>${spring.version}</version>
       </dependency>
 
       <dependency>
         <groupId>xml-apis</groupId>
         <artifactId>xml-apis</artifactId>
-        <version>1.4.01</version>
+        <version>${xml-apis.version}</version>
       </dependency>
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
-        <version>2.4</version>
+        <version>${servlet.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>jstl</artifactId>
-        <version>1.2</version>
+        <version>${jstl.version}</version>
         <scope>provided</scope>
       </dependency>
 
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.10</version>
+        <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-all</artifactId>
-        <version>1.9.0</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>xmlunit</groupId>
         <artifactId>xmlunit</artifactId>
-        <version>1.3</version>
+        <version>${xmlunit.version}</version>
         <scope>test</scope>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>1.6.4</version>
+        <version>${slf4j.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-simple</artifactId>
-        <version>1.6.4</version>
+        <version>${slf4j.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-io</artifactId>
-        <version>1.3.2</version>
+        <version>${apache-commons.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.opensaml</groupId>
         <artifactId>opensaml</artifactId>
-        <version>2.5.1</version>
+        <version>${opensaml.version}</version>
         <exclusions>
           <exclusion>
             <groupId>xerces</groupId>
