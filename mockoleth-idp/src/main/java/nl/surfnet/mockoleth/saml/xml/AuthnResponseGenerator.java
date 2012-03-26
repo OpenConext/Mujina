@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -16,9 +16,8 @@
 
 package nl.surfnet.mockoleth.saml.xml;
 
-import jcox.saml.xml.IssuerGenerator;
-import jcox.util.IDService;
-import jcox.util.TimeService;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 import nl.surfnet.mockoleth.model.Configuration;
 
 import org.joda.time.DateTime;

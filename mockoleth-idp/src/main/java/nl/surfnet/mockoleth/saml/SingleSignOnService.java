@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -22,9 +22,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jcox.saml.xml.SAML2ValidatorSuite;
-import jcox.spring.AuthnRequestInfo;
-import jcox.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.SAML2ValidatorSuite;
+import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
 
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
@@ -37,19 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.web.HttpRequestHandler;
 
-/**
- * Class responsible for decoding/verifying AuthnRequests.  This servlet is unprotected
- * and can be accessed by a user who does not yet have ROLE_USER.
- * 
- * If the request does not contain a valid SAML request from an sp, it will not
- * return a response.
- * 
- * If the message is valid, it will forward to the AuthResponder.
- * 
- * 
- * @author jcox
- *
- */
 public class SingleSignOnService implements HttpRequestHandler {
 	
 	

@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -27,11 +27,8 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import jcox.saml.SSOSuccessAuthnResponder;
-import jcox.saml.SecurityPolicyDelegate;
-import jcox.saml.SingleSignOnService;
-import jcox.spring.AuthnRequestInfo;
-import jcox.test.AbstractRequestIntTest;
+import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
+import nl.surfnet.mockoleth.test.AbstractRequestIntTest;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -59,16 +56,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-/**
- * Tests both SingleSignOnService and SSOSuccessAuthnResponder.
- * 
- * 
- * Processes SAML AuthnRequests that were generated with SAMLAuthenticationEntryPointIntTest.
- * 
- * 
- * @author jcox
- *
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={
         "classpath:applicationContext-property-mappings.xml",

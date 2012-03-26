@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jcox.saml.BindingAdapter;
-import jcox.saml.xml.AuthnResponseGenerator;
-import jcox.saml.xml.EndpointGenerator;
-import jcox.util.IDService;
-import jcox.util.TimeService;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 import nl.surfnet.mockoleth.model.Configuration;
 
 import org.apache.commons.lang.Validate;
@@ -48,21 +48,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
-/**
- * If there is a AuthnRequestInfo in session this failure handler will respond to the Service
- * Provider with a SAML Response detailing the authn failure.  The SP can then generate a new
- * autnRequest that will send the user back to the login form - details of the original failure 
- * should be visible on the login form.
- * 
- * 
- * If there is no AuthnRequestInfo in session (this is a direct form based login attempt to the
- * IDP) delegate the failure to an injected SimpleURLFailureHandler. 
- * 
- *
- * 
- * @author jcox
- *
- */
 public class RealAuthenticationFailureHandler implements AuthenticationFailureHandler, InitializingBean {
 
 

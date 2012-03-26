@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -22,12 +22,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jcox.saml.BindingAdapter;
-import jcox.saml.xml.AuthnResponseGenerator;
-import jcox.saml.xml.EndpointGenerator;
-import jcox.spring.AuthnRequestInfo;
-import jcox.util.IDService;
-import jcox.util.TimeService;
+import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 import nl.surfnet.mockoleth.model.Configuration;
 
 import org.apache.commons.lang.Validate;
@@ -50,14 +49,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
 
-/**
- * HttpRequestHandler that will generate an AuthnResponse to a service provider.
- * 
- * Access to this servlet requires at least ROLE_USER.
- * 
- * @author jcox
- *
- */
 public class SSOSuccessAuthnResponder implements HttpRequestHandler, InitializingBean {
 
 	private final String issuingEntityName; 

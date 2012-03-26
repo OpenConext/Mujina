@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -24,20 +24,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import jcox.saml.BindingAdapter;
-import jcox.saml.xml.AuthnResponseGenerator;
-import jcox.saml.xml.EndpointGenerator;
-import jcox.spring.AuthnRequestInfo;
-import jcox.spring.RealAuthenticationFailureHandler;
-import jcox.util.IDService;
-import jcox.util.TimeService;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opensaml.common.SignableSAMLObject;
-import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
@@ -74,7 +71,8 @@ public class RealAuthenticationFailureHandlerTest {
 	
 	@Mock
     EndpointGenerator endpointGenerator;
-	@Mock AuthnResponseGenerator authnResponseGenerator;
+	@Mock
+    AuthnResponseGenerator authnResponseGenerator;
 	@Mock Response authResponse;
 	@Mock Endpoint assertionConsumerEndpoint;
 	@Mock AuthenticationFailureHandler nonSSOAuthnFailureHandler;

@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.util.List;
 import nl.surfnet.mockoleth.spring.IdentityProviderAuthenticationException;
 import nl.surfnet.mockoleth.spring.ServiceProviderAuthenticationException;
 import nl.surfnet.mockoleth.spring.User;
-import nl.surfnet.mockoleth.saml.RealAssertionConsumer;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -65,12 +64,6 @@ import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.springframework.security.core.GrantedAuthority;
 
-/**
- * More of an integration test than just a unit test.
- * 
- * @author jcox
- *
- */
 public class RealAssertionConsumerTest {
 
 	private String responseID= "1";

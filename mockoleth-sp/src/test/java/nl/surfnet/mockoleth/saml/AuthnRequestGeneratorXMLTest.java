@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package nl.surfnet.mockoleth.saml;
 
 import static org.mockito.Mockito.when;
-import jcox.util.IDService;
-import jcox.util.TimeService;
-import jcox.saml.xml.AbstractXMLTest;
+import nl.surfnet.mockoleth.saml.xml.AbstractXMLTest;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 
 import org.joda.time.DateTime;
 import org.mockito.Mock;

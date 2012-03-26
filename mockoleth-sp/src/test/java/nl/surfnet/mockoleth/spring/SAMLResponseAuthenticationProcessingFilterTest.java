@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -31,11 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import jcox.saml.BindingAdapter;
-import nl.surfnet.mockoleth.spring.SAMLAuthenticationToken;
-import nl.surfnet.mockoleth.spring.SAMLResponseAuthenticationProcessingFilter;
-import nl.surfnet.mockoleth.spring.ServiceProviderAuthenticationException;
-import nl.surfnet.mockoleth.spring.User;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
 
 import org.junit.Before;
 import org.junit.Test;

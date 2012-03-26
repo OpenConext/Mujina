@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import jcox.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
 
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.Response;

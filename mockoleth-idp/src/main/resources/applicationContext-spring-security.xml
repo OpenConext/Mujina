@@ -30,7 +30,7 @@
     		<beans:constructor-arg value="/login.jsp"/>
     </beans:bean>
 
-	<beans:bean id="authnFailureHandler" class="jcox.spring.RealAuthenticationFailureHandler">
+	<beans:bean id="authnFailureHandler" class="nl.surfnet.mockoleth.spring.RealAuthenticationFailureHandler">
 
 		<beans:constructor-arg ref="timeService"/>
 		<beans:constructor-arg ref="idService"/>

@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import nl.surfnet.mockoleth.saml.AuthnRequestGenerator;
-import jcox.saml.BindingAdapter;
-import jcox.saml.xml.EndpointGenerator;
-import jcox.util.IDService;
-import jcox.util.TimeService;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
 
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.AuthnRequest;
@@ -46,16 +46,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
-/**
- * Sample AuthenticationEntryPoint that a service provider might use.
- * 
- * A more sophisticated implementation might resolve the service end points using a SAML META service.
- * 
- * 
- * 
- * @author jcox
- *
- */
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
 
 	private final static Logger logger = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);

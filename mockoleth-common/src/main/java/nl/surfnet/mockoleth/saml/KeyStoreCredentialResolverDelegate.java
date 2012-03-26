@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -29,19 +29,6 @@ import org.springframework.beans.factory.annotation.Required;
 
 import nl.surfnet.mockoleth.model.Configuration;
 
-/**
- * 
- * Trivial implementation of CredentialResolver.  Not recommended for production use as
- * it is not secure.
- * 
- * This class loads a Java keystore from spring config and instantiates 
- * an Open SAML KeyStoreCredentialResolver.  All calls are then delegated to the
- * KeyStoreCredentialResolver.
- * 
- * 
- * @author jcox
- *
- */
 public class KeyStoreCredentialResolverDelegate implements CredentialResolver, InitializingBean  {
 
 	private KeyStoreCredentialResolver  keyStoreCredentialResolver;

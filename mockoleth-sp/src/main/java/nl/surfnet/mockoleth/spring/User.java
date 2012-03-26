@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -31,16 +31,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 
-/**
- * 
- * The principal that is attached the the SAMLAuthenticationToken.
- * 
- * Note that there is no relation to Spring Security's User or UserDetails, except for the code
- * that is used to sort the User's GrantedAuthorities
- * 
- * @author jcox
- *
- */
 public class User implements Principal, Serializable {
 
 	private final String name;

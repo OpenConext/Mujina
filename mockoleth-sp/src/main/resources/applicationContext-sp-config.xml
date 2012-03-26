@@ -6,8 +6,8 @@
 	<bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
 
-	<bean id="timeService" class="jcox.util.TimeService" />
-	<bean id="idService" class="jcox.util.IDService" />
+	<bean id="timeService" class="nl.surfnet.mockoleth.util.TimeService" />
+	<bean id="idService" class="nl.surfnet.mockoleth.util.IDService" />
 
 	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
 	   <property name="preferFileSystemAccess" value="false"/>
@@ -28,7 +28,7 @@
 			<constructor-arg ref="samlParserPool"/>
 	</bean>
 
-	<bean id="bindingAdpater" class="jcox.saml.PostBindingAdapter">
+	<bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
 		<constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
 		<constructor-arg ref="decoder"/>
 		<constructor-arg ref="securityPolicyResolver"/>
@@ -39,7 +39,7 @@
 		<constructor-arg ref="securityPolicy"/>
 	</bean>
 
-	<bean id="securityPolicy" class="jcox.saml.SecurityPolicyDelegate">
+	<bean id="securityPolicy" class="nl.surfnet.mockoleth.saml.SecurityPolicyDelegate">
 		<constructor-arg>
 			<list>
 				<ref bean="signatureSecurityPolicyRule"/>
@@ -69,14 +69,14 @@
 		
 	</bean>
 
-	<bean id="signatureSecurityPolicyRule" class="jcox.saml.SignatureSecurityPolicyRule">
+	<bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
 			<constructor-arg ref="keyStoreCredentialResolverDelegate"></constructor-arg>
 			<constructor-arg >
 				<bean class="org.opensaml.security.SAMLSignatureProfileValidator"></bean>
 			</constructor-arg>
 	</bean>
 
-	<bean id="keyStoreCredentialResolverDelegate" class="jcox.saml.KeyStoreCredentialResolverDelegate">
+	<bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
 	
 		<property name="privateKeyPasswordsByAlias">
 			<map>
@@ -89,7 +89,7 @@
 	
 	</bean>
 
-	<bean id="assertionConsumer" class="jcox.saml.RealAssertionConsumer">
+	<bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
 	</bean>
 
   <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration" />

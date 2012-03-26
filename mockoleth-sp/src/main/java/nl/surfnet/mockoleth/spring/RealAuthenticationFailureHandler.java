@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -29,22 +29,6 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.savedrequest.RequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 
-/**
- * Handles authn failures of the SAMLResponseAuthenticationProcessingFilter. 
- * 
- * If the AuthenticationException is of type IdentityProviderAuthenticationException,
- * retry the original request, which will cause a new authn attempt with the IDP.  This
- * is nearly identical to Spring's SavedRequestAwareAuthenticationSuccessHandler.
- * 
- * Any other exceptions will result in responding with forbidden (403).
- * 
- * A more sophisticated implementation might limit the number of attempts or
- * allow the user to cancel the authn attempt.
- * 
- * 
- * @author jcox
- *
- */
 public class RealAuthenticationFailureHandler implements
 		AuthenticationFailureHandler {
 

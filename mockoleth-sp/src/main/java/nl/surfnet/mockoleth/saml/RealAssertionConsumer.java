@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jcox.saml.xml.SAML2ValidatorSuite;
-import jcox.spring.IdentityProviderAuthenticationException;
-import jcox.spring.ServiceProviderAuthenticationException;
-import jcox.spring.User;
+import nl.surfnet.mockoleth.saml.xml.SAML2ValidatorSuite;
+import nl.surfnet.mockoleth.spring.IdentityProviderAuthenticationException;
+import nl.surfnet.mockoleth.spring.ServiceProviderAuthenticationException;
+import nl.surfnet.mockoleth.spring.User;
 
 import org.apache.commons.lang.StringUtils;
 import org.opensaml.saml2.core.Assertion;
@@ -80,7 +80,7 @@ public class RealAssertionConsumer implements AssertionConsumer {
 	
 		logger.debug("assertion.getID() {}", assertion.getAuthnStatements());
 
-		return new User(assertion.getSubject().getNameID().getValue(), 
+		return new User(assertion.getSubject().getNameID().getValue(),
 						samlResponse.getIssuer().getValue(), 
 						assertion.getIssuer().getValue(), 
 						samlResponse.getID(), 

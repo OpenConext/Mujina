@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -27,13 +27,6 @@ import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 
-/**
- * 
- * Abstracts the SAML Binding used to send/receive messages.
- * 
- * @author jcox
- *
- */
 public interface BindingAdapter {
 
 	public void sendSAMLMessage(SignableSAMLObject samlMessage, Endpoint endpoint, 	Credential signingCredential, HttpServletResponse response) throws MessageEncodingException;

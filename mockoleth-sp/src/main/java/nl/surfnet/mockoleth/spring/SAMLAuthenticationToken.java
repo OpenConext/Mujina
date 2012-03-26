@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 James Cox <james.s.cox@gmail.com>
+*   Copyright 2012 SURFnet.nl
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -22,10 +22,6 @@ import org.opensaml.saml2.core.Response;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
-/**
- * @author jcox
- *
- */
 public class SAMLAuthenticationToken extends AbstractAuthenticationToken {
 
 	private final Object principal;
