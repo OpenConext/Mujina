@@ -1,7 +1,6 @@
 package nl.surfnet.mockoleth.controllers;
 
-import java.io.UnsupportedEncodingException;
-
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +23,23 @@ public class RestApiController {
     Configuration configuration;
 
     @RequestMapping("/test")
-    public String test() throws UnsupportedEncodingException {
+    public String test() {
         return "test-view";
     }
 
     @RequestMapping(value = {"/set-attribute"}, method = RequestMethod.POST)
     @ResponseBody
-    public String setAttribute(@RequestBody Attribute attribute) throws UnsupportedEncodingException {
+    public void setAttribute(@RequestBody Attribute attribute, HttpServletResponse response) {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
         configuration.getAttributes().put(attribute.getName(), attribute.getValue());
-        return "success";
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
     @ResponseBody
-    public String reset() throws UnsupportedEncodingException {
+    public void reset(HttpServletResponse response) {
         LOGGER.info("Resetting to default configuration");
-        return "success";
+        configuration.reset();
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
