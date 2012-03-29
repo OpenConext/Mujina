@@ -1,97 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012 SURFnet bv, The Netherlands
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
-
-
-	<bean id="timeService" class="nl.surfnet.mockoleth.util.TimeService" />
-	<bean id="idService" class="nl.surfnet.mockoleth.util.IDService" />
-
-	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-	   <property name="preferFileSystemAccess" value="false"/>
-	   <property name="velocityProperties">
-		<props>
-			<prop key="resource.loader">classpath</prop>
-			<prop key="classpath.resource.loader.class">org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader</prop>
-		</props>
-		</property>
-	</bean>
-	
-	<bean id="samlParserPool"  class="org.opensaml.xml.parse.BasicParserPool" >
-
-			<property name="maxPoolSize" value="${MAX_PARSER_POOL_SIZE}" /> 
-	</bean>
-	
-	<bean id="decoder" class="org.opensaml.saml2.binding.decoding.HTTPPostSimpleSignDecoder">
-			<constructor-arg ref="samlParserPool"/>
-	</bean>
-
-	<bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
-		<constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
-		<constructor-arg ref="decoder"/>
-		<constructor-arg ref="securityPolicyResolver"/>
-		<property name="velocityEngine" ref="velocityEngine" />
-	</bean>
-
-	<bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
-		<constructor-arg ref="securityPolicy"/>
-	</bean>
-
-	<bean id="securityPolicy" class="nl.surfnet.mockoleth.saml.SecurityPolicyDelegate">
-		<constructor-arg>
-			<list>
-				<ref bean="signatureSecurityPolicyRule"/>
-				<ref bean="issueInstantRule"/>
-				<ref bean="messageReplayRule"/>
-			</list>
-		</constructor-arg>
-	</bean>
+  <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
 
-	<bean id="mapBasedStorageService" class="org.opensaml.util.storage.MapBasedStorageService"/>
-		
-	<bean id="replayCache" class="org.opensaml.util.storage.ReplayCache">
-		<constructor-arg ref="mapBasedStorageService"/>
-		
-		<constructor-arg value="${REPLAY_CACHE_LIFE_IN_MILLIS}"></constructor-arg>
-	</bean> 
-	
-	<bean id="messageReplayRule" class="org.opensaml.common.binding.security.MessageReplayRule">
-		<constructor-arg ref="replayCache"/>
-	</bean>
+  <bean id="timeService" class="nl.surfnet.mockoleth.util.TimeService"/>
+  <bean id="idService" class="nl.surfnet.mockoleth.util.IDService"/>
 
-	<bean id="issueInstantRule" class="org.opensaml.common.binding.security.IssueInstantRule">
-		<constructor-arg index="0" value="${ISSUE_INSTANT_CHECK_CLOCK_SKEW_IN_SECONDS}"/>
-		<constructor-arg index="1" value="${ISSUE_INSTANT_CHECK_VALIDITY_TIME_IN_SECONDS}"/>
-		<property name="requiredRule" value="true"/>
-		
-	</bean>
+  <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <property name="preferFileSystemAccess" value="false"/>
+    <property name="velocityProperties">
+      <props>
+        <prop key="resource.loader">classpath</prop>
+        <prop key="classpath.resource.loader.class">
+          org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+        </prop>
+      </props>
+    </property>
+  </bean>
 
-	<bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
-			<constructor-arg ref="keyStoreCredentialResolverDelegate"/>
-			<constructor-arg >
-				<bean class="org.opensaml.security.SAMLSignatureProfileValidator"/>
-			</constructor-arg>
-	</bean>
+  <bean id="samlParserPool" class="org.opensaml.xml.parse.BasicParserPool">
 
-	<bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
-	
-		<property name="privateKeyPasswordsByAlias">
-			<map>
-				<entry key="sp" value="secret" />
-        <entry key="idp" value="secret" />
-			</map>
-		</property>
-		
-		<property name="keystorePassword" value="secret" />
-	
-	</bean>
+    <property name="maxPoolSize" value="${MAX_PARSER_POOL_SIZE}"/>
+  </bean>
 
-	<bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
-	</bean>
+  <bean id="decoder" class="org.opensaml.saml2.binding.decoding.HTTPPostSimpleSignDecoder">
+    <constructor-arg ref="samlParserPool"/>
+  </bean>
 
-  <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration" />
+  <bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
+    <constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
+    <constructor-arg ref="decoder"/>
+    <constructor-arg ref="securityPolicyResolver"/>
+    <property name="velocityEngine" ref="velocityEngine"/>
+  </bean>
+
+  <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
+    <constructor-arg ref="securityPolicy"/>
+  </bean>
+
+  <bean id="securityPolicy" class="nl.surfnet.mockoleth.saml.SecurityPolicyDelegate">
+    <constructor-arg>
+      <list>
+        <ref bean="signatureSecurityPolicyRule"/>
+        <ref bean="issueInstantRule"/>
+        <ref bean="messageReplayRule"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+
+  <bean id="mapBasedStorageService" class="org.opensaml.util.storage.MapBasedStorageService"/>
+
+  <bean id="replayCache" class="org.opensaml.util.storage.ReplayCache">
+    <constructor-arg ref="mapBasedStorageService"/>
+
+    <constructor-arg value="${REPLAY_CACHE_LIFE_IN_MILLIS}"></constructor-arg>
+  </bean>
+
+  <bean id="messageReplayRule" class="org.opensaml.common.binding.security.MessageReplayRule">
+    <constructor-arg ref="replayCache"/>
+  </bean>
+
+  <bean id="issueInstantRule" class="org.opensaml.common.binding.security.IssueInstantRule">
+    <constructor-arg index="0" value="${ISSUE_INSTANT_CHECK_CLOCK_SKEW_IN_SECONDS}"/>
+    <constructor-arg index="1" value="${ISSUE_INSTANT_CHECK_VALIDITY_TIME_IN_SECONDS}"/>
+    <property name="requiredRule" value="true"/>
+
+  </bean>
+
+  <bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
+    <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
+    <constructor-arg>
+      <bean class="org.opensaml.security.SAMLSignatureProfileValidator"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
+
+    <property name="privateKeyPasswordsByAlias">
+      <map>
+        <entry key="sp" value="secret"/>
+        <entry key="idp" value="secret"/>
+      </map>
+    </property>
+
+    <property name="keystorePassword" value="secret"/>
+
+  </bean>
+
+  <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
+  </bean>
+
+  <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration"/>
 
 </beans>

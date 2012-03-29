@@ -1,9 +1,25 @@
+<!--
+  Copyright 2012 SURFnet bv, The Netherlands
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
 <project>
-    <parent>
-      <groupId>org.surfnet.coin</groupId>
-      <artifactId>coin-master</artifactId>
-      <version>2.2.0-SNAPSHOT</version>
-    </parent>
+  <parent>
+    <groupId>org.surfnet.coin</groupId>
+    <artifactId>coin-master</artifactId>
+    <version>2.2.0-SNAPSHOT</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>nl.surfnet.coin</groupId>
   <artifactId>mockoleth</artifactId>
@@ -17,31 +33,31 @@
   </modules>
 
   <distributionManagement>
-      <repository>
-        <id>coin-repo</id>
-        <name>coin-repo</name>
-        <url>dav:http://bamboo-dev.coin.surfnetlabs.nl</url>
-      </repository>
-      <snapshotRepository>
-        <id>repo</id>
-        <name>Repository Name</name>
-        <url>dav:http://bamboo-dev.coin.surfnetlabs.nl</url>
-      </snapshotRepository>
-    </distributionManagement>
-  
-    <repositories>
-      <repository>
-        <id>coin-repo</id>
-        <name>COIN Repository</name>
-        <url>http://bamboo-dev.coin.surfnetlabs.nl</url>
-      </repository>
-    </repositories>
-  
-    <scm>
-      <connection>scm:git:git://github.com/SURFconext/Mockoleth.git</connection>
-      <developerConnection>scm:git:git@github.com:SURFconext/Mockoleth.git</developerConnection>
-      <url>scm:git:git://github.com/SURFconext/Mockoleth.git</url>
-    </scm>
+    <repository>
+      <id>coin-repo</id>
+      <name>coin-repo</name>
+      <url>dav:http://bamboo-dev.coin.surfnetlabs.nl</url>
+    </repository>
+    <snapshotRepository>
+      <id>repo</id>
+      <name>Repository Name</name>
+      <url>dav:http://bamboo-dev.coin.surfnetlabs.nl</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
+    <repository>
+      <id>coin-repo</id>
+      <name>COIN Repository</name>
+      <url>http://bamboo-dev.coin.surfnetlabs.nl</url>
+    </repository>
+  </repositories>
+
+  <scm>
+    <connection>scm:git:git://github.com/SURFconext/Mockoleth.git</connection>
+    <developerConnection>scm:git:git@github.com:SURFconext/Mockoleth.git</developerConnection>
+    <url>scm:git:git://github.com/SURFconext/Mockoleth.git</url>
+  </scm>
 
   <properties>
     <spring.version>3.0.6.RELEASE</spring.version>

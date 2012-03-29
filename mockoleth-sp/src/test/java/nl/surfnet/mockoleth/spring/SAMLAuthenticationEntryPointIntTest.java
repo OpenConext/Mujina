@@ -1,23 +1,20 @@
 /*
-*   Copyright 2012 SURFnet.nl
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package nl.surfnet.mockoleth.spring;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,54 +33,59 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
+@ContextConfiguration(locations = {
         "classpath:applicationContext-property-mappings.xml",
         "classpath:applicationContext-sp-config.xml",
         "classpath:applicationContext-spring-security.xml"})
 
 public class SAMLAuthenticationEntryPointIntTest {
 
-	private final static Logger logger = LoggerFactory
-	.getLogger(SAMLAuthenticationEntryPointIntTest.class);
-	
-	//args to class under test 
-	@Mock private HttpServletRequest request;
-	MockHttpServletResponse response;
-	@Mock AuthenticationException authException;
-	
-	private SAMLAuthenticationEntryPoint samlAuthenticationEntryPoint;
+    private final static Logger logger = LoggerFactory
+            .getLogger(SAMLAuthenticationEntryPointIntTest.class);
 
-	@Autowired
-	public void setSamlAuthenticationEntryPoint(
-			SAMLAuthenticationEntryPoint samlAuthenticationEntryPoint) {
-		this.samlAuthenticationEntryPoint = samlAuthenticationEntryPoint;
-	}
-	
-	@Before
-	public void before() throws Exception {
-	
-		MockitoAnnotations.initMocks(this);
-		response = new MockHttpServletResponse();
+    //args to class under test
+    @Mock
+    private HttpServletRequest request;
+    MockHttpServletResponse response;
+    @Mock
+    AuthenticationException authException;
 
-	}
-	
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		DefaultBootstrap.bootstrap();
-	}
-	
-	@Test
-	public void testCommence() throws Exception {
-		
-		samlAuthenticationEntryPoint.commence(request, response, authException);
-		
-		assertNotNull("response.getContentAsString was null", response.getContentAsString());
-		
-		logger.debug("The response was: {}", response.getContentAsString());
-		assertTrue("The response did not contain a SAMLRequest", response.getContentAsString().contains("SAMLRequest"));
-		
-		
-	}
-	
+    private SAMLAuthenticationEntryPoint samlAuthenticationEntryPoint;
+
+    @Autowired
+    public void setSamlAuthenticationEntryPoint(
+            SAMLAuthenticationEntryPoint samlAuthenticationEntryPoint) {
+        this.samlAuthenticationEntryPoint = samlAuthenticationEntryPoint;
+    }
+
+    @Before
+    public void before() throws Exception {
+
+        MockitoAnnotations.initMocks(this);
+        response = new MockHttpServletResponse();
+
+    }
+
+    @BeforeClass
+    public static void beforeClass() throws Exception {
+        DefaultBootstrap.bootstrap();
+    }
+
+    @Test
+    public void testCommence() throws Exception {
+
+        samlAuthenticationEntryPoint.commence(request, response, authException);
+
+        assertNotNull("response.getContentAsString was null", response.getContentAsString());
+
+        logger.debug("The response was: {}", response.getContentAsString());
+        assertTrue("The response did not contain a SAMLRequest", response.getContentAsString().contains("SAMLRequest"));
+
+
+    }
+
 }

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package nl.surfnet.mockoleth.model;
 
 import java.io.BufferedInputStream;
@@ -19,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MockConfiguration implements Configuration {
-    
-    private Map<String, String> attributes = new TreeMap<String,String>();
+
+    private Map<String, String> attributes = new TreeMap<String, String>();
     private KeyStore keyStore;
     private String keystorePassword = "secret";
     private final static Logger LOGGER = LoggerFactory
@@ -29,7 +45,7 @@ public class MockConfiguration implements Configuration {
     public MockConfiguration() {
         reset();
     }
-    
+
     @Override
     public void reset() {
         attributes.clear();
@@ -66,29 +82,29 @@ public class MockConfiguration implements Configuration {
     /**
      * Append a certificate and private key to a keystore.
      *
-     * @param keyStore where to append the certificate and private key to
-     * @param keyAlias the alias of the key
+     * @param keyStore        where to append the certificate and private key to
+     * @param keyAlias        the alias of the key
      * @param certificateFile the file containing the certificate in the PEM format
-     * @param privatekeyFile the file containing the private key in the DER format
-     * @param password the password on the key
-     *
-     * Generate your private key:
-     * openssl genrsa -out something.key 1024
-     *
-     * Show the PEM private key:
-     * openssl asn1parse -inform pem -dump -i -in something.key
-     *
-     * Translate the key to pkcs8 DER format:
-     * openssl pkcs8 -topk8 -inform PEM -outform DER -in something.key -nocrypt > something.pkcs8.der
-     *
-     * Show the DER private key:
-     * openssl asn1parse -inform der -dump -i -in something.pkcs8.der
-     *
-     * Generate a certificate request:
-     * openssl req -new -key something.key -out something.csr
-     *
-     * Generate a certificate:
-     * openssl x509 -req -days 365 -in something.csr -signkey something.key -out something.crt
+     * @param privatekeyFile  the file containing the private key in the DER format
+     * @param password        the password on the key
+     *                        <p/>
+     *                        Generate your private key:
+     *                        openssl genrsa -out something.key 1024
+     *                        <p/>
+     *                        Show the PEM private key:
+     *                        openssl asn1parse -inform pem -dump -i -in something.key
+     *                        <p/>
+     *                        Translate the key to pkcs8 DER format:
+     *                        openssl pkcs8 -topk8 -inform PEM -outform DER -in something.key -nocrypt > something.pkcs8.der
+     *                        <p/>
+     *                        Show the DER private key:
+     *                        openssl asn1parse -inform der -dump -i -in something.pkcs8.der
+     *                        <p/>
+     *                        Generate a certificate request:
+     *                        openssl req -new -key something.key -out something.csr
+     *                        <p/>
+     *                        Generate a certificate:
+     *                        openssl x509 -req -days 365 -in something.csr -signkey something.key -out something.crt
      */
     private void appendToKeyStore(KeyStore keyStore, String keyAlias, String certificateFile, String privatekeyFile, char[] password) throws Exception {
         BufferedInputStream bis = null;
@@ -98,7 +114,7 @@ public class MockConfiguration implements Configuration {
         try {
             certFact = CertificateFactory.getInstance("X.509");
             cert = certFact.generateCertificate(bis);
-        } catch(CertificateException e) {
+        } catch (CertificateException e) {
             throw new Exception("Could not instantiate cert", e);
         }
         bis.close();

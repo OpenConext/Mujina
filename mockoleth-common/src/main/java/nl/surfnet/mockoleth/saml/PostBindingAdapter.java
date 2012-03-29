@@ -1,18 +1,18 @@
 /*
-*   Copyright 2012 SURFnet.nl
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package nl.surfnet.mockoleth.saml;
 
@@ -38,89 +38,86 @@ import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 
-public class PostBindingAdapter implements BindingAdapter, InitializingBean{
+public class PostBindingAdapter implements BindingAdapter, InitializingBean {
 
-	static final String SAML_REQUEST_POST_PARAM_NAME = "SAMLRequest";
-	static final String SAML_RESPONSE_POST_PARAM_NAME = "SAMLResponse";
+    static final String SAML_REQUEST_POST_PARAM_NAME = "SAMLRequest";
+    static final String SAML_RESPONSE_POST_PARAM_NAME = "SAMLResponse";
 
-	private VelocityEngine velocityEngine;
+    private VelocityEngine velocityEngine;
 
-	private final SAMLMessageDecoder decoder;
-	SAMLMessageEncoder encoder;	
-	private final String issuingEntityName;
-	private final SecurityPolicyResolver resolver;
-	
-	
-	
-	public PostBindingAdapter(SAMLMessageDecoder decoder, String issuingEntityName, SecurityPolicyResolver resolver) {
-		super();
-		this.decoder = decoder;
-		this.issuingEntityName = issuingEntityName;
-		this.resolver = resolver;
-	}
+    private final SAMLMessageDecoder decoder;
+    SAMLMessageEncoder encoder;
+    private final String issuingEntityName;
+    private final SecurityPolicyResolver resolver;
 
 
-	@Required
-	public void setVelocityEngine(
-			VelocityEngine velocityEngine) {
-		this.velocityEngine = velocityEngine;
-	}
-	
+    public PostBindingAdapter(SAMLMessageDecoder decoder, String issuingEntityName, SecurityPolicyResolver resolver) {
+        super();
+        this.decoder = decoder;
+        this.issuingEntityName = issuingEntityName;
+        this.resolver = resolver;
+    }
 
-	@Override
-	public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws MessageDecodingException, SecurityException {
-		
-		BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-		
-		messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
-		messageContext.setSecurityPolicyResolver(resolver);
 
-		decoder.decode(messageContext);
-		
-		return	messageContext;
+    @Required
+    public void setVelocityEngine(
+            VelocityEngine velocityEngine) {
+        this.velocityEngine = velocityEngine;
+    }
 
-	}
 
-	@Override
-	public void sendSAMLMessage(SignableSAMLObject samlMessage,
-								Endpoint endpoint, 
-								Credential signingCredential,
-								HttpServletResponse response) throws MessageEncodingException {
-		
-		HttpServletResponseAdapter outTransport = new HttpServletResponseAdapter(response, false);
-		
-		BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-		
-		messageContext.setOutboundMessageTransport(outTransport);
-		messageContext.setPeerEntityEndpoint(endpoint);
-		messageContext.setOutboundSAMLMessage(samlMessage);
-		messageContext.setOutboundMessageIssuer(issuingEntityName);
+    @Override
+    public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws MessageDecodingException, SecurityException {
+
+        BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+
+        messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
+        messageContext.setSecurityPolicyResolver(resolver);
+
+        decoder.decode(messageContext);
+
+        return messageContext;
+
+    }
+
+    @Override
+    public void sendSAMLMessage(SignableSAMLObject samlMessage,
+                                Endpoint endpoint,
+                                Credential signingCredential,
+                                HttpServletResponse response) throws MessageEncodingException {
+
+        HttpServletResponseAdapter outTransport = new HttpServletResponseAdapter(response, false);
+
+        BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+
+        messageContext.setOutboundMessageTransport(outTransport);
+        messageContext.setPeerEntityEndpoint(endpoint);
+        messageContext.setOutboundSAMLMessage(samlMessage);
+        messageContext.setOutboundMessageIssuer(issuingEntityName);
 
         // Dragons! signing cerdential disabled
-		// messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
-		
-		encoder.encode(messageContext);
-		
-	}
+        // messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
+
+        encoder.encode(messageContext);
+
+    }
 
 
-	@Override
-	public String extractSAMLMessage(HttpServletRequest request) {
-	    
-		if(StringUtils.isNotBlank(request.getParameter(SAML_REQUEST_POST_PARAM_NAME)))
-			return request.getParameter(SAML_REQUEST_POST_PARAM_NAME);
-		else
-			return request.getParameter(SAML_RESPONSE_POST_PARAM_NAME);
-		
-	}
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		encoder = new HTTPPostSimpleSignEncoder(velocityEngine,
-		        "/templates/saml2-post-simplesign-binding.vm", true); 
-	}
+    @Override
+    public String extractSAMLMessage(HttpServletRequest request) {
 
+        if (StringUtils.isNotBlank(request.getParameter(SAML_REQUEST_POST_PARAM_NAME)))
+            return request.getParameter(SAML_REQUEST_POST_PARAM_NAME);
+        else
+            return request.getParameter(SAML_RESPONSE_POST_PARAM_NAME);
 
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        encoder = new HTTPPostSimpleSignEncoder(velocityEngine,
+                "/templates/saml2-post-simplesign-binding.vm", true);
+    }
 
 
 }
