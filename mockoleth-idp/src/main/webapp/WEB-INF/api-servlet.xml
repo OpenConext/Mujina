@@ -44,7 +44,6 @@
       <util:list id="beanList">
         <ref bean="stringHttpMessageConverter"/>
         <ref bean="mappingJacksonHttpMessageConverter"/>
-        <ref bean="marshallingHttpMessageConverter"/>
       </util:list>
     </property>
   </bean>
@@ -54,9 +53,6 @@
   
   <bean id="mappingJacksonHttpMessageConverter"
         class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
-  
-  <bean id="marshallingHttpMessageConverter"
-    class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter"/>
 
 
 </beans>
