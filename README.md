@@ -5,7 +5,7 @@
 / /\/\ \ (_) | (__|   < (_) | |  __/ |_| | | |
 \/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
 
-    Mock Identiry Provider using OpenSAML
+    Mock Identity Provider using OpenSAML
 </pre>
 
 Mockoleth
