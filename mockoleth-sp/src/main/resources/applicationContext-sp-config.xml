@@ -70,9 +70,9 @@
 	</bean>
 
 	<bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
-			<constructor-arg ref="keyStoreCredentialResolverDelegate"></constructor-arg>
+			<constructor-arg ref="keyStoreCredentialResolverDelegate"/>
 			<constructor-arg >
-				<bean class="org.opensaml.security.SAMLSignatureProfileValidator"></bean>
+				<bean class="org.opensaml.security.SAMLSignatureProfileValidator"/>
 			</constructor-arg>
 	</bean>
 

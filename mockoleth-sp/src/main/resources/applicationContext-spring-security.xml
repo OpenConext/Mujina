@@ -60,7 +60,7 @@
 		
 		<beans:property name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
 		
-		<beans:property name="bindingAdapter" ref="bindingAdpater"></beans:property>
+		<beans:property name="bindingAdapter" ref="bindingAdpater"/>
 		
 	</beans:bean>
 	
