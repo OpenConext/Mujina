@@ -33,16 +33,10 @@ public class KeyStoreCredentialResolverDelegate implements CredentialResolver, I
 
     private KeyStoreCredentialResolver keyStoreCredentialResolver;
 
-    private String keystorePassword;
     private Map<String, String> privateKeyPasswordsByAlias;
 
     @Autowired
     private Configuration configuration;
-
-    @Required
-    public void setKeystorePassword(String keystorePassword) {
-        this.keystorePassword = keystorePassword;
-    }
 
     @Required
     public void setPrivateKeyPasswordsByAlias(

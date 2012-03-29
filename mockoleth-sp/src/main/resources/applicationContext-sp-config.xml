@@ -103,8 +103,6 @@
       </map>
     </property>
 
-    <property name="keystorePassword" value="secret"/>
-
   </bean>
 
   <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">

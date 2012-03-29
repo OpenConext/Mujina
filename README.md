@@ -31,3 +31,13 @@ curl -v -H "Accept: application/json" \
         -X POST -d '{"name": "urn:mace:dir:attribute-def:foo", "value": "bar"}' \
         http://localhost:8080/idp/api/set-attribute
 </pre>
+
+Adding a user
+-------------
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
+        http://localhost:8080/idp/api/add-user
+</pre>

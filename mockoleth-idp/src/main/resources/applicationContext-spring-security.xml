@@ -49,22 +49,17 @@
   </beans:bean>
 
   <beans:bean id="authnFailureHandler" class="nl.surfnet.mockoleth.spring.RealAuthenticationFailureHandler">
-
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
     <beans:constructor-arg value="${ISSUING_ENTITY_ID}"/>
     <beans:constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
     <beans:constructor-arg name="bindingAdapter" ref="bindingAdpater"/>
     <beans:constructor-arg ref="simpleUrlAuthenticationFailureHandler"/>
-
   </beans:bean>
+  
+  <beans:bean id="customAuthenticationProvider" class="nl.surfnet.mockoleth.spring.security.CustomAuthenticationProvider" />
 
   <authentication-manager>
-    <authentication-provider>
-      <user-service>
-        <user name="admin" password="secret" authorities="ROLE_USER, ROLE_ADMIN"/>
-        <user name="user" password="secret" authorities="ROLE_USER"/>
-      </user-service>
-    </authentication-provider>
+    <authentication-provider ref="customAuthenticationProvider" />
   </authentication-manager>
 </beans:beans>

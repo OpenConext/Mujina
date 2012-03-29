@@ -16,6 +16,8 @@
 
 package nl.surfnet.mockoleth.controllers;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
@@ -29,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.User;
+import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
 @Controller
 public class RestApiController {
@@ -49,6 +53,19 @@ public class RestApiController {
     public void setAttribute(@RequestBody Attribute attribute, HttpServletResponse response) {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
         configuration.getAttributes().put(attribute.getName(), attribute.getValue());
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+
+    @RequestMapping(value = {"/add-user"}, method = RequestMethod.POST)
+    @ResponseBody
+    public void addUser(@RequestBody User user, HttpServletResponse response) {
+        LOGGER.info("Request to add user {} with password {}", user.getName(), user.getPassword());
+        CustomAuthentication customAuthentication = new CustomAuthentication(user.getName(), user.getPassword());
+        final List<String> authorities = user.getAuthorities();
+        for (String authority : authorities) {
+            customAuthentication.addAuthority(authority);
+        }
+        configuration.getUsers().add(customAuthentication);
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 

@@ -17,7 +17,10 @@
 package nl.surfnet.mockoleth.model;
 
 import java.security.KeyStore;
+import java.util.Collection;
 import java.util.Map;
+
+import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
 public interface Configuration {
     void reset();
@@ -25,4 +28,6 @@ public interface Configuration {
     Map<String, String> getAttributes();
 
     KeyStore getKeyStore();
+    
+    Collection<CustomAuthentication> getUsers();
 }

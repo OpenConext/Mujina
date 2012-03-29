@@ -27,20 +27,24 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+
+import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
 public class MockConfiguration implements Configuration {
 
     private Map<String, String> attributes = new TreeMap<String, String>();
     private KeyStore keyStore;
     private String keystorePassword = "secret";
-    private final static Logger LOGGER = LoggerFactory
-            .getLogger(MockConfiguration.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(MockConfiguration.class);
+    private Collection<CustomAuthentication> users = new ArrayList<CustomAuthentication>();
 
     public MockConfiguration() {
         reset();
@@ -66,7 +70,11 @@ public class MockConfiguration implements Configuration {
         } catch (Exception e) {
             LOGGER.error("Unable to create default keystore", e);
         }
-
+        users.clear();
+        final CustomAuthentication user = new CustomAuthentication("admin", "secret");
+        user.addAuthority("ROLE_USER");
+        user.addAuthority("ROLE_ADMIN");
+        users.add(user);
     }
 
     @Override
@@ -77,6 +85,11 @@ public class MockConfiguration implements Configuration {
     @Override
     public KeyStore getKeyStore() {
         return keyStore;
+    }
+
+    @Override
+    public Collection<CustomAuthentication> getUsers() {
+        return users;
     }
 
     /**

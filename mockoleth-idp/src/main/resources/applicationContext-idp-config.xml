@@ -23,7 +23,7 @@
 	    http://www.springframework.org/schema/context
 	    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <context:annotation-config/>
+  <context:annotation-config />
 
   <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
@@ -43,9 +43,7 @@
     <constructor-arg ref="bindingAdpater"/>
     <constructor-arg ref="idService"/>
     <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
-
     <property name="responseValidityTimeInSeconds" value="${ASSERTION_VALIDITY_TIME_INS_SECONDS}"/>
-
   </bean>
 
   <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
@@ -70,12 +68,10 @@
   </bean>
 
   <bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
-
     <constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
-
   </bean>
 
   <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
@@ -85,19 +81,16 @@
   <bean id="securityPolicy" class="nl.surfnet.mockoleth.saml.SecurityPolicyDelegate">
     <constructor-arg>
       <list>
-        <!-- <ref bean="signatureSecurityPolicyRule"/> -->
         <ref bean="issueInstantRule"/>
         <ref bean="messageReplayRule"/>
       </list>
     </constructor-arg>
   </bean>
 
-
   <bean id="mapBasedStorageService" class="org.opensaml.util.storage.MapBasedStorageService"/>
 
   <bean id="replayCache" class="org.opensaml.util.storage.ReplayCache">
     <constructor-arg ref="mapBasedStorageService"/>
-
     <constructor-arg value="${REPLAY_CACHE_LIFE_IN_MILLIS}"></constructor-arg>
   </bean>
 
@@ -112,7 +105,6 @@
 
   </bean>
 
-
   <bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
     <constructor-arg ref="keyStoreCredentialResolverDelegate"></constructor-arg>
     <constructor-arg>
@@ -121,16 +113,12 @@
   </bean>
 
   <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
-
     <property name="privateKeyPasswordsByAlias">
       <map>
         <entry key="sp" value="secret"/>
         <entry key="idp" value="secret"/>
       </map>
     </property>
-
-    <property name="keystorePassword" value="secret"/>
-
   </bean>
 
   <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration"/>
