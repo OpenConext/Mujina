@@ -1,18 +1,18 @@
 /*
-*   Copyright 2012 SURFnet.nl
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package nl.surfnet.mockoleth.spring;
 
@@ -21,12 +21,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import nl.surfnet.mockoleth.saml.AuthnRequestGenerator;
-import nl.surfnet.mockoleth.saml.BindingAdapter;
-import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
-import nl.surfnet.mockoleth.util.IDService;
-import nl.surfnet.mockoleth.util.TimeService;
 
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.AuthnRequest;
@@ -46,85 +40,91 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
+import nl.surfnet.mockoleth.saml.AuthnRequestGenerator;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
+
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
 
-	private final static Logger logger = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);
-	
-	private final TimeService timeService;
-	private final IDService idService;
-	private final String issuer;
-	
-	 private String singleSignOnServiceURL;
-	 private String assertionConsumerServiceURL;
-	 private BindingAdapter bindingAdapter;
-	 EndpointGenerator endpointGenerator;
-	 AuthnRequestGenerator authnRequestGenerator;
-	 CredentialResolver credentialResolver;
-	 
-	 Credential signingCredential;
+    private final static Logger logger = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);
 
-	public SAMLAuthenticationEntryPoint(TimeService timeService,
-			IDService idService, String issuer) {
-		super();
-		this.timeService = timeService;
-		this.idService = idService;
-		this.issuer = issuer;
-	}
+    private final TimeService timeService;
+    private final IDService idService;
+    private final String issuer;
 
-	@Required
-	public void setSingleSignOnServiceURL(String singleSignOnServiceURL) {
-		this.singleSignOnServiceURL = singleSignOnServiceURL;
-	}
+    private String singleSignOnServiceURL;
+    private String assertionConsumerServiceURL;
+    private BindingAdapter bindingAdapter;
+    EndpointGenerator endpointGenerator;
+    AuthnRequestGenerator authnRequestGenerator;
+    CredentialResolver credentialResolver;
 
-	@Required
-	public void setAssertionConsumerServiceURL(String assertionConsumerServiceURL) {
-		this.assertionConsumerServiceURL = assertionConsumerServiceURL;
-	}
+    Credential signingCredential;
 
-	@Required
-	public void setBindingAdapter(BindingAdapter bindingAdapter) {
-		this.bindingAdapter = bindingAdapter;
-	}
+    public SAMLAuthenticationEntryPoint(TimeService timeService,
+                                        IDService idService, String issuer) {
+        super();
+        this.timeService = timeService;
+        this.idService = idService;
+        this.issuer = issuer;
+    }
 
-	
-	@Required
-	public void setCredentialResolver(CredentialResolver credentialResolver) {
-		this.credentialResolver = credentialResolver;
-	}
+    @Required
+    public void setSingleSignOnServiceURL(String singleSignOnServiceURL) {
+        this.singleSignOnServiceURL = singleSignOnServiceURL;
+    }
 
-	@Override
-	public void commence(HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException) throws IOException, ServletException {
-		
-		Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
-		
-		AuthnRequest authnReqeust =  authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL,assertionConsumerServiceURL);
-		
-		logger.debug("Sending authnRequest to {}", singleSignOnServiceURL );
-		
-		try {
-			bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential,response);
-		} catch (MessageEncodingException mee) {
-			logger.error("Could not send authnRequest to Identity Provider.", mee);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		}
-	}
+    @Required
+    public void setAssertionConsumerServiceURL(String assertionConsumerServiceURL) {
+        this.assertionConsumerServiceURL = assertionConsumerServiceURL;
+    }
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		
-		authnRequestGenerator = new AuthnRequestGenerator(issuer,timeService,idService);
-		endpointGenerator = new EndpointGenerator();
-		
+    @Required
+    public void setBindingAdapter(BindingAdapter bindingAdapter) {
+        this.bindingAdapter = bindingAdapter;
+    }
 
-		CriteriaSet criteriaSet = new CriteriaSet();
-		criteriaSet.add(new EntityIDCriteria(issuer));
-		criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
 
-		signingCredential = credentialResolver.resolveSingle(criteriaSet);
-		Validate.notNull(signingCredential);
-		
-	}
+    @Required
+    public void setCredentialResolver(CredentialResolver credentialResolver) {
+        this.credentialResolver = credentialResolver;
+    }
+
+    @Override
+    public void commence(HttpServletRequest request,
+                         HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
+
+        Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
+
+        AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, assertionConsumerServiceURL);
+
+        logger.debug("Sending authnRequest to {}", singleSignOnServiceURL);
+
+        try {
+            bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, response);
+        } catch (MessageEncodingException mee) {
+            logger.error("Could not send authnRequest to Identity Provider.", mee);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+        authnRequestGenerator = new AuthnRequestGenerator(issuer, timeService, idService);
+        endpointGenerator = new EndpointGenerator();
+
+
+        CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new EntityIDCriteria(issuer));
+        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+
+        signingCredential = credentialResolver.resolveSingle(criteriaSet);
+        Validate.notNull(signingCredential);
+
+    }
 
 }

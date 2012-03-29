@@ -1,18 +1,18 @@
 /*
-*   Copyright 2012 SURFnet.nl
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*       http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*/
+ * Copyright 2012 SURFnet bv, The Netherlands
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package nl.surfnet.mockoleth.spring;
 
@@ -21,13 +21,6 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import nl.surfnet.mockoleth.saml.BindingAdapter;
-import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
-import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
-import nl.surfnet.mockoleth.util.IDService;
-import nl.surfnet.mockoleth.util.TimeService;
-import nl.surfnet.mockoleth.model.Configuration;
 
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.Response;
@@ -48,83 +41,90 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
+import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.saml.BindingAdapter;
+import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
+import nl.surfnet.mockoleth.util.IDService;
+import nl.surfnet.mockoleth.util.TimeService;
+
 public class RealAuthenticationFailureHandler implements AuthenticationFailureHandler, InitializingBean {
 
 
-	private final static Logger logger = LoggerFactory
-			.getLogger(RealAuthenticationFailureHandler.class);
-	
-	private final TimeService timeService;
-	private final IDService idService;
-	private final String issuingEntityName;
-	private final CredentialResolver credentialResolver;
-	private final BindingAdapter bindingAdapter;
-	private final AuthenticationFailureHandler nonSSOAuthnFailureHandler;
-	
-	Credential signingCredential;
-	EndpointGenerator endpointGenerator;
-	AuthnResponseGenerator authnResponseGenerator;
-	
+    private final static Logger logger = LoggerFactory
+            .getLogger(RealAuthenticationFailureHandler.class);
+
+    private final TimeService timeService;
+    private final IDService idService;
+    private final String issuingEntityName;
+    private final CredentialResolver credentialResolver;
+    private final BindingAdapter bindingAdapter;
+    private final AuthenticationFailureHandler nonSSOAuthnFailureHandler;
+
+    Credential signingCredential;
+    EndpointGenerator endpointGenerator;
+    AuthnResponseGenerator authnResponseGenerator;
+
 
     @Autowired
     Configuration configuration;
 
-	public RealAuthenticationFailureHandler(TimeService timeService,
-			IDService idService, String issuingEntityName,
-			CredentialResolver credentialResolver, BindingAdapter bindingAdapter,
-			AuthenticationFailureHandler nonSSOAuthnFailureHandler) {
-		super();
-		this.timeService = timeService;
-		this.idService = idService;
-		this.issuingEntityName = issuingEntityName;
-		this.credentialResolver = credentialResolver;
-		this.bindingAdapter = bindingAdapter;
-		this.nonSSOAuthnFailureHandler = nonSSOAuthnFailureHandler;
-	}
+    public RealAuthenticationFailureHandler(TimeService timeService,
+                                            IDService idService, String issuingEntityName,
+                                            CredentialResolver credentialResolver, BindingAdapter bindingAdapter,
+                                            AuthenticationFailureHandler nonSSOAuthnFailureHandler) {
+        super();
+        this.timeService = timeService;
+        this.idService = idService;
+        this.issuingEntityName = issuingEntityName;
+        this.credentialResolver = credentialResolver;
+        this.bindingAdapter = bindingAdapter;
+        this.nonSSOAuthnFailureHandler = nonSSOAuthnFailureHandler;
+    }
 
-	
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
-		endpointGenerator = new EndpointGenerator();
-		
-		CriteriaSet criteriaSet = new CriteriaSet();
-		criteriaSet.add(new EntityIDCriteria(issuingEntityName));
-		criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
 
-		signingCredential = credentialResolver.resolveSingle(criteriaSet);
-		Validate.notNull(signingCredential);
-		
-	}
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
+        endpointGenerator = new EndpointGenerator();
 
-	@Override
-	public void onAuthenticationFailure(HttpServletRequest request,
-			HttpServletResponse response, AuthenticationException authenticationException)
-			throws IOException, ServletException {
-		logger.debug("commencing RealAuthenticationFailureHandler because of {}", authenticationException.getClass());
+        CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new EntityIDCriteria(issuingEntityName));
+        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
 
-		AuthnRequestInfo authnRequestInfo = (AuthnRequestInfo) request.getSession().getAttribute(AuthnRequestInfo.class.getName());
-		
-		if(authnRequestInfo == null) {
-			logger.warn("Could not find AuthnRequestInfo on the request.  Delegating to nonSSOAuthnFailureHandler.");
-			nonSSOAuthnFailureHandler.onAuthenticationFailure(request, response, authenticationException);
-			return;
-		}
-		
-		logger.debug("AuthnRequestInfo is {}", authnRequestInfo );
-		
-		request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, authenticationException);
-		
-		Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConumerURL(), authnRequestInfo.getAuthnRequestID(), authenticationException);
-		Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME, authnRequestInfo.getAssertionConumerURL(), null);
-		
-		request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
-		
-		try {
-			bindingAdapter.sendSAMLMessage(authResponse, endpoint, signingCredential, response);
-		} catch (MessageEncodingException mee) {
-			logger.error("Exception encoding SAML message", mee);
-			response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-		}
-	}
+        signingCredential = credentialResolver.resolveSingle(criteriaSet);
+        Validate.notNull(signingCredential);
+
+    }
+
+    @Override
+    public void onAuthenticationFailure(HttpServletRequest request,
+                                        HttpServletResponse response, AuthenticationException authenticationException)
+            throws IOException, ServletException {
+        logger.debug("commencing RealAuthenticationFailureHandler because of {}", authenticationException.getClass());
+
+        AuthnRequestInfo authnRequestInfo = (AuthnRequestInfo) request.getSession().getAttribute(AuthnRequestInfo.class.getName());
+
+        if (authnRequestInfo == null) {
+            logger.warn("Could not find AuthnRequestInfo on the request.  Delegating to nonSSOAuthnFailureHandler.");
+            nonSSOAuthnFailureHandler.onAuthenticationFailure(request, response, authenticationException);
+            return;
+        }
+
+        logger.debug("AuthnRequestInfo is {}", authnRequestInfo);
+
+        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, authenticationException);
+
+        Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConumerURL(), authnRequestInfo.getAuthnRequestID(), authenticationException);
+        Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME, authnRequestInfo.getAssertionConumerURL(), null);
+
+        request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
+
+        try {
+            bindingAdapter.sendSAMLMessage(authResponse, endpoint, signingCredential, response);
+        } catch (MessageEncodingException mee) {
+            logger.error("Exception encoding SAML message", mee);
+            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+        }
+    }
 }
