@@ -23,10 +23,17 @@
     <apache-commons.version>1.3.2</apache-commons.version>
     <xml-apis.version>1.4.01</xml-apis.version>
     <jackson.version>1.9.5</jackson.version>
+    <spring.oxm>1.5.10</spring.oxm>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+
+      <dependency>
+        <groupId>org.springframework.ws</groupId>
+        <artifactId>spring-oxm</artifactId>
+        <version>${spring.oxm}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.codehaus.jackson</groupId>
