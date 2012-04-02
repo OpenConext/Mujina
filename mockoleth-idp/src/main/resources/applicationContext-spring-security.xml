@@ -51,7 +51,6 @@
   <beans:bean id="authnFailureHandler" class="nl.surfnet.mockoleth.spring.RealAuthenticationFailureHandler">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
-    <beans:constructor-arg value="${ISSUING_ENTITY_ID}"/>
     <beans:constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
     <beans:constructor-arg name="bindingAdapter" ref="bindingAdpater"/>
     <beans:constructor-arg ref="simpleUrlAuthenticationFailureHandler"/>

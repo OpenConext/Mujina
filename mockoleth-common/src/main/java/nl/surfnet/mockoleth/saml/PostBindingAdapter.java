@@ -36,7 +36,10 @@ import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
+
+import nl.surfnet.mockoleth.model.Configuration;
 
 public class PostBindingAdapter implements BindingAdapter, InitializingBean {
 
@@ -47,14 +50,15 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
 
     private final SAMLMessageDecoder decoder;
     SAMLMessageEncoder encoder;
-    private final String issuingEntityName;
     private final SecurityPolicyResolver resolver;
 
+    @Autowired
+    Configuration configuration;
 
-    public PostBindingAdapter(SAMLMessageDecoder decoder, String issuingEntityName, SecurityPolicyResolver resolver) {
+    public PostBindingAdapter(SAMLMessageDecoder decoder,
+                              SecurityPolicyResolver resolver) {
         super();
         this.decoder = decoder;
-        this.issuingEntityName = issuingEntityName;
         this.resolver = resolver;
     }
 
@@ -93,7 +97,7 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
         messageContext.setOutboundMessageTransport(outTransport);
         messageContext.setPeerEntityEndpoint(endpoint);
         messageContext.setOutboundSAMLMessage(samlMessage);
-        messageContext.setOutboundMessageIssuer(issuingEntityName);
+        messageContext.setOutboundMessageIssuer(configuration.getEntityID());
 
         // Dragons! signing cerdential disabled
         // messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);

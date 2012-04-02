@@ -16,24 +16,23 @@
 
 package nl.surfnet.mockoleth.model;
 
-import java.security.KeyStore;
-import java.util.Collection;
-import java.util.Map;
+import java.io.Serializable;
 
-import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public interface Configuration {
-    void reset();
+@XmlRootElement
+public class EntityID implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    Map<String, String> getAttributes();
+    private String value;
 
-    KeyStore getKeyStore();
-    
-    Collection<CustomAuthentication> getUsers();
+    public String getValue() {
+        return value;
+    }
 
-    String getEntityID();
-
-    void setEntityID(String value);
-
-    void injectCredential(String certificate, String key);
+    @XmlElement
+    public void setValue(final String value) {
+        this.value = value;
+    }
 }

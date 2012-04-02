@@ -47,7 +47,6 @@
   </bean>
 
   <bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
-    <constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
@@ -108,6 +107,6 @@
   <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
   </bean>
 
-  <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration"/>
+  <bean id="configuration" class="nl.surfnet.mockoleth.model.IdpConfiguration"/>
 
 </beans>

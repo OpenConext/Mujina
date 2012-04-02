@@ -39,7 +39,6 @@
 
   <bean id="authnResponder" class="nl.surfnet.mockoleth.saml.SSOSuccessAuthnResponder">
     <constructor-arg ref="timeService"/>
-    <constructor-arg value="${ISSUING_ENTITY_ID}"/>
     <constructor-arg ref="bindingAdpater"/>
     <constructor-arg ref="idService"/>
     <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
@@ -68,7 +67,6 @@
   </bean>
 
   <bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
-    <constructor-arg value="${ISSUING_ENTITY_ID}"></constructor-arg>
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
@@ -121,6 +119,6 @@
     </property>
   </bean>
 
-  <bean id="configuration" class="nl.surfnet.mockoleth.model.MockConfiguration"/>
+  <bean id="configuration" class="nl.surfnet.mockoleth.model.IdpConfiguration"/>
 
 </beans>

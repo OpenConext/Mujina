@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.Credential;
+import nl.surfnet.mockoleth.model.EntityID;
 import nl.surfnet.mockoleth.model.User;
 import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
@@ -46,6 +48,22 @@ public class RestApiController {
     @RequestMapping("/test")
     public String test() {
         return "test-view";
+    }
+
+    @RequestMapping(value = {"/set-signing-credential"}, method = RequestMethod.POST)
+    @ResponseBody
+    public void setSigningCredential(@RequestBody Credential credential, HttpServletResponse response) {
+        LOGGER.info("Request to set signing credential");
+        configuration.injectCredential(credential.getCertificate(), credential.getKey());
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+    }
+
+    @RequestMapping(value = {"/set-entityid"}, method = RequestMethod.POST)
+    @ResponseBody
+    public void setEntityID(@RequestBody EntityID entityID, HttpServletResponse response) {
+        LOGGER.info("Request to set entityID {}", entityID.getValue());
+        configuration.setEntityID(entityID.getValue());
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/set-attribute"}, method = RequestMethod.POST)

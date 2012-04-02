@@ -27,7 +27,7 @@ import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.CriteriaSet;
+import org.opensaml.xml.security.*;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -49,17 +49,13 @@ import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
-public class SSOSuccessAuthnResponder implements HttpRequestHandler, InitializingBean {
+public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
-    private final String issuingEntityName;
     private final TimeService timeService;
     private final IDService idService;
     private int responseValidityTimeInSeconds;
     private final BindingAdapter adapter;
     private CredentialResolver credentialResolver;
-    Credential signingCredential;
-    EndpointGenerator endpointGenerator;
-    AuthnResponseGenerator authnResponseGenerator;
 
     @Autowired
     Configuration configuration;
@@ -68,11 +64,11 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
             .getLogger(SSOSuccessAuthnResponder.class);
 
 
-    public SSOSuccessAuthnResponder(String issuingEntityName, TimeService timeService,
+    public SSOSuccessAuthnResponder(TimeService timeService,
                                     IDService idService,
-                                    BindingAdapter adapter, CredentialResolver credentialResolver) {
+                                    BindingAdapter adapter,
+                                    CredentialResolver credentialResolver) {
         super();
-        this.issuingEntityName = issuingEntityName;
         this.timeService = timeService;
         this.idService = idService;
         this.adapter = adapter;
@@ -84,22 +80,6 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
     public void setResponseValidityTimeInSeconds(int responseValidityTimeInSeconds) {
         this.responseValidityTimeInSeconds = responseValidityTimeInSeconds;
     }
-
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(issuingEntityName));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-        signingCredential = credentialResolver.resolveSingle(criteriaSet);
-        Validate.notNull(signingCredential);
-
-        authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
-        endpointGenerator = new EndpointGenerator();
-
-    }
-
 
     @Override
     public void handleRequest(HttpServletRequest request,
@@ -116,6 +96,22 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler, Initializin
 
         UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         DateTime authnInstant = new DateTime(request.getSession().getCreationTime());
+
+        CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new EntityIDCriteria(configuration.getEntityID()));
+        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+        Credential signingCredential = null;
+        try {
+            signingCredential = credentialResolver.resolveSingle(criteriaSet);
+        } catch (org.opensaml.xml.security.SecurityException e) {
+            logger.warn("Unable to resolve EntityID while signing", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+        Validate.notNull(signingCredential);
+
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, configuration.getEntityID(), timeService, idService, configuration);
+        EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         Response authResponse = authnResponseGenerator.generateAuthnResponse(authToken, info.getAssertionConumerURL(), responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
         Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME, info.getAssertionConumerURL(), null);

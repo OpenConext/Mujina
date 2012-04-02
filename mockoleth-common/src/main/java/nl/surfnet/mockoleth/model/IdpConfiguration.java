@@ -17,6 +17,7 @@
 package nl.surfnet.mockoleth.model;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -31,27 +32,29 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 
 import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
-public class MockConfiguration implements Configuration {
+public class IdpConfiguration implements Configuration {
 
     private Map<String, String> attributes = new TreeMap<String, String>();
     private KeyStore keyStore;
     private String keystorePassword = "secret";
-    private final static Logger LOGGER = LoggerFactory.getLogger(MockConfiguration.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfiguration.class);
     private Collection<CustomAuthentication> users = new ArrayList<CustomAuthentication>();
+    private String entityId;
 
-    public MockConfiguration() {
+    public IdpConfiguration() {
         reset();
     }
 
     @Override
     public void reset() {
+        entityId = "idp";
         attributes.clear();
         attributes.put("urn:mace:dir:attribute-def:uid", "alle.veenstra");
         attributes.put("urn:mace:dir:attribute-def:cn", "Alle Veenstra");
@@ -92,6 +95,65 @@ public class MockConfiguration implements Configuration {
         return users;
     }
 
+    @Override
+    public String getEntityID() {
+        return entityId;
+    }
+
+    @Override
+    public void setEntityID(final String newEntityId) {
+        try {
+            final KeyStore.PasswordProtection passwordProtection =
+                    new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+            final KeyStore.Entry keyStoreEntry =
+                    keyStore.getEntry(this.entityId, passwordProtection);
+            keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
+        } catch (Exception e) {
+            LOGGER.warn("Unable to update signing key in key store", e);
+        }
+        this.entityId = newEntityId;
+    }
+
+    @Override
+    public void injectCredential(final String certificate, final String key) {
+        try {
+            if (keyStore.containsAlias(entityId)) {
+                keyStore.deleteEntry(entityId);
+            }
+            injectKeyStore(entityId, certificate, key);
+        } catch (Exception e) {
+            LOGGER.warn("Unable to append signing credential");
+        }
+    }
+
+    private void injectKeyStore(String alias, String pemCert, String pemKey) throws Exception {
+        CertificateFactory certFact;
+        Certificate cert;
+
+        String wrappedCert = "-----BEGIN CERTIFICATE-----\n" + pemCert + "\n-----END CERTIFICATE-----";
+
+        ByteArrayInputStream certificateInputStream = new ByteArrayInputStream(wrappedCert.getBytes());
+        try {
+            certFact = CertificateFactory.getInstance("X.509");
+            cert = certFact.generateCertificate(certificateInputStream);
+        } catch (CertificateException e) {
+            throw new Exception("Could not instantiate cert", e);
+        }
+        IOUtils.closeQuietly(certificateInputStream);
+        ArrayList<Certificate> certs = new ArrayList<Certificate>();
+        certs.add(cert);
+
+        final byte[] key = Base64.decodeBase64(pemKey);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        KeySpec ks = new PKCS8EncodedKeySpec(key);
+        RSAPrivateKey privKey = (RSAPrivateKey) keyFactory.generatePrivate(ks);
+
+        final Certificate[] certificates = new Certificate[1];
+        certificates[0] = certs.get(0);
+
+        keyStore.setKeyEntry(alias, privKey, keystorePassword.toCharArray(), certificates);
+    }
+
     /**
      * Append a certificate and private key to a keystore.
      *
@@ -120,10 +182,10 @@ public class MockConfiguration implements Configuration {
      *                        openssl x509 -req -days 365 -in something.csr -signkey something.key -out something.crt
      */
     private void appendToKeyStore(KeyStore keyStore, String keyAlias, String certificateFile, String privatekeyFile, char[] password) throws Exception {
-        BufferedInputStream bis = null;
-        bis = new BufferedInputStream(getClass().getClassLoader().getResourceAsStream(certificateFile));
-        CertificateFactory certFact = null;
-        Certificate cert = null;
+        BufferedInputStream bis = new BufferedInputStream(
+                getClass().getClassLoader().getResourceAsStream(certificateFile));
+        CertificateFactory certFact;
+        Certificate cert;
         try {
             certFact = CertificateFactory.getInstance("X.509");
             cert = certFact.generateCertificate(bis);

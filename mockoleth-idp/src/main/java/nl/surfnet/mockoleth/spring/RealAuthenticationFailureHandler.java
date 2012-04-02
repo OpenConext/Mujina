@@ -27,7 +27,7 @@ import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.CriteriaSet;
+import org.opensaml.xml.security.*;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -48,7 +48,7 @@ import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
-public class RealAuthenticationFailureHandler implements AuthenticationFailureHandler, InitializingBean {
+public class RealAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
 
     private final static Logger logger = LoggerFactory
@@ -56,50 +56,31 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
     private final TimeService timeService;
     private final IDService idService;
-    private final String issuingEntityName;
     private final CredentialResolver credentialResolver;
     private final BindingAdapter bindingAdapter;
     private final AuthenticationFailureHandler nonSSOAuthnFailureHandler;
-
-    Credential signingCredential;
-    EndpointGenerator endpointGenerator;
-    AuthnResponseGenerator authnResponseGenerator;
 
 
     @Autowired
     Configuration configuration;
 
     public RealAuthenticationFailureHandler(TimeService timeService,
-                                            IDService idService, String issuingEntityName,
-                                            CredentialResolver credentialResolver, BindingAdapter bindingAdapter,
+                                            IDService idService,
+                                            CredentialResolver credentialResolver,
+                                            BindingAdapter bindingAdapter,
                                             AuthenticationFailureHandler nonSSOAuthnFailureHandler) {
         super();
         this.timeService = timeService;
         this.idService = idService;
-        this.issuingEntityName = issuingEntityName;
         this.credentialResolver = credentialResolver;
         this.bindingAdapter = bindingAdapter;
         this.nonSSOAuthnFailureHandler = nonSSOAuthnFailureHandler;
     }
 
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        authnResponseGenerator = new AuthnResponseGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
-        endpointGenerator = new EndpointGenerator();
-
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(issuingEntityName));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-
-        signingCredential = credentialResolver.resolveSingle(criteriaSet);
-        Validate.notNull(signingCredential);
-
-    }
-
     @Override
     public void onAuthenticationFailure(HttpServletRequest request,
-                                        HttpServletResponse response, AuthenticationException authenticationException)
+                                        HttpServletResponse response,
+                                        AuthenticationException authenticationException)
             throws IOException, ServletException {
         logger.debug("commencing RealAuthenticationFailureHandler because of {}", authenticationException.getClass());
 
@@ -114,6 +95,22 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
         logger.debug("AuthnRequestInfo is {}", authnRequestInfo);
 
         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, authenticationException);
+
+        CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new EntityIDCriteria(configuration.getEntityID()));
+        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+
+        Credential signingCredential = null;
+        try {
+            signingCredential = credentialResolver.resolveSingle(criteriaSet);
+        } catch (org.opensaml.xml.security.SecurityException e) {
+            logger.warn("Unable to resolve signing credential for entityId", e);
+            return;
+        }
+        Validate.notNull(signingCredential);
+
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, configuration.getEntityID(), timeService, idService, configuration);
+        EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConumerURL(), authnRequestInfo.getAuthnRequestID(), authenticationException);
         Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME, authnRequestInfo.getAssertionConumerURL(), null);
