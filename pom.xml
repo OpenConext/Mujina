@@ -54,9 +54,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:git:git://github.com/SURFconext/Mockoleth.git</connection>
-    <developerConnection>scm:git:git@github.com:SURFconext/Mockoleth.git</developerConnection>
-    <url>scm:git:git://github.com/SURFconext/Mockoleth.git</url>
+    <connection>scm:git:git://github.com/OpenConext/Mockoleth.git</connection>
+    <developerConnection>scm:git:git@github.com:OpenConext/Mockoleth.git</developerConnection>
+    <url>scm:git:git://github.com/OpenConext/Mockoleth.git</url>
   </scm>
 
   <properties>
