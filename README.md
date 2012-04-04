@@ -4,11 +4,35 @@
 / /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
 \/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
 
-    Mock Identity Provider using OpenSAML
+  Mock Identity and Service Provider using OpenSAML
 </pre>
 
 Mockoleth
 =========
+
+Mockoleth mocks an Identity and Service Provider.
+There is a default configuration, which you can override using a REST API.
+This approach removes the need for special test configuration sets in your setup.
+Thus, Mockoloth makes testing your stack a breeze!
+
+The default Identity Provider configuration is as follows:
+* The Entity ID is "idp"
+* It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
+* It has a user with login "user" and password "secret" with role ROLE_USER
+* It has the following attributes
+    * "urn:mace:dir:attribute-def:uid" is "john.doe"
+    * "urn:mace:dir:attribute-def:cn" is "John Doe"
+    * "urn:mace:dir:attribute-def:givenName" is "John"
+    * "urn:mace:dir:attribute-def:sn" is "Doe"
+    * "urn:mace:dir:attribute-def:displayName" is "John Doe"
+    * "urn:mace:dir:attribute-def:mail" is "j.doe@example.com"
+    * "urn:mace:terena.org:attribute-def:schacHomeOrganization" is "example.com"
+    * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
+    * "urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1" is "guest"
+* There is a default certificate and private key available
+
+In this document you will find some examples for overriding the default configuration.
+After you override configuration you can go back to the default using the reset API.
 
 Run the IDP using jetty
 -----------------------
