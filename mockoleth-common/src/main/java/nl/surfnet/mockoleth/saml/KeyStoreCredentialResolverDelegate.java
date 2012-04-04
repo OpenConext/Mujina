@@ -16,47 +16,31 @@
 
 package nl.surfnet.mockoleth.saml;
 
-import java.util.Map;
-
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.KeyStoreCredentialResolver;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 
 import nl.surfnet.mockoleth.model.Configuration;
 
-public class KeyStoreCredentialResolverDelegate implements CredentialResolver, InitializingBean {
-
-    private KeyStoreCredentialResolver keyStoreCredentialResolver;
-
-    private Map<String, String> privateKeyPasswordsByAlias;
+public class KeyStoreCredentialResolverDelegate implements CredentialResolver {
 
     @Autowired
     private Configuration configuration;
 
-    @Required
-    public void setPrivateKeyPasswordsByAlias(
-            Map<String, String> privateKeyPasswordsByAlias) {
-        this.privateKeyPasswordsByAlias = privateKeyPasswordsByAlias;
-    }
-
     @Override
-    public Iterable<Credential> resolve(CriteriaSet criteriaSet)
-            throws SecurityException {
-        return keyStoreCredentialResolver.resolve(criteriaSet);
+    public Iterable<Credential> resolve(CriteriaSet criteriaSet) throws SecurityException {
+        return getKeyStoreCredentialResolver().resolve(criteriaSet);
     }
 
     @Override
     public Credential resolveSingle(CriteriaSet criteriaSet) throws SecurityException {
-        return keyStoreCredentialResolver.resolveSingle(criteriaSet);
+        return getKeyStoreCredentialResolver().resolveSingle(criteriaSet);
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        keyStoreCredentialResolver = new KeyStoreCredentialResolver(configuration.getKeyStore(), privateKeyPasswordsByAlias);
+    public KeyStoreCredentialResolver getKeyStoreCredentialResolver() {
+        return new KeyStoreCredentialResolver(configuration.getKeyStore(), configuration.getPrivateKeyPasswords());
     }
 }

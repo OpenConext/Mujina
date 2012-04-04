@@ -29,6 +29,7 @@ import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -47,6 +48,8 @@ public class IdpConfiguration implements Configuration {
     private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfiguration.class);
     private Collection<CustomAuthentication> users = new ArrayList<CustomAuthentication>();
     private String entityId;
+
+    private Map<String, String> privateKeyPasswords = new HashMap<String, String>();
 
     public IdpConfiguration() {
         reset();
@@ -70,6 +73,8 @@ public class IdpConfiguration implements Configuration {
             keyStore.load(null, keystorePassword.toCharArray());
             appendToKeyStore(keyStore, "idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
             appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+            privateKeyPasswords.put("idp", keystorePassword);
+            privateKeyPasswords.put("sp", keystorePassword);
         } catch (Exception e) {
             LOGGER.error("Unable to create default keystore", e);
         }
@@ -108,6 +113,7 @@ public class IdpConfiguration implements Configuration {
             final KeyStore.Entry keyStoreEntry =
                     keyStore.getEntry(this.entityId, passwordProtection);
             keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
+            privateKeyPasswords.put(newEntityId, keystorePassword);
         } catch (Exception e) {
             LOGGER.warn("Unable to update signing key in key store", e);
         }
@@ -206,5 +212,9 @@ public class IdpConfiguration implements Configuration {
         certificates[0] = certs.get(0);
 
         keyStore.setKeyEntry(keyAlias, privKey, password, certificates);
+    }
+
+    public Map<String, String> getPrivateKeyPasswords() {
+        return privateKeyPasswords;
     }
 }

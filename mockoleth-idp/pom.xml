@@ -120,6 +120,12 @@
       <artifactId>slf4j-simple</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>coin-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -129,6 +135,9 @@
       </testResource>
       <testResource>
         <directory>${project.basedir}/src/main/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
 
