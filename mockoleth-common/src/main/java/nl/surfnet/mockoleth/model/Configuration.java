@@ -36,4 +36,6 @@ public interface Configuration {
     void setEntityID(String value);
 
     void injectCredential(String certificate, String key);
+
+    Map<String, String> getPrivateKeyPasswords();
 }

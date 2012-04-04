@@ -63,9 +63,11 @@ public class SingleSignOnService implements HttpRequestHandler {
             messageContext = adapter.extractSAMLMessageContext(request);
         } catch (MessageDecodingException mde) {
             logger.error("Exception decoding SAML message", mde);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         } catch (SecurityException se) {
             logger.error("Exception decoding SAML message", se);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
@@ -75,6 +77,7 @@ public class SingleSignOnService implements HttpRequestHandler {
             validatorSuite.validate(authnRequest);
         } catch (ValidationException ve) {
             logger.warn("AuthnRequest Message failed Validation", ve);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 

@@ -94,14 +94,6 @@
   </bean>
 
   <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
-
-    <property name="privateKeyPasswordsByAlias">
-      <map>
-        <entry key="sp" value="secret"/>
-        <entry key="idp" value="secret"/>
-      </map>
-    </property>
-
   </bean>
 
   <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">

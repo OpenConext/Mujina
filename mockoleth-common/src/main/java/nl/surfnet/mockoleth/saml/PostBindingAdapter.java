@@ -99,9 +99,6 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
         messageContext.setOutboundSAMLMessage(samlMessage);
         messageContext.setOutboundMessageIssuer(configuration.getEntityID());
 
-        // Dragons! signing cerdential disabled
-        // messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
-
         encoder.encode(messageContext);
 
     }

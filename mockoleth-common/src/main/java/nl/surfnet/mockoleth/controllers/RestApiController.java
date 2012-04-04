@@ -52,31 +52,28 @@ public class RestApiController {
 
     @RequestMapping(value = {"/set-signing-credential"}, method = RequestMethod.POST)
     @ResponseBody
-    public void setSigningCredential(@RequestBody Credential credential, HttpServletResponse response) {
+    public void setSigningCredential(@RequestBody Credential credential) {
         LOGGER.info("Request to set signing credential");
         configuration.injectCredential(credential.getCertificate(), credential.getKey());
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/set-entityid"}, method = RequestMethod.POST)
     @ResponseBody
-    public void setEntityID(@RequestBody EntityID entityID, HttpServletResponse response) {
+    public void setEntityID(@RequestBody EntityID entityID) {
         LOGGER.info("Request to set entityID {}", entityID.getValue());
         configuration.setEntityID(entityID.getValue());
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/set-attribute"}, method = RequestMethod.POST)
     @ResponseBody
-    public void setAttribute(@RequestBody Attribute attribute, HttpServletResponse response) {
+    public void setAttribute(@RequestBody Attribute attribute) {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
         configuration.getAttributes().put(attribute.getName(), attribute.getValue());
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/add-user"}, method = RequestMethod.POST)
     @ResponseBody
-    public void addUser(@RequestBody User user, HttpServletResponse response) {
+    public void addUser(@RequestBody User user) {
         LOGGER.info("Request to add user {} with password {}", user.getName(), user.getPassword());
         CustomAuthentication customAuthentication = new CustomAuthentication(user.getName(), user.getPassword());
         final List<String> authorities = user.getAuthorities();
@@ -84,14 +81,12 @@ public class RestApiController {
             customAuthentication.addAuthority(authority);
         }
         configuration.getUsers().add(customAuthentication);
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
     @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
     @ResponseBody
-    public void reset(HttpServletResponse response) {
+    public void reset() {
         LOGGER.info("Resetting to default configuration");
         configuration.reset();
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 }
