@@ -22,9 +22,18 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Identity Provider Admin</title>
+  <title>Mockoleth</title>
 </head>
 <body>
+
+<pre style="front-weight: bold;">
+                   _         _      _   _
+  /\/\   ___   ___| | _____ | | ___| |_| |__
+ /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
+/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
+\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+
+</pre>
 
 <h1>Identity Provider Admin Page</h1>
 
@@ -32,8 +41,8 @@
 
 <a href="index.jsp">unprotected home page</a> <br/>
 <a href="user.jsp">protected user page</a> <br/>
-<a href="j_spring_security_logout">End your session with the Identity Provider</a> <i>Does not end your session with the
-  SP</i> <br/>
+<a href="j_spring_security_logout">End your session with the Identity Provider</a>
+<i>Does not end your session with theSP</i> <br/>
 
 <h3>Your current Spring Security Credentials are:</h3>
 

@@ -22,9 +22,18 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Identity Provider User Page</title>
+  <title>Mockoleth IdP User Page</title>
 </head>
 <body>
+
+<pre style="front-weight: bold;">
+                   _         _      _   _
+  /\/\   ___   ___| | _____ | | ___| |_| |__
+ /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
+/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
+\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+
+</pre>
 
 <h1>Identity Provider User Page</h1>
 

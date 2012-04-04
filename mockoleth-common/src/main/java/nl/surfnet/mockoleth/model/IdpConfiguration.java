@@ -59,14 +59,14 @@ public class IdpConfiguration implements Configuration {
     public void reset() {
         entityId = "idp";
         attributes.clear();
-        attributes.put("urn:mace:dir:attribute-def:uid", "alle.veenstra");
-        attributes.put("urn:mace:dir:attribute-def:cn", "Alle Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:givenName", "Alle");
-        attributes.put("urn:mace:dir:attribute-def:sn", "Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:displayName", "Alle Veenstra");
-        attributes.put("urn:mace:dir:attribute-def:mail", "a.veenstra@onehippo.com");
-        attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "test.surfguest.nl");
-        attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "alle.veenstra@SURFguest.nl");
+        attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
+        attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");
+        attributes.put("urn:mace:dir:attribute-def:givenName", "John");
+        attributes.put("urn:mace:dir:attribute-def:sn", "Doe");
+        attributes.put("urn:mace:dir:attribute-def:displayName", "John Doe");
+        attributes.put("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
+        attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
+        attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
         attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
         try {
             keyStore = KeyStore.getInstance("JKS");
@@ -79,9 +79,12 @@ public class IdpConfiguration implements Configuration {
             LOGGER.error("Unable to create default keystore", e);
         }
         users.clear();
-        final CustomAuthentication user = new CustomAuthentication("admin", "secret");
+        final CustomAuthentication admin = new CustomAuthentication("admin", "secret");
+        admin.addAuthority("ROLE_USER");
+        admin.addAuthority("ROLE_ADMIN");
+        users.add(admin);
+        final CustomAuthentication user = new CustomAuthentication("user", "secret");
         user.addAuthority("ROLE_USER");
-        user.addAuthority("ROLE_ADMIN");
         users.add(user);
     }
 
