@@ -45,11 +45,6 @@ public class RestApiController {
     @Autowired
     Configuration configuration;
 
-    @RequestMapping("/test")
-    public String test() {
-        return "test-view";
-    }
-
     @RequestMapping(value = {"/set-signing-credential"}, method = RequestMethod.POST)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
@@ -69,6 +64,13 @@ public class RestApiController {
     public void setAttribute(@RequestBody Attribute attribute) {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
         configuration.getAttributes().put(attribute.getName(), attribute.getValue());
+    }
+
+    @RequestMapping(value = {"/remove-attribute"}, method = RequestMethod.POST)
+    @ResponseBody
+    public void removeAttribute(@RequestBody Attribute attribute) {
+        LOGGER.info("Request to remove attribute {}", attribute.getName());
+        configuration.getAttributes().remove(attribute.getName());
     }
 
     @RequestMapping(value = {"/add-user"}, method = RequestMethod.POST)

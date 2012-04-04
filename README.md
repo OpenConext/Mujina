@@ -56,6 +56,16 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/idp/api/set-attribute
 </pre>
 
+Removing an attribute
+---------------------
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
+        http://localhost:8080/idp/api/remove-attribute
+</pre>
+
 Adding a user
 -------------
 

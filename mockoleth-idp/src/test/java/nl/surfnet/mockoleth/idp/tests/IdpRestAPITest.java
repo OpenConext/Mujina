@@ -65,7 +65,7 @@ public class IdpRestAPITest {
     }
 
     @Test
-    public void testAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
+    public void testSetAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
         final String name = "foo";
         final String value = "bar";
 
@@ -80,6 +80,23 @@ public class IdpRestAPITest {
 
         final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
         assertTrue(testHelper.responseHasAttribute(name, value, respAfter));
+    }
+
+    @Test
+    public void testRemoveAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
+        final String name = "urn:mace:dir:attribute-def:uid";
+        final String value = "john.doe";
+
+        final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+        assertTrue(testHelper.responseHasAttribute(name, value, respBefore));
+
+        final Attribute attr = new Attribute();
+        attr.setName(name);
+
+        restApiController.removeAttribute(attr);
+
+        final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+        assertFalse(testHelper.responseHasAttribute(name, value, respAfter));
     }
 
     @Test
