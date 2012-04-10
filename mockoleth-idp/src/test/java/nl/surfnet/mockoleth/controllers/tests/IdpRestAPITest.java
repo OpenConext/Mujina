@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import nl.surfnet.mockoleth.controllers.RestApiController;
+import nl.surfnet.mockoleth.controllers.IdentityProviderAPI;
 import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.Credential;
 import nl.surfnet.mockoleth.model.EntityID;
@@ -54,7 +54,7 @@ public class IdpRestAPITest {
     public static final String DEFAULT_USER = "admin";
     public static final String DEFAULT_PASSWORD = "secret";
     @Autowired
-    private RestApiController restApiController;
+    private IdentityProviderAPI restApiController;
 
     @Autowired
     private TestHelper testHelper;
