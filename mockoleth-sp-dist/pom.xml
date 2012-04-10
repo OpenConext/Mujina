@@ -70,4 +70,14 @@
     </plugins>
   </build>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>mockoleth-sp</artifactId>
+      <type>war</type>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+
 </project>
