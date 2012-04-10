@@ -8,12 +8,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.IdpConfiguration;
 
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    private Configuration configuration;
+    private IdpConfiguration configuration;
     
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {

@@ -1,19 +1,3 @@
-/*
- * Copyright 2012 SURFnet bv, The Netherlands
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package nl.surfnet.mockoleth.model;
 
 import java.io.BufferedInputStream;
@@ -28,79 +12,32 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
+public abstract class CommonConfigurationImpl implements Configuration {
 
-public class IdpConfiguration implements Configuration {
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommonConfigurationImpl.class);
 
-    private Map<String, String> attributes = new TreeMap<String, String>();
-    private KeyStore keyStore;
-    private String keystorePassword = "secret";
-    private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfiguration.class);
-    private Collection<CustomAuthentication> users = new ArrayList<CustomAuthentication>();
-    private String entityId;
-
-    private Map<String, String> privateKeyPasswords = new HashMap<String, String>();
-
-    public IdpConfiguration() {
-        reset();
-    }
+    protected KeyStore keyStore;
+    protected String keystorePassword = "secret";
 
     @Override
-    public void reset() {
-        entityId = "idp";
-        attributes.clear();
-        attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
-        attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");
-        attributes.put("urn:mace:dir:attribute-def:givenName", "John");
-        attributes.put("urn:mace:dir:attribute-def:sn", "Doe");
-        attributes.put("urn:mace:dir:attribute-def:displayName", "John Doe");
-        attributes.put("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-        attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-        attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
-        attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
-        try {
-            keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(null, keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            privateKeyPasswords.put("idp", keystorePassword);
-            privateKeyPasswords.put("sp", keystorePassword);
-        } catch (Exception e) {
-            LOGGER.error("Unable to create default keystore", e);
-        }
-        users.clear();
-        final CustomAuthentication admin = new CustomAuthentication("admin", "secret");
-        admin.addAuthority("ROLE_USER");
-        admin.addAuthority("ROLE_ADMIN");
-        users.add(admin);
-        final CustomAuthentication user = new CustomAuthentication("user", "secret");
-        user.addAuthority("ROLE_USER");
-        users.add(user);
+    public Map<String, String> getPrivateKeyPasswords() {
+        return privateKeyPasswords;
     }
+    protected String entityId;
 
-    @Override
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
+    protected Map<String, String> privateKeyPasswords = new HashMap<String, String>();
 
     @Override
     public KeyStore getKeyStore() {
         return keyStore;
-    }
-
-    @Override
-    public Collection<CustomAuthentication> getUsers() {
-        return users;
     }
 
     @Override
@@ -190,7 +127,7 @@ public class IdpConfiguration implements Configuration {
      *                        Generate a certificate:
      *                        openssl x509 -req -days 365 -in something.csr -signkey something.key -out something.crt
      */
-    private void appendToKeyStore(KeyStore keyStore, String keyAlias, String certificateFile, String privatekeyFile, char[] password) throws Exception {
+    protected void appendToKeyStore(KeyStore keyStore, String keyAlias, String certificateFile, String privatekeyFile, char[] password) throws Exception {
         BufferedInputStream bis = new BufferedInputStream(
                 getClass().getClassLoader().getResourceAsStream(certificateFile));
         CertificateFactory certFact;
@@ -215,9 +152,5 @@ public class IdpConfiguration implements Configuration {
         certificates[0] = certs.get(0);
 
         keyStore.setKeyEntry(keyAlias, privKey, password, certificates);
-    }
-
-    public Map<String, String> getPrivateKeyPasswords() {
-        return privateKeyPasswords;
     }
 }

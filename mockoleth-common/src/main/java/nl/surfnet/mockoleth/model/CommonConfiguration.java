@@ -22,14 +22,10 @@ import java.util.Map;
 
 import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
-public interface Configuration {
+public interface CommonConfiguration {
     void reset();
 
-    Map<String, String> getAttributes();
-
     KeyStore getKeyStore();
-    
-    Collection<CustomAuthentication> getUsers();
 
     String getEntityID();
 
