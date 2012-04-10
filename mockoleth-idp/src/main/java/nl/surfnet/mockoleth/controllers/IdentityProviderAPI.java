@@ -18,8 +18,6 @@ package nl.surfnet.mockoleth.controllers;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +35,10 @@ import nl.surfnet.mockoleth.model.User;
 import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
 @Controller
-public class RestApiController {
+public class IdentityProviderAPI {
 
     private final static Logger LOGGER = LoggerFactory
-            .getLogger(RestApiController.class);
+            .getLogger(IdentityProviderAPI.class);
 
     @Autowired
     Configuration configuration;

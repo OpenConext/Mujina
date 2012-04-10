@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package nl.surfnet.mockoleth.idp.tests;
+package nl.surfnet.mockoleth.controllers.tests;
 
 import java.io.IOException;
 import java.util.Collections;
