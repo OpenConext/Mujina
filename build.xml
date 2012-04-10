@@ -17,13 +17,13 @@
 <project name="Mockoleth" default="build-all" basedir=".">
   <description>Root build file to trigger both idp and sp</description>
   <target name="build-all" description="Triggers build in all sub modules">
-    <ant antfile="mockoleth-idp-dist/build.xml" target="build" usenativebasedir="true"/>
-    <ant antfile="mockoleth-sp-dist/build.xml" target="build" usenativebasedir="true"/>
+    <ant antfile="build.xml" target="build" dir="mockoleth-idp-dist"/>
+    <ant antfile="build.xml" target="build" dir="mockoleth-sp-dist"/>
   </target>
 
   <target name="scp-all" description="Triggers scp in all sub modules">
-    <ant antfile="mockoleth-idp-dist/build.xml" target="scp" usenativebasedir="true"/>
-    <ant antfile="mockoleth-sp-dist/build.xml" target="scp" usenativebasedir="true"/>
+    <ant antfile="build.xml" target="scp" dir="mockoleth-idp-dist"/>
+    <ant antfile="build.xml" target="scp" dir="mockoleth-sp-dist"/>
   </target>
 
 </project>
