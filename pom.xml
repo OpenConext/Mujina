@@ -30,6 +30,7 @@
     <module>mockoleth-common</module>
     <module>mockoleth-sp</module>
     <module>mockoleth-idp</module>
+    <module>mockoleth-idp-dist</module>
   </modules>
 
   <distributionManagement>
