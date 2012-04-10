@@ -35,14 +35,13 @@ import org.opensaml.xml.security.criteria.EntityIDCriteria;
 import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
 import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
 import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
@@ -58,7 +57,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
     private CredentialResolver credentialResolver;
 
     @Autowired
-    Configuration configuration;
+    IdpConfiguration idpConfiguration;
 
     private final static Logger logger = LoggerFactory
             .getLogger(SSOSuccessAuthnResponder.class);
@@ -98,7 +97,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
         DateTime authnInstant = new DateTime(request.getSession().getCreationTime());
 
         CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(configuration.getEntityID()));
+        criteriaSet.add(new EntityIDCriteria(idpConfiguration.getEntityID()));
         criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
         Credential signingCredential = null;
         try {
@@ -110,7 +109,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
         }
         Validate.notNull(signingCredential);
 
-        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, configuration.getEntityID(), timeService, idService, configuration);
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(), timeService, idService, idpConfiguration);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         Response authResponse = authnResponseGenerator.generateAuthnResponse(authToken, info.getAssertionConumerURL(), responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);

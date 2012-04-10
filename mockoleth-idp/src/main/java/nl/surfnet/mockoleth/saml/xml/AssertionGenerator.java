@@ -34,7 +34,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
@@ -49,14 +49,14 @@ public class AssertionGenerator {
     private final AuthnStatementGenerator authnStatementGenerator = new AuthnStatementGenerator();
     private final AttributeStatementGenerator attributeStatementGenerator = new AttributeStatementGenerator();
     private Credential signingCredential;
-    private Configuration configuration;
+    private IdpConfiguration idpConfiguration;
 
-    public AssertionGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, Configuration configuration) {
+    public AssertionGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, IdpConfiguration idpConfiguration) {
         super();
         this.signingCredential = signingCredential;
         this.timeService = timeService;
         this.idService = idService;
-        this.configuration = configuration;
+        this.idpConfiguration = idpConfiguration;
         issuerGenerator = new IssuerGenerator(issuingEntityName);
         subjectGenerator = new SubjectGenerator(timeService);
     }
@@ -86,7 +86,7 @@ public class AssertionGenerator {
         // extends this
         // assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(authToken.getAuthorities()));
 
-        assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(configuration.getAttributes()));
+        assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(idpConfiguration.getAttributes()));
 
         assertion.setID(idService.generateID());
         assertion.setIssueInstant(timeService.getCurrentDateTime());

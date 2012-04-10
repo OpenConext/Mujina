@@ -21,8 +21,8 @@
 
   <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
-
   <bean id="timeService" class="nl.surfnet.mockoleth.util.TimeService"/>
+
   <bean id="idService" class="nl.surfnet.mockoleth.util.IDService"/>
 
   <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
@@ -50,6 +50,7 @@
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
+    <property name="configuration" ref="spConfiguration" />
   </bean>
 
   <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
@@ -94,11 +95,12 @@
   </bean>
 
   <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
+    <property name="configuration" ref="spConfiguration" />
   </bean>
 
   <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
   </bean>
 
-  <bean id="configuration" class="nl.surfnet.mockoleth.model.IdpConfiguration"/>
+  <bean id="spConfiguration" class="nl.surfnet.mockoleth.model.SpConfigurationImpl"/>
 
 </beans>

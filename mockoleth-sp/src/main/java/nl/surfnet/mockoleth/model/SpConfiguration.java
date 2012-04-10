@@ -1,4 +1,4 @@
 package nl.surfnet.mockoleth.model;
 
-public interface SpConfiguration extends Configuration {
+public interface SpConfiguration extends CommonConfiguration {
 }

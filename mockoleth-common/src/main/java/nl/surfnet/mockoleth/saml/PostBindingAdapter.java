@@ -36,10 +36,9 @@ import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.CommonConfiguration;
 
 public class PostBindingAdapter implements BindingAdapter, InitializingBean {
 
@@ -52,14 +51,17 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
     SAMLMessageEncoder encoder;
     private final SecurityPolicyResolver resolver;
 
-    @Autowired
-    Configuration configuration;
+    CommonConfiguration configuration;
 
     public PostBindingAdapter(SAMLMessageDecoder decoder,
                               SecurityPolicyResolver resolver) {
         super();
         this.decoder = decoder;
         this.resolver = resolver;
+    }
+
+    public void setConfiguration(final CommonConfiguration configuration) {
+        this.configuration = configuration;
     }
 
 

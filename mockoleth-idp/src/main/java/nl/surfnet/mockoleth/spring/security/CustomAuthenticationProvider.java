@@ -13,13 +13,13 @@ import nl.surfnet.mockoleth.model.IdpConfiguration;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    private IdpConfiguration configuration;
+    private IdpConfiguration idpConfiguration;
     
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
         final String password = authentication.getCredentials().toString();
-        final Collection<CustomAuthentication> users = configuration.getUsers();
+        final Collection<CustomAuthentication> users = idpConfiguration.getUsers();
         for (CustomAuthentication customAuthentication : users) {
             CustomAuthentication.User user = (CustomAuthentication.User)customAuthentication.getCredentials();
             if (user.getUsername().equals(name) && user.getPassword().equals(password)) {

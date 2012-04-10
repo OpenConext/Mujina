@@ -21,14 +21,13 @@ import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.KeyStoreCredentialResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.CommonConfiguration;
+
 
 public class KeyStoreCredentialResolverDelegate implements CredentialResolver {
 
-    @Autowired
-    private Configuration configuration;
+    private CommonConfiguration configuration;
 
     @Override
     public Iterable<Credential> resolve(CriteriaSet criteriaSet) throws SecurityException {
@@ -42,5 +41,9 @@ public class KeyStoreCredentialResolverDelegate implements CredentialResolver {
 
     public KeyStoreCredentialResolver getKeyStoreCredentialResolver() {
         return new KeyStoreCredentialResolver(configuration.getKeyStore(), configuration.getPrivateKeyPasswords());
+    }
+
+    public void setConfiguration(final CommonConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

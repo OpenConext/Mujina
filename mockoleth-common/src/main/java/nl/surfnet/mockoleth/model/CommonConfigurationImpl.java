@@ -20,7 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class CommonConfigurationImpl implements Configuration {
+public abstract class CommonConfigurationImpl implements CommonConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CommonConfigurationImpl.class);
 

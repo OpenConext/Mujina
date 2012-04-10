@@ -70,6 +70,7 @@
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
+    <property name="configuration" ref="idpConfiguration" />
   </bean>
 
   <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
@@ -111,8 +112,9 @@
   </bean>
 
   <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
+    <property name="configuration" ref="idpConfiguration" />
   </bean>
 
-  <bean id="configuration" class="nl.surfnet.mockoleth.model.IdpConfiguration"/>
+  <bean id="idpConfiguration" class="nl.surfnet.mockoleth.model.IdpConfigurationImpl"/>
 
 </beans>

@@ -27,7 +27,7 @@ import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.CriteriaSet;
+import org.opensaml.xml.security.*;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -35,40 +35,35 @@ import org.opensaml.xml.security.criteria.EntityIDCriteria;
 import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 
+import nl.surfnet.mockoleth.model.SpConfiguration;
 import nl.surfnet.mockoleth.saml.AuthnRequestGenerator;
 import nl.surfnet.mockoleth.saml.BindingAdapter;
 import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
-public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
+public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private final static Logger logger = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);
 
     private final TimeService timeService;
     private final IDService idService;
-    private final String issuer;
 
     private String singleSignOnServiceURL;
     private String assertionConsumerServiceURL;
     private BindingAdapter bindingAdapter;
-    EndpointGenerator endpointGenerator;
-    AuthnRequestGenerator authnRequestGenerator;
-    CredentialResolver credentialResolver;
+    private CredentialResolver credentialResolver;
 
-    Credential signingCredential;
+    private SpConfiguration spConfiguration;
 
-    public SAMLAuthenticationEntryPoint(TimeService timeService,
-                                        IDService idService, String issuer) {
+    public SAMLAuthenticationEntryPoint(TimeService timeService, IDService idService) {
         super();
         this.timeService = timeService;
         this.idService = idService;
-        this.issuer = issuer;
     }
 
     @Required
@@ -92,10 +87,17 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint, I
         this.credentialResolver = credentialResolver;
     }
 
+    public void setConfiguration(final SpConfiguration spConfiguration) {
+        this.spConfiguration = spConfiguration;
+    }
+
     @Override
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {
+
+        AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(spConfiguration.getEntityID(), timeService, idService);
+        EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
 
@@ -104,27 +106,20 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint, I
         logger.debug("Sending authnRequest to {}", singleSignOnServiceURL);
 
         try {
+            CriteriaSet criteriaSet = new CriteriaSet();
+            criteriaSet.add(new EntityIDCriteria(spConfiguration.getEntityID()));
+            criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+
+            Credential signingCredential = credentialResolver.resolveSingle(criteriaSet);
+            Validate.notNull(signingCredential);
+
             bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, response);
         } catch (MessageEncodingException mee) {
             logger.error("Could not send authnRequest to Identity Provider.", mee);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (org.opensaml.xml.security.SecurityException e) {
+            logger.error("Unable to retrieve signing credential", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-
-        authnRequestGenerator = new AuthnRequestGenerator(issuer, timeService, idService);
-        endpointGenerator = new EndpointGenerator();
-
-
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(issuer));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-
-        signingCredential = credentialResolver.resolveSingle(criteriaSet);
-        Validate.notNull(signingCredential);
-
-    }
-
 }

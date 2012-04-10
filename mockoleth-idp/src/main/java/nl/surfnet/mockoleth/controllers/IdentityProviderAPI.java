@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.surfnet.mockoleth.model.Attribute;
-import nl.surfnet.mockoleth.model.Configuration;
 import nl.surfnet.mockoleth.model.Credential;
 import nl.surfnet.mockoleth.model.EntityID;
+import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.model.User;
 import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
@@ -41,34 +41,34 @@ public class IdentityProviderAPI {
             .getLogger(IdentityProviderAPI.class);
 
     @Autowired
-    Configuration configuration;
+    IdpConfiguration idpConfiguration;
 
     @RequestMapping(value = {"/set-signing-credential"}, method = RequestMethod.POST)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
         LOGGER.info("Request to set signing credential");
-        configuration.injectCredential(credential.getCertificate(), credential.getKey());
+        idpConfiguration.injectCredential(credential.getCertificate(), credential.getKey());
     }
 
     @RequestMapping(value = {"/set-entityid"}, method = RequestMethod.POST)
     @ResponseBody
     public void setEntityID(@RequestBody EntityID entityID) {
         LOGGER.info("Request to set entityID {}", entityID.getValue());
-        configuration.setEntityID(entityID.getValue());
+        idpConfiguration.setEntityID(entityID.getValue());
     }
 
     @RequestMapping(value = {"/set-attribute"}, method = RequestMethod.POST)
     @ResponseBody
     public void setAttribute(@RequestBody Attribute attribute) {
         LOGGER.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
-        configuration.getAttributes().put(attribute.getName(), attribute.getValue());
+        idpConfiguration.getAttributes().put(attribute.getName(), attribute.getValue());
     }
 
     @RequestMapping(value = {"/remove-attribute"}, method = RequestMethod.POST)
     @ResponseBody
     public void removeAttribute(@RequestBody Attribute attribute) {
         LOGGER.info("Request to remove attribute {}", attribute.getName());
-        configuration.getAttributes().remove(attribute.getName());
+        idpConfiguration.getAttributes().remove(attribute.getName());
     }
 
     @RequestMapping(value = {"/add-user"}, method = RequestMethod.POST)
@@ -80,13 +80,13 @@ public class IdentityProviderAPI {
         for (String authority : authorities) {
             customAuthentication.addAuthority(authority);
         }
-        configuration.getUsers().add(customAuthentication);
+        idpConfiguration.getUsers().add(customAuthentication);
     }
 
     @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
     @ResponseBody
     public void reset() {
         LOGGER.info("Resetting to default configuration");
-        configuration.reset();
+        idpConfiguration.reset();
     }
 }

@@ -28,7 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import nl.surfnet.mockoleth.model.Configuration;
+import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
@@ -45,13 +45,13 @@ public class AuthnResponseGenerator {
 
     StatusGenerator statusGenerator;
 
-    public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, Configuration configuration) {
+    public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService, IdpConfiguration idpConfiguration) {
         super();
         this.issuingEntityName = issuingEntityName;
         this.idService = idService;
         this.timeService = timeService;
         issuerGenerator = new IssuerGenerator(issuingEntityName);
-        assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService, configuration);
+        assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService, idpConfiguration);
         statusGenerator = new StatusGenerator();
     }
 
