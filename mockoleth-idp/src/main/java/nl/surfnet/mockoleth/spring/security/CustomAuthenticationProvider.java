@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import nl.surfnet.mockoleth.model.IdpConfiguration;
 
@@ -19,11 +20,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
         final String password = authentication.getCredentials().toString();
-        final Collection<CustomAuthentication> users = idpConfiguration.getUsers();
-        for (CustomAuthentication customAuthentication : users) {
-            CustomAuthentication.User user = (CustomAuthentication.User)customAuthentication.getCredentials();
-            if (user.getUsername().equals(name) && user.getPassword().equals(password)) {
-                return customAuthentication;
+        final Collection<UsernamePasswordAuthenticationToken> users = idpConfiguration.getUsers();
+        for (UsernamePasswordAuthenticationToken user : users) {
+            UserDetails principal = (UserDetails)user.getPrincipal();
+            if (principal.getUsername().equals(name)
+                    && principal.getPassword().equals(password)) {
+                return user;
             }
         }
         return null;

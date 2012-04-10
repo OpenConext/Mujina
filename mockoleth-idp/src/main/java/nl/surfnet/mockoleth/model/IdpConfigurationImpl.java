@@ -19,20 +19,23 @@ package nl.surfnet.mockoleth.model;
 import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class IdpConfigurationImpl extends CommonConfigurationImpl implements IdpConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfigurationImpl.class);
 
     private Map<String, String> attributes = new TreeMap<String, String>();
-    private Collection<CustomAuthentication> users = new ArrayList<CustomAuthentication>();
+    private Collection<UsernamePasswordAuthenticationToken> users = new ArrayList<UsernamePasswordAuthenticationToken>();
 
     public IdpConfigurationImpl() {
         reset();
@@ -62,12 +65,21 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
             LOGGER.error("Unable to create default keystore", e);
         }
         users.clear();
-        final CustomAuthentication admin = new CustomAuthentication("admin", "secret");
-        admin.addAuthority("ROLE_USER");
-        admin.addAuthority("ROLE_ADMIN");
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
+        UserDetails principal =
+                new org.springframework.security.core.userdetails.User("admin", "secret", true, true,  true, true, authorities);
+        final UsernamePasswordAuthenticationToken admin
+                = new UsernamePasswordAuthenticationToken(principal, "secret", authorities);
         users.add(admin);
-        final CustomAuthentication user = new CustomAuthentication("user", "secret");
-        user.addAuthority("ROLE_USER");
+        authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
+        principal =
+                new org.springframework.security.core.userdetails.User("user", "secret", true, true,  true, true, authorities);
+        final UsernamePasswordAuthenticationToken user
+                = new UsernamePasswordAuthenticationToken(principal, "secret", authorities);
         users.add(user);
     }
 
@@ -77,7 +89,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     }
 
     @Override
-    public Collection<CustomAuthentication> getUsers() {
+    public Collection<UsernamePasswordAuthenticationToken> getUsers() {
         return users;
     }
 

@@ -16,11 +16,16 @@
 
 package nl.surfnet.mockoleth.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +37,6 @@ import nl.surfnet.mockoleth.model.Credential;
 import nl.surfnet.mockoleth.model.EntityID;
 import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.model.User;
-import nl.surfnet.mockoleth.spring.security.CustomAuthentication;
 
 @Controller
 public class IdentityProviderAPI {
@@ -75,11 +79,15 @@ public class IdentityProviderAPI {
     @ResponseBody
     public void addUser(@RequestBody User user) {
         LOGGER.info("Request to add user {} with password {}", user.getName(), user.getPassword());
-        CustomAuthentication customAuthentication = new CustomAuthentication(user.getName(), user.getPassword());
+        final List<GrantedAuthority> grants = new ArrayList<GrantedAuthority>();
         final List<String> authorities = user.getAuthorities();
         for (String authority : authorities) {
-            customAuthentication.addAuthority(authority);
+            grants.add(new GrantedAuthorityImpl(authority));
         }
+        UserDetails principal =
+                new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), true, true,  true, true, grants);
+        final UsernamePasswordAuthenticationToken customAuthentication
+                = new UsernamePasswordAuthenticationToken(principal, user.getPassword(), grants);
         idpConfiguration.getUsers().add(customAuthentication);
     }
 
