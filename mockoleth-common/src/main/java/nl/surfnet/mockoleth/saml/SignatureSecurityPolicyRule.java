@@ -22,13 +22,9 @@ import org.opensaml.security.SAMLSignatureProfileValidator;
 import org.opensaml.ws.message.MessageContext;
 import org.opensaml.ws.security.SecurityPolicyException;
 import org.opensaml.ws.security.SecurityPolicyRule;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.CredentialResolver;
-import org.opensaml.xml.security.credential.UsageType;
-import org.opensaml.xml.security.criteria.EntityIDCriteria;
-import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.opensaml.xml.security.keyinfo.KeyInfoCredentialResolver;
+import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.impl.ExplicitKeySignatureTrustEngine;
 import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
@@ -46,7 +42,7 @@ import org.springframework.beans.factory.InitializingBean;
  */
 public class SignatureSecurityPolicyRule implements InitializingBean, SecurityPolicyRule {
 
-    private final static Logger logger = LoggerFactory.getLogger(SignatureSecurityPolicyRule.class);
+    private final static Logger log = LoggerFactory.getLogger(SignatureSecurityPolicyRule.class);
 
     private final CredentialResolver credentialResolver;
     private final SAMLSignatureProfileValidator samlSignatureProfileValidator;
@@ -70,7 +66,7 @@ public class SignatureSecurityPolicyRule implements InitializingBean, SecurityPo
     @Override
     public void evaluate(MessageContext messageContext) throws SecurityPolicyException {
 
-        logger.debug("evaluating signature of {}", messageContext);
+        log.debug("evaluating signature of {}", messageContext);
 
         if (!(messageContext.getInboundMessage() instanceof SignableSAMLObject)) {
             throw new SecurityPolicyException("Inbound Message is not a SignableSAMLObject");
@@ -78,37 +74,16 @@ public class SignatureSecurityPolicyRule implements InitializingBean, SecurityPo
 
         SignableSAMLObject samlMessage = (SignableSAMLObject) messageContext.getInboundMessage();
 
-        /*
-		if( !samlMessage.isSigned()) {
-			throw new SecurityPolicyException("InboundMessage was not signed.");
-		} */
-
         checkSignatureProfile(samlMessage);
-
-        checkMessageSignature(messageContext, samlMessage);
-
-    }
-
-    private void checkMessageSignature(MessageContext messageContext,
-                                       SignableSAMLObject samlMessage) throws SecurityPolicyException {
-        CriteriaSet criteriaSet = new CriteriaSet();
-        logger.debug("Inbound issuer is {}", messageContext.getInboundMessageIssuer());
-        criteriaSet.add(new EntityIDCriteria(messageContext.getInboundMessageIssuer()));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-
-        try {
-            if (!trustEngine.validate(samlMessage.getSignature(), criteriaSet)) {
-                throw new SecurityPolicyException("Signature was either invalid or signing key could not be established as trusted");
-            }
-        } catch (SecurityException se) {
-            throw new SecurityPolicyException("Error evaluating the signature", se);
-        }
     }
 
     private void checkSignatureProfile(SignableSAMLObject samlMessage)
             throws SecurityPolicyException {
         try {
-            samlSignatureProfileValidator.validate(samlMessage.getSignature());
+            final Signature signature = samlMessage.getSignature();
+            if (signature != null) {
+                samlSignatureProfileValidator.validate(signature);
+            }
         } catch (ValidationException ve) {
 
             throw new SecurityPolicyException("Signature did not conform to SAML Signature profile", ve);

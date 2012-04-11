@@ -95,12 +95,11 @@ public class RealAssertionConsumer implements AssertionConsumer {
     private Set<GrantedAuthority> extractAuthorities(
             List<AttributeStatement> attributeStatements) {
 
-
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
         for (AttributeStatement attributeStatement : attributeStatements) {
             for (Attribute attribute : attributeStatement.getAttributes()) {
                 if (GrantedAuthority.class.getName().equalsIgnoreCase(attribute.getName())) {
                     logger.debug("found Granted Authorities.");
-                    Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
                     for (XMLObject xmlObj : attribute.getAttributeValues()) {
                         if (xmlObj instanceof XSString)
                             authorities.add(new GrantedAuthorityImpl(((XSString) xmlObj).getValue()));
@@ -109,8 +108,9 @@ public class RealAssertionConsumer implements AssertionConsumer {
                 }
             }
         }
-        throw new ServiceProviderAuthenticationException("There were no GrantedAuthority.class.getName() AttributeStatements");
-
+        // return default
+        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        return authorities;
     }
 
     private void checkResponseStatus(Response samlResponse) {

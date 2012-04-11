@@ -30,11 +30,9 @@ import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureConstants;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import nl.surfnet.mockoleth.model.IdpConfiguration;
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
@@ -61,19 +59,15 @@ public class AssertionGenerator {
         subjectGenerator = new SubjectGenerator(timeService);
     }
 
-    public Assertion generateAssertion(UsernamePasswordAuthenticationToken authToken, String recepientAssertionConsumerURL, int validForInSeconds, String inResponseTo, DateTime authnInstant) {
-
-
+    public Assertion generateAssertion(String remoteIP, SimpleAuthentication authToken, String recepientAssertionConsumerURL, int validForInSeconds, String inResponseTo, DateTime authnInstant) {
         // org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(namespaceURI, prefix).
 
 
-        UserDetails principal = (UserDetails) authToken.getPrincipal();
-        WebAuthenticationDetails details = (WebAuthenticationDetails) authToken.getDetails();
 
         AssertionBuilder assertionBuilder = (AssertionBuilder) builderFactory.getBuilder(Assertion.DEFAULT_ELEMENT_NAME);
         Assertion assertion = assertionBuilder.buildObject();
 
-        Subject subject = subjectGenerator.generateSubject(recepientAssertionConsumerURL, validForInSeconds, principal.getUsername(), inResponseTo, details.getRemoteAddress());
+        Subject subject = subjectGenerator.generateSubject(recepientAssertionConsumerURL, validForInSeconds, authToken.getName(), inResponseTo, remoteIP);
 
         Issuer issuer = issuerGenerator.generateIssuer();
 

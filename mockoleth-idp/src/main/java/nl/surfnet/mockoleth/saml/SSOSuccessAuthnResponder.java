@@ -37,11 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
 
 import nl.surfnet.mockoleth.model.IdpConfiguration;
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.saml.xml.AuthnResponseGenerator;
 import nl.surfnet.mockoleth.saml.xml.EndpointGenerator;
 import nl.surfnet.mockoleth.spring.AuthnRequestInfo;
@@ -93,7 +93,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
         logger.debug("AuthnRequestInfo: {}", info);
 
-        UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        SimpleAuthentication authToken = (SimpleAuthentication) SecurityContextHolder.getContext().getAuthentication();
         DateTime authnInstant = new DateTime(request.getSession().getCreationTime());
 
         CriteriaSet criteriaSet = new CriteriaSet();
@@ -112,7 +112,9 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
         AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(), timeService, idService, idpConfiguration);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-        Response authResponse = authnResponseGenerator.generateAuthnResponse(authToken, info.getAssertionConumerURL(), responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
+        final String remoteIP = request.getRemoteAddr();
+
+        Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConumerURL(), responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
         Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME, info.getAssertionConumerURL(), null);
 
         request.getSession().removeAttribute(AuthnRequestInfo.class.getName());

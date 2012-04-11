@@ -24,11 +24,10 @@ import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.core.impl.ResponseBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.security.credential.Credential;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import nl.surfnet.mockoleth.model.IdpConfiguration;
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.util.IDService;
 import nl.surfnet.mockoleth.util.TimeService;
 
@@ -56,16 +55,14 @@ public class AuthnResponseGenerator {
     }
 
 
-    public Response generateAuthnResponse(UsernamePasswordAuthenticationToken authToken, String recepientAssertionConsumerURL, int validForInSeconds, String inResponseTo, DateTime authnInstant) {
-
-        UserDetails userDetails = (UserDetails) authToken.getPrincipal();
+    public Response generateAuthnResponse(String remoteIP, SimpleAuthentication authToken, String recepientAssertionConsumerURL, int validForInSeconds, String inResponseTo, DateTime authnInstant) {
 
         ResponseBuilder responseBuilder = (ResponseBuilder) builderFactory.getBuilder(Response.DEFAULT_ELEMENT_NAME);
         Response authResponse = responseBuilder.buildObject();
 
         Issuer responseIssuer = issuerGenerator.generateIssuer();
 
-        Assertion assertion = assertionGenerator.generateAssertion(authToken, recepientAssertionConsumerURL, validForInSeconds, inResponseTo, authnInstant);
+        Assertion assertion = assertionGenerator.generateAssertion(remoteIP, authToken, recepientAssertionConsumerURL, validForInSeconds, inResponseTo, authnInstant);
 
         authResponse.setIssuer(responseIssuer);
         authResponse.setID(idService.generateID());

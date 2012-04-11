@@ -7,9 +7,9 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import nl.surfnet.mockoleth.model.IdpConfiguration;
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
@@ -20,15 +20,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
         final String password = authentication.getCredentials().toString();
-        final Collection<UsernamePasswordAuthenticationToken> users = idpConfiguration.getUsers();
-        for (UsernamePasswordAuthenticationToken user : users) {
-            UserDetails principal = (UserDetails)user.getPrincipal();
-            if (principal.getUsername().equals(name)
-                    && principal.getPassword().equals(password)) {
+        final Collection<SimpleAuthentication> users = idpConfiguration.getUsers();
+        for (SimpleAuthentication user : users) {
+            if (user.getPrincipal().equals(name) && user.getCredentials().equals(password)) {
                 return user;
             }
         }
-        return null;
+        throw new AuthenticationException("Can not log in") {};
     }
 
     @Override

@@ -3,6 +3,7 @@ package nl.surfnet.mockoleth.controllers.tests;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -24,7 +25,7 @@ import org.opensaml.xml.parse.XMLParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -33,6 +34,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.saml.AuthnRequestGenerator;
 import nl.surfnet.mockoleth.saml.PostBindingAdapter;
 import nl.surfnet.mockoleth.saml.SSOSuccessAuthnResponder;
@@ -104,19 +106,15 @@ public class TestHelper {
         singleSignOnService.handleRequest(request, response);
         assertEquals(response.getStatus(), 200);
 
-        final List<GrantedAuthorityImpl> grantedAuthorities = Collections.singletonList(new GrantedAuthorityImpl("ROLE_USER"));
+        final List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_USER"));
 
-        UserDetails userDetails = new User(user, password, true, true,true, true, grantedAuthorities);
-
-        final UsernamePasswordAuthenticationToken secret = new UsernamePasswordAuthenticationToken(userDetails, password);
-        WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetails(request);
-        secret.setDetails(webAuthenticationDetails);
-
-        if (customAuthenticationProvider.authenticate(secret) == null) {
+        SimpleAuthentication auth = new SimpleAuthentication(user, password, grantedAuthorities);
+        if (customAuthenticationProvider.authenticate(auth) == null) {
             throw new IllegalStateException("Not authenticated");
         }
 
-        SecurityContextHolder.getContext().setAuthentication(secret);
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         MockHttpServletResponse response2 = new MockHttpServletResponse();
 

@@ -22,10 +22,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.IdpConfiguration;
+import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.model.User;
 
 @Controller
@@ -72,10 +71,7 @@ public class IdentityProviderAPI {
         for (String authority : authorities) {
             grants.add(new GrantedAuthorityImpl(authority));
         }
-        UserDetails principal =
-                new org.springframework.security.core.userdetails.User(user.getName(), user.getPassword(), true, true,  true, true, grants);
-        final UsernamePasswordAuthenticationToken customAuthentication
-                = new UsernamePasswordAuthenticationToken(principal, user.getPassword(), grants);
-        configuration.getUsers().add(customAuthentication);
+        SimpleAuthentication auth = new SimpleAuthentication(user.getName(), user.getPassword(), grants);
+        configuration.getUsers().add(auth);
     }
 }

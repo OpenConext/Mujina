@@ -121,8 +121,8 @@ public class IdpRestAPITest {
         assertNotNull(resp);
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testWrongUser() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
+    @Test(expected = Exception.class)
+    public void testWrongUser() throws Exception {
         testHelper.doSamlLogin("hacker", "x0rr3d");
     }
 

@@ -25,17 +25,15 @@ import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.core.userdetails.UserDetails;
 
 public class IdpConfigurationImpl extends CommonConfigurationImpl implements IdpConfiguration {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfigurationImpl.class);
 
     private Map<String, String> attributes = new TreeMap<String, String>();
-    private Collection<UsernamePasswordAuthenticationToken> users = new ArrayList<UsernamePasswordAuthenticationToken>();
+    private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
 
     public IdpConfigurationImpl() {
         reset();
@@ -68,18 +66,11 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
         authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-        UserDetails principal =
-                new org.springframework.security.core.userdetails.User("admin", "secret", true, true,  true, true, authorities);
-        final UsernamePasswordAuthenticationToken admin
-                = new UsernamePasswordAuthenticationToken(principal, "secret", authorities);
+        final SimpleAuthentication admin = new SimpleAuthentication("admin", "secret", authorities);
         users.add(admin);
         authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-        authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-        principal =
-                new org.springframework.security.core.userdetails.User("user", "secret", true, true,  true, true, authorities);
-        final UsernamePasswordAuthenticationToken user
-                = new UsernamePasswordAuthenticationToken(principal, "secret", authorities);
+        final SimpleAuthentication user= new SimpleAuthentication("user", "secret", authorities);
         users.add(user);
     }
 
@@ -89,7 +80,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     }
 
     @Override
-    public Collection<UsernamePasswordAuthenticationToken> getUsers() {
+    public Collection<SimpleAuthentication> getUsers() {
         return users;
     }
 
