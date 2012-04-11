@@ -50,6 +50,16 @@
     </dependency>
 
     <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
     </dependency>
@@ -126,7 +136,13 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>6.1.26</version>
         <configuration>
-          <contextPath>/sp</contextPath>
+          <contextPath>/</contextPath>
+          <webAppConfig>
+            <extraClasspath>
+              ${basedir}/src/main/resources/;
+              ${basedir}/src/test/resources/
+            </extraClasspath>
+          </webAppConfig>
           <scanIntervalSeconds>3</scanIntervalSeconds>
           <stopPort>9966</stopPort>
           <stopKey>foo</stopKey>
