@@ -105,8 +105,8 @@ QQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ\
 5JCAUQcdrEQJ
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"certificate": "$CERT","key":"$KEY"}' \
-        http://localhost:808/api/signing-credential
+        -X POST -d '{"certificate": "$CERT","key":"$KEY"}' \
+        http://localhost:8080/api/signing-credential
 </pre>
 
 Setting attribute urn:mace:dir:attribute-def:foo to bar

@@ -55,7 +55,7 @@ public class CommonAPI {
         configuration.setEntityID(entityID.getValue());
     }
 
-    @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.PUT)
+    @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.POST)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
         log.info("Request to set signing credential");
