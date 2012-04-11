@@ -48,14 +48,14 @@ public class CommonAPI {
         configuration.reset();
     }
 
-    @RequestMapping(value = {"/set-entityid"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/entityid"}, method = RequestMethod.PUT)
     @ResponseBody
     public void setEntityID(@RequestBody EntityID entityID) {
         log.info("Request to set entityID {}", entityID.getValue());
         configuration.setEntityID(entityID.getValue());
     }
 
-    @RequestMapping(value = {"/set-signing-credential"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.PUT)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
         log.info("Request to set signing credential");

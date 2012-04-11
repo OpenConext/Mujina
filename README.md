@@ -68,8 +68,8 @@ Changing the entityID
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"value": "myEntityId"}' \
-        http://localhost:8080/api/set-entityid
+        -X PUT -d '{"value": "myEntityId"}' \
+        http://localhost:8080/api/entityid
 </pre>
 
 Changing the signing credentials
@@ -105,8 +105,8 @@ QQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ\
 5JCAUQcdrEQJ
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"certificate": "$CERT","key":"$KEY"}' \
-        http://localhost:808/api/set-signing-credential
+        -X PUT -d '{"certificate": "$CERT","key":"$KEY"}' \
+        http://localhost:808/api/signing-credential
 </pre>
 
 Setting attribute urn:mace:dir:attribute-def:foo to bar
@@ -116,7 +116,7 @@ Setting attribute urn:mace:dir:attribute-def:foo to bar
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d '{"name": "urn:mace:dir:attribute-def:foo", "value": "bar"}' \
-        http://localhost:8080/api/set-attribute
+        http://localhost:8080/api/attribute
 </pre>
 
 Removing an attribute
@@ -125,8 +125,8 @@ Removing an attribute
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
-        http://localhost:8080/api/remove-attribute
+        -X DELETE -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
+        http://localhost:8080/api/attribute
 </pre>
 
 Adding a user
@@ -136,7 +136,7 @@ Adding a user
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
-        http://localhost:8080/api/add-user
+        http://localhost:8080/api/user
 </pre>
 
 

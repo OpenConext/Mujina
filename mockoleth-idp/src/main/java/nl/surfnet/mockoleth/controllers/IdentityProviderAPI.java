@@ -38,8 +38,7 @@ import nl.surfnet.mockoleth.model.User;
 @Controller
 public class IdentityProviderAPI {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(IdentityProviderAPI.class);
+    private final static Logger log = LoggerFactory.getLogger(IdentityProviderAPI.class);
 
     final IdpConfiguration configuration;
 
@@ -48,21 +47,21 @@ public class IdentityProviderAPI {
         this.configuration = configuration;
     }
 
-    @RequestMapping(value = {"/set-attribute"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/attribute"}, method = RequestMethod.POST)
     @ResponseBody
     public void setAttribute(@RequestBody Attribute attribute) {
         log.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
         configuration.getAttributes().put(attribute.getName(), attribute.getValue());
     }
 
-    @RequestMapping(value = {"/remove-attribute"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/attribute"}, method = RequestMethod.DELETE)
     @ResponseBody
     public void removeAttribute(@RequestBody Attribute attribute) {
         log.info("Request to remove attribute {}", attribute.getName());
         configuration.getAttributes().remove(attribute.getName());
     }
 
-    @RequestMapping(value = {"/add-user"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/user"}, method = RequestMethod.POST)
     @ResponseBody
     public void addUser(@RequestBody User user) {
         log.info("Request to add user {} with password {}", user.getName(), user.getPassword());

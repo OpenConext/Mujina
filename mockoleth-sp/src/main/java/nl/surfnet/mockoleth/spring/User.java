@@ -144,8 +144,6 @@ public class User implements Principal, Serializable {
                 append("authenticationIssueInstant", authenticationIssueInstant).
                 append("authorities", authorities).
                 toString();
-
-
     }
 
     //Taken From Spring Security's User impl
