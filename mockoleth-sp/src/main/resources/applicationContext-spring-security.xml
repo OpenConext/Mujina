@@ -36,6 +36,8 @@
     <!-- necessary? -->
     <intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_USER"/>
 
+    <intercept-url pattern="/api/**" filters="none" />
+
   </http>
 
   <authentication-manager alias="authenticationManager">

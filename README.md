@@ -32,6 +32,11 @@ The default Identity Provider configuration is as follows:
     * "urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1" is "guest"
 * There is a default certificate and private key available
 
+The default Service Provider configuration is as follows:
+
+* The Entity ID is "sp"
+* There is a default certificate and private key available
+
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
 
@@ -46,35 +51,16 @@ mvn jetty:run
 
 Then, go to https://localhost:8443/idp or http://localhost:8080/idp
 
-Setting attribute urn:mace:dir:attribute-def:foo to bar
--------------------------------------------------------
+Run the SP using jetty
+----------------------
 
 <pre>
-curl -v -H "Accept: application/json" \
-        -H "Content-type: application/json" \
-        -X POST -d '{"name": "urn:mace:dir:attribute-def:foo", "value": "bar"}' \
-        http://localhost:8080/api/set-attribute
+mvn clean install
+cd mockoleth-sp
+mvn jetty:run
 </pre>
 
-Removing an attribute
----------------------
-
-<pre>
-curl -v -H "Accept: application/json" \
-        -H "Content-type: application/json" \
-        -X POST -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
-        http://localhost:8080/api/remove-attribute
-</pre>
-
-Adding a user
--------------
-
-<pre>
-curl -v -H "Accept: application/json" \
-        -H "Content-type: application/json" \
-        -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
-        http://localhost:8080/api/add-user
-</pre>
+Then, go to http://localhost:9090/idp
 
 Changing the entityID
 ---------------------
@@ -122,5 +108,36 @@ curl -v -H "Accept: application/json" \
         -X POST -d '{"certificate": "$CERT","key":"$KEY"}' \
         http://localhost:808/api/set-signing-credential
 </pre>
+
+Setting attribute urn:mace:dir:attribute-def:foo to bar
+-------------------------------------------------------
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST -d '{"name": "urn:mace:dir:attribute-def:foo", "value": "bar"}' \
+        http://localhost:8080/api/set-attribute
+</pre>
+
+Removing an attribute
+---------------------
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
+        http://localhost:8080/api/remove-attribute
+</pre>
+
+Adding a user
+-------------
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
+        http://localhost:8080/api/add-user
+</pre>
+
 
 

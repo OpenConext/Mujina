@@ -25,8 +25,7 @@ import org.springframework.security.core.AuthenticationException;
 
 import nl.surfnet.mockoleth.saml.AssertionConsumer;
 
-public class SAMLResponseAuthenticationProvider implements
-        AuthenticationProvider {
+public class SAMLResponseAuthenticationProvider implements AuthenticationProvider {
 
     private final static Logger logger = LoggerFactory
             .getLogger(SAMLResponseAuthenticationProvider.class);

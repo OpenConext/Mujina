@@ -33,6 +33,7 @@
 / /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
 \/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
 
+              Identity Provider
 </pre>
 
 <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION }">

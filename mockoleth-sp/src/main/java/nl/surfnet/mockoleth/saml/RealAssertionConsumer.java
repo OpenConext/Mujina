@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Attribute;
@@ -35,6 +37,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.RequestContextListener;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import nl.surfnet.mockoleth.saml.xml.SAML2ValidatorSuite;
 import nl.surfnet.mockoleth.spring.IdentityProviderAuthenticationException;
@@ -43,7 +49,7 @@ import nl.surfnet.mockoleth.spring.User;
 
 public class RealAssertionConsumer implements AssertionConsumer {
 
-    private final static Logger logger = LoggerFactory
+    private final static Logger log = LoggerFactory
             .getLogger(RealAssertionConsumer.class);
 
 
@@ -56,29 +62,33 @@ public class RealAssertionConsumer implements AssertionConsumer {
         try {
             validatorSuite.validate(samlResponse);
         } catch (ValidationException ve) {
-            logger.warn("Response Message failed Validation", ve);
+            log.warn("Response Message failed Validation", ve);
             throw new ServiceProviderAuthenticationException("Invalid SAML REsponse Message", ve);
         }
+
 
 
         checkResponseStatus(samlResponse);
 
         Assertion assertion = samlResponse.getAssertions().get(0);
 
-        logger.debug("authenticationResponseIssuingEntityName {}", samlResponse.getIssuer().getValue());
+        log.debug("authenticationResponseIssuingEntityName {}", samlResponse.getIssuer().getValue());
 
-        logger.debug("assertion.getID() {}", assertion.getID());
-        logger.debug("assertion.getSubject().getNameID().getValue() {}", assertion.getSubject().getNameID().getValue());
+        log.debug("assertion.getID() {}", assertion.getID());
+        log.debug("assertion.getSubject().getNameID().getValue() {}", assertion.getSubject().getNameID().getValue());
 
         AuthnStatement authnStatement = assertion.getAuthnStatements().get(0);
 
-        logger.debug("authnStatement.getAuthnInstant() {}", authnStatement.getAuthnInstant());
+        log.debug("authnStatement.getAuthnInstant() {}", authnStatement.getAuthnInstant());
 
         Set<GrantedAuthority> authorities = extractAuthorities(assertion.getAttributeStatements());
-        logger.debug("Granted Authorities will be {}", authorities);
+        log.debug("Granted Authorities will be {}", authorities);
 
+        final ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
+        final HttpSession session = requestAttributes.getRequest().getSession();
+        session.setAttribute("assertionAttributes", assertion.getAttributeStatements());
 
-        logger.debug("assertion.getID() {}", assertion.getAuthnStatements());
+        log.debug("assertion.getID() {}", assertion.getAuthnStatements());
 
         return new User(assertion.getSubject().getNameID().getValue(),
                 samlResponse.getIssuer().getValue(),
@@ -99,7 +109,7 @@ public class RealAssertionConsumer implements AssertionConsumer {
         for (AttributeStatement attributeStatement : attributeStatements) {
             for (Attribute attribute : attributeStatement.getAttributes()) {
                 if (GrantedAuthority.class.getName().equalsIgnoreCase(attribute.getName())) {
-                    logger.debug("found Granted Authorities.");
+                    log.debug("found Granted Authorities.");
                     for (XMLObject xmlObj : attribute.getAttributeValues()) {
                         if (xmlObj instanceof XSString)
                             authorities.add(new GrantedAuthorityImpl(((XSString) xmlObj).getValue()));
@@ -125,7 +135,7 @@ public class RealAssertionConsumer implements AssertionConsumer {
             StringBuilder extraInformation = extractExtraInformation(samlResponse);
 
             if (extraInformation.length() > 0) {
-                logger.warn("Extra information extracted from authentication failure was {}", extraInformation.toString());
+                log.warn("Extra information extracted from authentication failure was {}", extraInformation.toString());
 
                 throw new IdentityProviderAuthenticationException("Identity Provider has failed the authentication.", extraInformation.toString());
             } else {

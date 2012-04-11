@@ -1,3 +1,7 @@
+<%@ page import="org.opensaml.saml2.core.AttributeStatement" %>
+<%@ page import="java.util.List" %>
+<%@ page import="org.opensaml.saml2.core.Attribute" %>
+<%@ page import="org.opensaml.xml.XMLObject" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -26,25 +30,54 @@
 </head>
 <body>
 
-<h1>Service Provider Home Page</h1>
+<pre>
+                   _         _      _   _
+  /\/\   ___   ___| | _____ | | ___| |_| |__
+ /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
+/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
+\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+
+               Service Provider
+</pre>
 
 <h3>This page is not secured.</h3>
 
 <a href="user.jsp">protected user page</a> <br/>
 <a href="admin.jsp">protected admin page</a> <br/>
-<a href="j_spring_security_logout">End your session with the Service Provider</a> <i>Does not end your session with the
-  IDP</i> <br/>
+<a href="j_spring_security_logout">End your session with the Service Provider</a>
+<i>Does not end your session with the IDP</i> <br/>
 
-<h3>Your current Spring Security Credentials are:</h3>
+<h3>The following attributes were present:</h3>
+
+<dl id="assertionAttributes">
+<%
+  final List<AttributeStatement> attributeStatements = (List<AttributeStatement>)session.getAttribute("assertionAttributes");
+  if (attributeStatements != null) {
+    for (AttributeStatement attributeStatement : attributeStatements) {
+      final List<Attribute> attributes = attributeStatement.getAttributes();
+      for (Attribute attribute : attributes) {
+        out.print("<dt style=\"font-weight: bold;\">");
+        out.print(attribute.getName());
+        out.print("</dt><dd id=\"" + attribute.getName() + "\">");
+        final List<XMLObject> attributeValues = attribute.getAttributeValues();
+        for (XMLObject attributeValue : attributeValues) {
+          out.print(attributeValue.getDOM().getTextContent());
+          out.print(" ");
+        }
+        out.print("</dd>");
+      }
+    }
+  }
+%>
+</dl>
 
 <H4>Authentication Principal is: </H4>
-
 <p><sec:authentication property="principal"></sec:authentication></p>
+
 <H4>Authentication Credentials are: </H4>
-
 <p><sec:authentication property="credentials"></sec:authentication></p>
-<H4>Authentication Details are: </H4>
 
+<H4>Authentication Details are: </H4>
 <p><sec:authentication property="details"></sec:authentication></p>
 
 </body>

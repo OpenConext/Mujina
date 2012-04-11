@@ -26,7 +26,15 @@
 </head>
 <body>
 
-<h1>Service Provider User Page</h1>
+<pre>
+                   _         _      _   _
+  /\/\   ___   ___| | _____ | | ___| |_| |__
+ /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
+/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
+\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+
+               Service Provider
+</pre>
 
 <h3>This page is secured. You must have the ROLE_USER authority to be here.</h3>
 
@@ -38,13 +46,12 @@
 <h3>Your current Spring Security Credentials are:</h3>
 
 <H4>Authentication Principal is: </H4>
-
 <p><sec:authentication property="principal"></sec:authentication></p>
+
 <H4>Authentication Credentials are: </H4>
-
 <p><sec:authentication property="credentials"></sec:authentication></p>
-<H4>Authentication Details are: </H4>
 
+<H4>Authentication Details are: </H4>
 <p><sec:authentication property="details"></sec:authentication></p>
 
 </body>
