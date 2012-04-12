@@ -137,12 +137,6 @@
         <version>6.1.26</version>
         <configuration>
           <contextPath>/</contextPath>
-          <webAppConfig>
-            <extraClasspath>
-              ${basedir}/src/main/resources/;
-              ${basedir}/src/test/resources/
-            </extraClasspath>
-          </webAppConfig>
           <scanIntervalSeconds>3</scanIntervalSeconds>
           <stopPort>9966</stopPort>
           <stopKey>foo</stopKey>
@@ -152,6 +146,7 @@
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
+          <useTestClasspath>true</useTestClasspath>
         </configuration>
       </plugin>
     </plugins>
