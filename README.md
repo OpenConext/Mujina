@@ -10,7 +10,7 @@
 Mockoleth
 =========
 
-Mockoleth mocks an Identity and Service Provider.
+Mockoleth mocks a SAML Identity and Service Provider.
 There is a default configuration, which you can override using a REST API.
 This approach removes the need for special test configuration sets in your setup.
 Thus, Mockoloth makes testing your stack a breeze!
@@ -65,6 +65,8 @@ Then, go to http://localhost:9090/idp
 Changing the entityID
 ---------------------
 
+This API is available on both the IDP and the SP.
+
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
@@ -72,9 +74,10 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/entityid
 </pre>
 
-Changing the signing credentials
+Changing the signing credentials (Both IDP and SP)
 --------------------------------
 
+This API is available on both the IDP and the SP.
 The certificate should be in PEM format.
 The key should be in base64 encoded pkcs6 DER format.
 
@@ -112,6 +115,8 @@ curl -v -H "Accept: application/json" \
 Setting attribute urn:mace:dir:attribute-def:foo to bar
 -------------------------------------------------------
 
+This API is only available on the IDP.
+
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
@@ -121,6 +126,8 @@ curl -v -H "Accept: application/json" \
 
 Removing an attribute
 ---------------------
+
+This API is only available on the IDP.
 
 <pre>
 curl -v -H "Accept: application/json" \
@@ -132,12 +139,11 @@ curl -v -H "Accept: application/json" \
 Adding a user
 -------------
 
+This API is only available on the IDP.
+
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
         http://localhost:8080/api/user
 </pre>
-
-
-
