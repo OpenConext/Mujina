@@ -37,7 +37,8 @@
     <intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_USER"/>
 
     <intercept-url pattern="/api/**" filters="none" />
-
+    <intercept-url pattern="/social/**" filters="none" />
+    <intercept-url pattern="/assets/**" filters="none" />
   </http>
 
   <authentication-manager alias="authenticationManager">
