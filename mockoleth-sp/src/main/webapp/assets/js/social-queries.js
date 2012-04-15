@@ -1,3 +1,5 @@
 $(function() {
-	//$("#mainOptions").collapse();
+	$("#mainOptions").collapse({
+		  parent: ".accordion-group"
+	});
 });

@@ -44,7 +44,7 @@
 	</div>
 	<div class="row">
 		<div class="span12 columns">
-			<p>Play the different scenario's and see the request and
+			<p>Play with the different OAuth versions and API scenario's and see the subsequent request and
 				responses from the SURFconext OpenSocial API.</p>
 
 		</div>
@@ -52,6 +52,16 @@
 	<div class="row">
 		<div class="span6 columns">
 			<div class="accordion" id="mainOptions">
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse"
+							data-parent="#mainOptions" href="#collapseZero"> 
+							<span class="badge badge-info">0</span> API Settings </a>
+					</div>
+					<div id="collapseZero" class="accordion-body collapse in">
+						<div class="accordion-inner">TODO: settings, oauth version, end-points, preferences</div>
+					</div>
+				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
@@ -90,13 +100,13 @@
 		<div class="span6 columns">
 			<div id="request">
 				<div class="alert alert-info alert-http">HTTP Request</div>
-				<pre class="prettyprint linenums">
+				<pre class="prettyprint pre-scrollable pre-json">
 					<c:out value="${requestInfo}"/>
 				</pre>
 			</div>
 			<div id="response">
 				<div class="alert alert-info alert-http">HTTP Response</div>
-				<pre class="prettyprint linenums">
+				<pre class="prettyprint pre-scrollable pre-json">
 					<c:out value="${responseInfo}"/>
 				</pre>
 			</div>

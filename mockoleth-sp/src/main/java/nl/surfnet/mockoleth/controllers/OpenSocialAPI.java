@@ -21,19 +21,16 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import nl.surfnet.mockoleth.model.SpConfiguration;
 
 @Controller
 public class OpenSocialAPI {
@@ -42,8 +39,9 @@ public class OpenSocialAPI {
 
   @RequestMapping(value = { "/social-queries.do" }, method = RequestMethod.GET)
   public String socialQueries(ModelMap modelMap, HttpServletRequest request, HttpServletResponse response)
-      throws JsonGenerationException, JsonMappingException, IOException {
-    modelMap.addAttribute("requestInfo", request.toString());
+      throws IOException {
+    modelMap.addAttribute("requestInfo",
+        IOUtils.toString(new ClassPathResource("multiple-persons.json").getInputStream()));
     modelMap.addAttribute("responseInfo", response.toString());
     return "social-queries";
   }

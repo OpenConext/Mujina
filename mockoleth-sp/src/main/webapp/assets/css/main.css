@@ -6,3 +6,8 @@ body {
 .alert-http {
 	margin-bottom: 5px;	
 }
+
+.pre-json {
+	font-size: 9px;
+	line-height: 12px;
+}
