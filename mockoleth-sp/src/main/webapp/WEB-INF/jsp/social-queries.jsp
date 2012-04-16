@@ -3,7 +3,7 @@
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <%--
   Copyright 2012 SURFnet bv, The Netherlands
@@ -28,6 +28,8 @@
 <title>Service Provider Social Queries</title>
 <link rel="stylesheet"
 	href="<c:url value="/assets/bootstrap-2.0.2/css/bootstrap.css"/>"></link>
+<link rel="stylesheet"
+	href="<c:url value="/assets/awesome-1.0.0/css/font-awesome.css"/>"></link>
 <link rel="stylesheet" href="<c:url value="/assets/css/main.css"/>"></link>
 <script type="text/javascript"
 	src="<c:url value="/assets/js/jquery-1.7.2.js"/>"></script>
@@ -43,10 +45,10 @@
 		</h1>
 	</div>
 	<div class="row">
-		<div class="span12 columns">
-			<p>Play with the different OAuth versions and API scenario's and see the subsequent request and
-				responses from the SURFconext OpenSocial API.</p>
-
+		<div class="span11 columns">
+			<p>Play with the different OAuth versions and API scenario's and
+				see the subsequent request and responses from the SURFconext
+				OpenSocial API.</p>
 		</div>
 	</div>
 	<div class="row">
@@ -55,18 +57,19 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseZero"> 
-							<span class="badge badge-info">0</span> API Settings </a>
+							data-parent="#mainOptions" href="#collapseZero"> <span
+							class="badge badge-info">0</span> API Settings </a>
 					</div>
 					<div id="collapseZero" class="accordion-body collapse in">
-						<div class="accordion-inner">TODO: settings, oauth version, end-points, preferences</div>
+						<div class="accordion-inner">TODO: settings, oauth version,
+							end-points, preferences</div>
 					</div>
 				</div>
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseOne"> 
-							<span class="badge badge-info">1</span> Authorize SP application </a>
+							data-parent="#mainOptions" href="#collapseOne"> <span
+							class="badge badge-info">1</span> Authorize SP application </a>
 					</div>
 					<div id="collapseOne" class="accordion-body collapse in">
 						<div class="accordion-inner">TODO: enter authorization URL,
@@ -76,8 +79,9 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseTwo"> <span class="badge badge-info">2</span> Exchange
-							authorization code for tokens </a>
+							data-parent="#mainOptions" href="#collapseTwo"> <span
+							class="badge badge-info">2</span> Exchange authorization code for
+							tokens </a>
 					</div>
 					<div id="collapseTwo" class="accordion-body collapse">
 						<div class="accordion-inner">TODO: show authorization code +
@@ -87,8 +91,8 @@
 				<div class="accordion-group">
 					<div class="accordion-heading">
 						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseThree"> <span class="badge badge-info">3</span> Configure
-							request to API </a>
+							data-parent="#mainOptions" href="#collapseThree"> <span
+							class="badge badge-info">3</span> Configure request to API </a>
 					</div>
 					<div id="collapseThree" class="accordion-body collapse">
 						<div class="accordion-inner">TODO show input box for request
@@ -96,18 +100,21 @@
 					</div>
 				</div>
 			</div>
+			<a class="btn btn-small btn-info" href="#"> <i
+				class="icon-info-sign"></i> More Info</a>
+
 		</div>
 		<div class="span6 columns">
 			<div id="request">
 				<div class="alert alert-info alert-http">HTTP Request</div>
 				<pre class="prettyprint pre-scrollable pre-json">
-					<c:out value="${requestInfo}"/>
+					<c:out value="${requestInfo}" />
 				</pre>
 			</div>
 			<div id="response">
 				<div class="alert alert-info alert-http">HTTP Response</div>
 				<pre class="prettyprint pre-scrollable pre-json">
-					<c:out value="${responseInfo}"/>
+					<c:out value="${responseInfo}" />
 				</pre>
 			</div>
 		</div>
