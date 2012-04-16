@@ -1,0 +1,689 @@
+{
+    "startIndex": 0,
+    "totalResults": 22,
+    "entry": [
+        {
+            "nickname": "Jan Arts",
+            "emails": [
+                {
+                    "value": "Jan.Arts@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "member",
+            "id": "urn:collab:person:surfnet.nl:arts",
+            "name": {
+                "formatted": "Jan Arts",
+                "familyName": "Arts",
+                "givenName": "Jan"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "arts",
+                    "userId": "arts"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Jan Arts"
+        },
+        {
+            "nickname": "Geert van der Ploeg",
+            "emails": [
+                {
+                    "value": "gvanderploeg@iprofs.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "manager",
+            "id": "urn:collab:person:test.surfguest.nl:gvanderploeg",
+            "name": {
+                "formatted": "Geert van der Ploeg",
+                "familyName": "van der Ploeg",
+                "givenName": "Geert"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "gvanderploeg",
+                    "userId": "gvanderploeg"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Geert van der Ploeg"
+        },
+        {
+            "nickname": "Okke Harsta",
+            "emails": [
+                {
+                    "value": "oharsta@zilverline.com",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfguest.nl:oharsta",
+            "name": {
+                "formatted": "Okke Harsta",
+                "familyName": "Harsta",
+                "givenName": "Okke"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "oharsta",
+                    "userId": "oharsta"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfguest.nl"
+                }
+            ],
+            "displayName": "Okke Harsta"
+        },
+        {
+            "nickname": "Femke Morsch",
+            "emails": [
+                {
+                    "value": "Femke.Morsch@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:morsch",
+            "name": {
+                "formatted": "Femke Morsch",
+                "familyName": "Morsch",
+                "givenName": "Femke"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "morsch",
+                    "userId": "morsch"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Femke Morsch"
+        },
+        {
+            "nickname": "Remco Poortinga",
+            "emails": [
+                {
+                    "value": "Remco.Poortinga@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "member",
+            "id": "urn:collab:person:surfnet.nl:poortinga",
+            "name": {
+                "formatted": "Remco Poortinga",
+                "familyName": "Poortinga",
+                "givenName": "Remco"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "poortinga",
+                    "userId": "poortinga"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Remco Poortinga"
+        },
+        {
+            "nickname": "Francois Kooman",
+            "emails": [
+                {
+                    "value": "Francois.Kooman@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:francois",
+            "name": {
+                "formatted": "Francois Kooman",
+                "familyName": "Kooman",
+                "givenName": "Francois"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "francois",
+                    "userId": "francois"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Francois Kooman"
+        },
+        {
+            "nickname": "Jasha Joachimsthal TEST account",
+            "emails": [
+                {
+                    "value": "j.joachimsthal@onehippo.com",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:test.surfguest.nl:jjoachimsthal",
+            "name": {
+                "formatted": "Jasha Joachimsthal TEST account",
+                "familyName": "Joachimsthal TEST account",
+                "givenName": "Jasha"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "jjoachimsthal",
+                    "userId": "jjoachimsthal"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Jasha Joachimsthal TEST account"
+        },
+        {
+            "nickname": "Alle Veenstra",
+            "emails": [
+                {
+                    "value": "a.veenstra@onehippo.com",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "manager",
+            "id": "urn:collab:person:test.surfguest.nl:alle.veenstra",
+            "name": {
+                "formatted": "Alle Veenstra",
+                "familyName": "Veenstra",
+                "givenName": "Alle"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "alle.veenstra",
+                    "userId": "alle.veenstra"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Alle Veenstra"
+        },
+        {
+            "nickname": "Paul van Dijk",
+            "emails": [
+                {
+                    "value": "Paul.vanDijk@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:paulvd",
+            "name": {
+                "formatted": "Paul van Dijk",
+                "familyName": "van Dijk",
+                "givenName": "Paul"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "paulvd",
+                    "userId": "paulvd"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Paul van Dijk"
+        },
+        {
+            "nickname": "Okke Harsta",
+            "emails": [
+                {
+                    "value": "Okke.Harsta@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:okke",
+            "name": {
+                "formatted": "Okke Harsta",
+                "familyName": "Harsta",
+                "givenName": "Okke"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "okke",
+                    "userId": "okke"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Okke Harsta"
+        },
+        {
+            "nickname": "Hendrik J. Bekker",
+            "emails": [
+                {
+                    "value": "Henny.Bekker@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:henny",
+            "name": {
+                "formatted": "Henny Bekker",
+                "familyName": "Bekker",
+                "givenName": "Henny"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "henny",
+                    "userId": "henny"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Hendrik J. Bekker"
+        },
+        {
+            "nickname": "Surfmedia Ibuildings",
+            "emails": [
+                {
+                    "value": "surfnet@ibuildings.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:test.surfguest.nl:smibuildings",
+            "name": {
+                "formatted": "Surfmedia Ibuildings",
+                "familyName": "Ibuildings",
+                "givenName": "Surfmedia"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "smibuildings",
+                    "userId": "smibuildings"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Surfmedia Ibuildings"
+        },
+        {
+            "nickname": "Niels van Dijk",
+            "emails": [
+                {
+                    "value": "Niels.vanDijk@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:niels",
+            "name": {
+                "formatted": "Niels van Dijk",
+                "familyName": "van Dijk",
+                "givenName": "Niels"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "niels",
+                    "userId": "niels"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Niels van Dijk"
+        },
+        {
+            "nickname": "Ivo van den Abeelen",
+            "emails": [
+                {
+                    "value": "Ivo.vandenAbeelen@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "member",
+            "id": "urn:collab:person:surfnet.nl:abeelen",
+            "name": {
+                "formatted": "Ivo van den Abeelen",
+                "familyName": "van den Abeelen",
+                "givenName": "Ivo"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "abeelen",
+                    "userId": "abeelen"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Ivo van den Abeelen"
+        },
+        {
+            "nickname": "Pieter van der Meulen",
+            "emails": [
+                {
+                    "value": "Pieter.vanderMeulen@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:pieter",
+            "name": {
+                "formatted": "Pieter van der Meulen",
+                "familyName": "van der  Meulen",
+                "givenName": "Pieter"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "pieter",
+                    "userId": "pieter"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Pieter van der Meulen"
+        },
+        {
+            "nickname": "Boy Baukema",
+            "emails": [
+                {
+                    "value": "boy@ibuildings.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "manager",
+            "id": "urn:collab:person:surfguest.nl:relax",
+            "name": {
+                "formatted": "Boy Baukema",
+                "familyName": "Baukema",
+                "givenName": "Boy"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "relax",
+                    "userId": "relax"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfguest.nl"
+                }
+            ],
+            "displayName": "Boy Baukema"
+        },
+        {
+            "nickname": "Peter Clijsters",
+            "emails": [
+                {
+                    "value": "peter.clijsters@everett.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:test.surfguest.nl:peterclijsters",
+            "name": {
+                "formatted": "Peter Clijsters",
+                "familyName": "Clijsters",
+                "givenName": "Peter"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "peterclijsters",
+                    "userId": "peterclijsters"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Peter Clijsters"
+        },
+        {
+            "nickname": "Maarten Kremers",
+            "emails": [
+                {
+                    "value": "Maarten.Kremers@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:surfnet.nl:maarten",
+            "name": {
+                "formatted": "Maarten Kremers",
+                "familyName": "Kremers",
+                "givenName": "Maarten"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "maarten",
+                    "userId": "maarten"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Maarten Kremers"
+        },
+        {
+            "nickname": "Okke Harsta",
+            "emails": [
+                {
+                    "value": "oharsta@zilverline.com",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:google.com:oharsta_zilverline.com",
+            "name": {
+                "formatted": "Okke Harsta",
+                "familyName": "Harsta",
+                "givenName": "Okke"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "oharsta_zilverline.com",
+                    "userId": "oharsta_zilverline.com"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "google.com"
+                }
+            ],
+            "displayName": "Okke Harsta"
+        },
+        {
+            "nickname": "Jeffrey Everling",
+            "emails": [
+                {
+                    "value": "Jeffrey.Everling@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "member",
+            "id": "urn:collab:person:surfnet.nl:jeffrey",
+            "name": {
+                "formatted": "Jeffrey Everling",
+                "familyName": "Everling",
+                "givenName": "Jeffrey"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "jeffrey",
+                    "userId": "jeffrey"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Jeffrey Everling"
+        },
+        {
+            "nickname": "Okke Harsta",
+            "emails": [
+                {
+                    "value": "oharsta+surfguest@zilverline.com",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "admin",
+            "id": "urn:collab:person:test.surfguest.nl:oharsta",
+            "name": {
+                "formatted": "Okke Harsta",
+                "familyName": "Harsta",
+                "givenName": "Okke"
+            },
+            "tags": [
+                "guest"
+            ],
+            "accounts": [
+                {
+                    "username": "oharsta",
+                    "userId": "oharsta"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "test.surfguest.nl"
+                }
+            ],
+            "displayName": "Okke Harsta"
+        },
+        {
+            "nickname": "Bas Zoetekouw",
+            "emails": [
+                {
+                    "value": "Bas.Zoetekouw@surfnet.nl",
+                    "type": "email"
+                }
+            ],
+            "voot_membership_role": "manager",
+            "id": "urn:collab:person:surfnet.nl:bas",
+            "name": {
+                "formatted": "Bas Zoetekouw",
+                "familyName": "Zoetekouw",
+                "givenName": "Bas"
+            },
+            "tags": [
+                "member"
+            ],
+            "accounts": [
+                {
+                    "username": "bas",
+                    "userId": "bas"
+                }
+            ],
+            "organizations": [
+                {
+                    "name": "surfnet.nl"
+                }
+            ],
+            "displayName": "Bas Zoetekouw"
+        }
+    ],
+    "itemsPerPage": 22
+}

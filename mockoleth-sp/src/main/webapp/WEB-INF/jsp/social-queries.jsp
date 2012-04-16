@@ -50,7 +50,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="span6 columns">
+		<div class="span5 columns">
 			<div class="accordion" id="mainOptions">
 				<div class="accordion-group">
 					<div class="accordion-heading">
