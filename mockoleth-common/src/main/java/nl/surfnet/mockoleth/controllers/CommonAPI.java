@@ -19,11 +19,13 @@ package nl.surfnet.mockoleth.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import nl.surfnet.mockoleth.model.CommonConfiguration;
 import nl.surfnet.mockoleth.model.Credential;
@@ -42,6 +44,7 @@ public class CommonAPI {
     }
 
     @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void reset() {
         log.info("Resetting to default configuration");
@@ -49,6 +52,7 @@ public class CommonAPI {
     }
 
     @RequestMapping(value = {"/entityid"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setEntityID(@RequestBody EntityID entityID) {
         log.info("Request to set entityID {}", entityID.getValue());
@@ -56,6 +60,7 @@ public class CommonAPI {
     }
 
     @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
         log.info("Request to set signing credential");

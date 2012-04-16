@@ -22,6 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.IdpConfiguration;
@@ -48,6 +50,7 @@ public class IdentityProviderAPI {
     }
 
     @RequestMapping(value = {"/attribute"}, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setAttribute(@RequestBody Attribute attribute) {
         log.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
@@ -55,6 +58,7 @@ public class IdentityProviderAPI {
     }
 
     @RequestMapping(value = {"/attribute"}, method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void removeAttribute(@RequestBody Attribute attribute) {
         log.info("Request to remove attribute {}", attribute.getName());
@@ -62,6 +66,7 @@ public class IdentityProviderAPI {
     }
 
     @RequestMapping(value = {"/user"}, method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void addUser(@RequestBody User user) {
         log.info("Request to add user {} with password {}", user.getName(), user.getPassword());
