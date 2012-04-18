@@ -169,7 +169,7 @@ The default setting is USER.
 This setting requires a valid user to be known in Mockoleth's IdP.
 
 The ALL setting allows any username and password combination.
-As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the supplied username.
+As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the username each time a user logs in.
 
 Setting the SSO Service URL
 -------------

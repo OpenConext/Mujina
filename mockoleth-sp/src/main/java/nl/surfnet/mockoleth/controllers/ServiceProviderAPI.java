@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import nl.surfnet.mockoleth.model.Attribute;
 import nl.surfnet.mockoleth.model.SSOServiceURL;
 import nl.surfnet.mockoleth.model.SpConfiguration;
 
