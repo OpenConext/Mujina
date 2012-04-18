@@ -124,6 +124,8 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/attribute
 </pre>
 
+When you want an attribute to be random on every request, you can set it's value to "random" (without the double quotes).
+
 Removing an attribute
 ---------------------
 

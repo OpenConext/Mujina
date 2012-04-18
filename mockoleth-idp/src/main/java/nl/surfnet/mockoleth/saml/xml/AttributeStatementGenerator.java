@@ -46,7 +46,7 @@ public class AttributeStatementGenerator {
             XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
             String value = entry.getValue();
             if ("random".equals(value)) {
-                value = "john.doe." + counter;
+                value = "john.doe." + (counter++);
             }
             stringValue.setValue(value);
             attribute.getAttributeValues().add(stringValue);
