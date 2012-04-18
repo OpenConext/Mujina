@@ -29,40 +29,9 @@ import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 public class AttributeStatementGenerator {
+    private static long counter = 0;
 
     private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
-
-    /*
-	public AttributeStatement generateAttributeStatement(Collection<GrantedAuthority> authorities) {
-		
-		AttributeStatementBuilder attributeStatementBuilder = (AttributeStatementBuilder) builderFactory.getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
-		AttributeStatement attributeStatement = attributeStatementBuilder.buildObject();
-
-		//Response/Assertion/AttributeStatement/Attribute
-		AttributeBuilder attributeBuilder = (AttributeBuilder)  builderFactory.getBuilder(Attribute.DEFAULT_ELEMENT_NAME);
-		Attribute attribute = attributeBuilder.buildObject();
-		attribute.setName(GrantedAuthority.class.getName());
-		
-		//urn:oasis:names:tc:SAML:2.0:attrname-format:basic
-		attribute.setNameFormat(Attribute.BASIC);
-		
-		
-		for (GrantedAuthority grantedAuthority : authorities) {
-			//this was convoluted to figure out
-			//Response/Assertion/AttributeStatement/Attribute/AttributeValue
-			XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
-			XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-			stringValue.setValue(grantedAuthority.getAuthority());
-
-	
-			attribute.getAttributeValues().add(stringValue);
-			
-		}
-		
-		attributeStatement.getAttributes().add(attribute);
-		
-		return attributeStatement;
-	} */
 
     public AttributeStatement generateAttributeStatement(final Map<String, String> attributes) {
         AttributeStatementBuilder attributeStatementBuilder = (AttributeStatementBuilder) builderFactory.getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
@@ -74,9 +43,12 @@ public class AttributeStatementGenerator {
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             Attribute attribute = attributeBuilder.buildObject();
             attribute.setName(entry.getKey());
-            // attribute.setNameFormat(Attribute.BASIC);
             XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-            stringValue.setValue(entry.getValue());
+            String value = entry.getValue();
+            if ("random".equals(value)) {
+                value = "john.doe." + counter;
+            }
+            stringValue.setValue(value);
             attribute.getAttributeValues().add(stringValue);
             attributeStatement.getAttributes().add(attribute);
         }
