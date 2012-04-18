@@ -48,12 +48,11 @@ import nl.surfnet.mockoleth.util.TimeService;
 
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final static Logger logger = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);
+    private final static Logger log = LoggerFactory.getLogger(SAMLAuthenticationEntryPoint.class);
 
     private final TimeService timeService;
     private final IDService idService;
 
-    private String singleSignOnServiceURL;
     private String assertionConsumerServiceURL;
     private BindingAdapter bindingAdapter;
     private CredentialResolver credentialResolver;
@@ -64,11 +63,6 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
         super();
         this.timeService = timeService;
         this.idService = idService;
-    }
-
-    @Required
-    public void setSingleSignOnServiceURL(String singleSignOnServiceURL) {
-        this.singleSignOnServiceURL = singleSignOnServiceURL;
     }
 
     @Required
@@ -99,11 +93,13 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
         AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(spConfiguration.getEntityID(), timeService, idService);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
+        final String singleSignOnServiceURL = spConfiguration.getSingleSignOnServiceURL();
+
         Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
 
         AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, assertionConsumerServiceURL);
 
-        logger.debug("Sending authnRequest to {}", singleSignOnServiceURL);
+        log.debug("Sending authnRequest to {}", singleSignOnServiceURL);
 
         try {
             CriteriaSet criteriaSet = new CriteriaSet();
@@ -115,10 +111,10 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
             bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, response);
         } catch (MessageEncodingException mee) {
-            logger.error("Could not send authnRequest to Identity Provider.", mee);
+            log.error("Could not send authnRequest to Identity Provider.", mee);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (org.opensaml.xml.security.SecurityException e) {
-            logger.error("Unable to retrieve signing credential", e);
+            log.error("Unable to retrieve signing credential", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

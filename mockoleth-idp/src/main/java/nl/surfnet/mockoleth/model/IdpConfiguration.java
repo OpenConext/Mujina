@@ -24,4 +24,7 @@ public interface IdpConfiguration extends CommonConfiguration {
 
     Collection<SimpleAuthentication> getUsers();
 
+    AuthenticationMethod.Method getAuthentication();
+
+    void setAuthentication(AuthenticationMethod.Method method);
 }

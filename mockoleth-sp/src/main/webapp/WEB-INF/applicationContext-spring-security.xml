@@ -69,7 +69,6 @@
   <beans:bean id="samlAuthenticationEntryPoint" class="nl.surfnet.mockoleth.spring.SAMLAuthenticationEntryPoint">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
-    <beans:property name="singleSignOnServiceURL" value="${IDP_SSO_SERVICE_URL}"/>
     <beans:property name="assertionConsumerServiceURL" value="${ASSERTION_CONSUMER_URL}"/>
     <beans:property name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
     <beans:property name="bindingAdapter" ref="bindingAdpater"/>

@@ -19,11 +19,16 @@ package nl.surfnet.mockoleth.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import nl.surfnet.mockoleth.model.Attribute;
+import nl.surfnet.mockoleth.model.SSOServiceURL;
 import nl.surfnet.mockoleth.model.SpConfiguration;
 
 @Controller
@@ -37,6 +42,14 @@ public class ServiceProviderAPI {
     @Autowired
     public ServiceProviderAPI(final SpConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @RequestMapping(value = {"/ssoServiceURL"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void setAttribute(@RequestBody SSOServiceURL ssoServiceURL) {
+        log.info("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
+        configuration.setSingleSignOnServiceURL(ssoServiceURL.getValue());
     }
 
 }

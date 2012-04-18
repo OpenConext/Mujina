@@ -34,6 +34,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
 
     private Map<String, String> attributes = new TreeMap<String, String>();
     private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
+    private AuthenticationMethod.Method authMethod;
 
     public IdpConfigurationImpl() {
         reset();
@@ -41,6 +42,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
 
     @Override
     public void reset() {
+        authMethod = AuthenticationMethod.Method.USER;
         entityId = "idp";
         attributes.clear();
         attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
@@ -82,6 +84,16 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     @Override
     public Collection<SimpleAuthentication> getUsers() {
         return users;
+    }
+
+    @Override
+    public AuthenticationMethod.Method getAuthentication() {
+        return authMethod;
+    }
+
+    @Override
+    public void setAuthentication(final AuthenticationMethod.Method method) {
+        this.authMethod = method;
     }
 
 }

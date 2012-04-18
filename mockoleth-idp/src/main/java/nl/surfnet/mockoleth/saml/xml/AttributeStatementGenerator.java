@@ -29,8 +29,6 @@ import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 
 public class AttributeStatementGenerator {
-    private static long counter = 0;
-
     private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
     public AttributeStatement generateAttributeStatement(final Map<String, String> attributes) {
@@ -44,11 +42,7 @@ public class AttributeStatementGenerator {
             Attribute attribute = attributeBuilder.buildObject();
             attribute.setName(entry.getKey());
             XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-            String value = entry.getValue();
-            if ("random".equals(value)) {
-                value = "john.doe." + (counter++);
-            }
-            stringValue.setValue(value);
+            stringValue.setValue(entry.getValue());
             attribute.getAttributeValues().add(stringValue);
             attributeStatement.getAttributes().add(attribute);
         }

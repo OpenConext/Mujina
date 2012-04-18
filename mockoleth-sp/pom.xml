@@ -126,6 +126,12 @@
 
     <testResources>
       <testResource>
+        <directory>${project.basedir}/src/main/webapp/WEB-INF</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </testResource>
+      <testResource>
         <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>

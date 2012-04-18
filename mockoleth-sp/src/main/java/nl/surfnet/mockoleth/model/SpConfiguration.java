@@ -17,4 +17,6 @@
 package nl.surfnet.mockoleth.model;
 
 public interface SpConfiguration extends CommonConfiguration {
+    public void setSingleSignOnServiceURL(String singleSignOnServiceURL);
+    public String getSingleSignOnServiceURL();
 }

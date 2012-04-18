@@ -23,10 +23,13 @@ import org.slf4j.LoggerFactory;
 
 public class SpConfigurationImpl extends CommonConfigurationImpl implements SpConfiguration {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(SpConfigurationImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(SpConfigurationImpl.class);
+    private final String defaultIdpSSOServiceURL;
 
-    public SpConfigurationImpl() {
+    private String idpSSOServiceURL;
+
+    public SpConfigurationImpl(String defaultIdpSSOServiceURL) {
+        this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
         reset();
     }
 
@@ -40,8 +43,17 @@ public class SpConfigurationImpl extends CommonConfigurationImpl implements SpCo
             appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
             privateKeyPasswords.put("idp", keystorePassword);
             privateKeyPasswords.put("sp", keystorePassword);
+            idpSSOServiceURL = defaultIdpSSOServiceURL;
         } catch (Exception e) {
             log.error("Unable to create default keystore", e);
         }
+    }
+
+    public void setSingleSignOnServiceURL(String idpSSOServiceURL) {
+        this.idpSSOServiceURL = idpSSOServiceURL;
+    }
+
+    public String getSingleSignOnServiceURL() {
+        return idpSSOServiceURL;
     }
 }

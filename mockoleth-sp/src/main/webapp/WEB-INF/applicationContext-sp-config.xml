@@ -101,6 +101,8 @@
   <bean id="assertionConsumer" class="nl.surfnet.mockoleth.saml.RealAssertionConsumer">
   </bean>
 
-  <bean id="spConfiguration" class="nl.surfnet.mockoleth.model.SpConfigurationImpl"/>
+  <bean id="spConfiguration" class="nl.surfnet.mockoleth.model.SpConfigurationImpl">
+    <constructor-arg value="${IDP_SSO_SERVICE_URL}" />
+  </bean>
 
 </beans>

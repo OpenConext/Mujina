@@ -18,12 +18,14 @@ package nl.surfnet.mockoleth.controllers.tests;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.xml.io.UnmarshallingException;
@@ -35,6 +37,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import nl.surfnet.mockoleth.controllers.IdentityProviderAPI;
 import nl.surfnet.mockoleth.controllers.CommonAPI;
 import nl.surfnet.mockoleth.model.Attribute;
+import nl.surfnet.mockoleth.model.AuthenticationMethod;
 import nl.surfnet.mockoleth.model.Credential;
 import nl.surfnet.mockoleth.model.EntityID;
 import nl.surfnet.mockoleth.model.User;
@@ -151,5 +154,14 @@ public class IdpRestAPITest {
         final Response resp = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
 
         assertNotNull(resp);
+    }
+
+    @Test
+    public void testSetAuthentication() throws IOException, XMLParserException, ServletException, MessageEncodingException, UnmarshallingException {
+        AuthenticationMethod authenticationMethod = new AuthenticationMethod();
+        authenticationMethod.setValue("ALL");
+        restApiController.setAuthenticationMethod(authenticationMethod);
+        final Response response = testHelper.doSamlLogin("jaapie", "asdlkfjbdiufv");
+        assertTrue(testHelper.responseHasAttribute("urn:mace:dir:attribute-def:uid", "jaapie", response));
     }
 }

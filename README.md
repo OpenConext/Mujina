@@ -124,8 +124,6 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/attribute
 </pre>
 
-When you want an attribute to be random on every request, you can set it's value to "random" (without the double quotes).
-
 Removing an attribute
 ---------------------
 
@@ -148,4 +146,39 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
         http://localhost:8080/api/user
+</pre>
+
+Setting the authentication method
+---------------------------------
+
+This API is only available on the IDP.
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"value": "ALL"}' \
+        http://localhost:8080/api/authmethod
+</pre>
+
+The authentication method API has two possible values.
+
+* USER
+* ALL
+
+The default setting is USER.
+This setting requires a valid user to be known in Mockoleth's IdP.
+
+The ALL setting allows any username and password combination.
+As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the supplied username.
+
+Setting the SSO Service URL
+-------------
+
+This API is only available on the SP.
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"value": "http://localhost:8080/SingleSignOnService/vo:test"}' \
+        http://localhost:9090/api/ssoServiceURL
 </pre>

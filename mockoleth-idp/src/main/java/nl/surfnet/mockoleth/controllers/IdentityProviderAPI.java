@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import nl.surfnet.mockoleth.model.Attribute;
+import nl.surfnet.mockoleth.model.AuthenticationMethod;
 import nl.surfnet.mockoleth.model.IdpConfiguration;
 import nl.surfnet.mockoleth.model.SimpleAuthentication;
 import nl.surfnet.mockoleth.model.User;
@@ -77,5 +78,14 @@ public class IdentityProviderAPI {
         }
         SimpleAuthentication auth = new SimpleAuthentication(user.getName(), user.getPassword(), grants);
         configuration.getUsers().add(auth);
+    }
+
+    @RequestMapping(value = {"/authmethod"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void setAuthenticationMethod(@RequestBody AuthenticationMethod authenticationMethod) {
+        log.info("Request to set auth method to {}", authenticationMethod.getValue());
+        final AuthenticationMethod.Method method = AuthenticationMethod.Method.valueOf(authenticationMethod.getValue());
+        configuration.setAuthentication(method);
     }
 }
