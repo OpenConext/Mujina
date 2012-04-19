@@ -47,7 +47,7 @@ public class CommonAPI {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void reset() {
-        log.info("Resetting to default configuration");
+        log.debug("Resetting to default configuration");
         configuration.reset();
     }
 
@@ -55,7 +55,7 @@ public class CommonAPI {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setEntityID(@RequestBody EntityID entityID) {
-        log.info("Request to set entityID {}", entityID.getValue());
+        log.debug("Request to set entityID {}", entityID.getValue());
         configuration.setEntityID(entityID.getValue());
     }
 
@@ -63,7 +63,7 @@ public class CommonAPI {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setSigningCredential(@RequestBody Credential credential) {
-        log.info("Request to set signing credential");
+        log.debug("Request to set signing credential");
         configuration.injectCredential(credential.getCertificate(), credential.getKey());
     }
 

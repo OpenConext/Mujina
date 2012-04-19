@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,27 +51,27 @@ public class IdentityProviderAPI {
         this.configuration = configuration;
     }
 
-    @RequestMapping(value = {"/attribute"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/attributes/{name}"}, method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void setAttribute(@RequestBody Attribute attribute) {
-        log.info("Request to set attribute {} to {}", attribute.getValue(), attribute.getName());
-        configuration.getAttributes().put(attribute.getName(), attribute.getValue());
+    public void setAttribute(@PathVariable String name, @RequestBody Attribute attribute) {
+        log.debug("Request to set attribute {} to {}", attribute.getValue(), name);
+        configuration.getAttributes().put(name, attribute.getValue());
     }
 
-    @RequestMapping(value = {"/attribute"}, method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/attributes/{name}"}, method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void removeAttribute(@RequestBody Attribute attribute) {
-        log.info("Request to remove attribute {}", attribute.getName());
-        configuration.getAttributes().remove(attribute.getName());
+    public void removeAttribute(@PathVariable String name) {
+        log.debug("Request to remove attribute {}", name);
+        configuration.getAttributes().remove(name);
     }
 
-    @RequestMapping(value = {"/user"}, method = RequestMethod.POST)
+    @RequestMapping(value = {"/users"}, method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void addUser(@RequestBody User user) {
-        log.info("Request to add user {} with password {}", user.getName(), user.getPassword());
+        log.debug("Request to add user {} with password {}", user.getName(), user.getPassword());
         final List<GrantedAuthority> grants = new ArrayList<GrantedAuthority>();
         final List<String> authorities = user.getAuthorities();
         for (String authority : authorities) {
@@ -84,7 +85,7 @@ public class IdentityProviderAPI {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setAuthenticationMethod(@RequestBody AuthenticationMethod authenticationMethod) {
-        log.info("Request to set auth method to {}", authenticationMethod.getValue());
+        log.debug("Request to set auth method to {}", authenticationMethod.getValue());
         final AuthenticationMethod.Method method = AuthenticationMethod.Method.valueOf(authenticationMethod.getValue());
         configuration.setAuthentication(method);
     }

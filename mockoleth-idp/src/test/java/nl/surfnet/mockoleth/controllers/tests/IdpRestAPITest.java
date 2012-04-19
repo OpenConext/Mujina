@@ -81,10 +81,9 @@ public class IdpRestAPITest {
         assertFalse(testHelper.responseHasAttribute(name, value, respBefore));
 
         final Attribute attr = new Attribute();
-        attr.setName(name);
         attr.setValue(value);
 
-        restApiController.setAttribute(attr);
+        restApiController.setAttribute(name, attr);
 
         final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
         assertTrue(testHelper.responseHasAttribute(name, value, respAfter));
@@ -98,10 +97,7 @@ public class IdpRestAPITest {
         final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
         assertTrue(testHelper.responseHasAttribute(name, value, respBefore));
 
-        final Attribute attr = new Attribute();
-        attr.setName(name);
-
-        restApiController.removeAttribute(attr);
+        restApiController.removeAttribute(name);
 
         final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
         assertFalse(testHelper.responseHasAttribute(name, value, respAfter));

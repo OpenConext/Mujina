@@ -84,7 +84,7 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
             }
             injectKeyStore(entityId, certificate, key);
         } catch (Exception e) {
-            LOGGER.warn("Unable to append signing credential");
+            throw new RuntimeException("Unable to append signing credential");
         }
     }
 

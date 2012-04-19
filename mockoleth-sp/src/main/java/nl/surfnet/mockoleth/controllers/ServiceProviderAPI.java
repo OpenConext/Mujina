@@ -47,7 +47,7 @@ public class ServiceProviderAPI {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setAttribute(@RequestBody SSOServiceURL ssoServiceURL) {
-        log.info("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
+        log.debug("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
         configuration.setSingleSignOnServiceURL(ssoServiceURL.getValue());
     }
 

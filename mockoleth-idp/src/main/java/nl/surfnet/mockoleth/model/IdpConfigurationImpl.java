@@ -43,7 +43,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     @Override
     public void reset() {
         authMethod = AuthenticationMethod.Method.USER;
-        entityId = "idp";
+        entityId = "http://mock-idp";
         attributes.clear();
         attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
         attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");

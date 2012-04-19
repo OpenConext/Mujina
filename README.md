@@ -108,7 +108,7 @@ QQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ\
 5JCAUQcdrEQJ
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"certificate": "$CERT","key":"$KEY"}' \
+        -X POST -d "{\"certificate\": \"$CERT\",\"key\":\"$KEY\"}" \
         http://localhost:8080/api/signing-credential
 </pre>
 
@@ -120,8 +120,8 @@ This API is only available on the IDP.
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"name": "urn:mace:dir:attribute-def:foo", "value": "bar"}' \
-        http://localhost:8080/api/attribute
+        -X PUT -d '{"value": "bar"}' \
+        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
 </pre>
 
 Removing an attribute
@@ -132,8 +132,8 @@ This API is only available on the IDP.
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X DELETE -d '{"name": "urn:mace:dir:attribute-def:uid"}' \
-        http://localhost:8080/api/attribute
+        -X DELETE \
+        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
 </pre>
 
 Adding a user
@@ -144,8 +144,8 @@ This API is only available on the IDP.
 <pre>
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X POST -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
-        http://localhost:8080/api/user
+        -X PUT -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
+        http://localhost:8080/api/users
 </pre>
 
 Setting the authentication method

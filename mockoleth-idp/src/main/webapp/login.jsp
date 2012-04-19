@@ -43,7 +43,7 @@
 
 <h3>Login with Username and Password</h3>
 
-<form name='f' action='/idp/j_spring_security_check' method='POST'>
+<form name='login' action='/idp/j_spring_security_check' method='POST'>
   <table>
     <tr>
       <td>User:</td>
