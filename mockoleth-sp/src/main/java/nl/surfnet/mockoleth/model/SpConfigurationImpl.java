@@ -39,10 +39,8 @@ public class SpConfigurationImpl extends CommonConfigurationImpl implements SpCo
         try {
             keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null, keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            privateKeyPasswords.put("idp", keystorePassword);
-            privateKeyPasswords.put("sp", keystorePassword);
+            appendToKeyStore(keyStore, "http://mock-sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+            privateKeyPasswords.put("http://mock-sp", keystorePassword);
             idpSSOServiceURL = defaultIdpSSOServiceURL;
         } catch (Exception e) {
             log.error("Unable to create default keystore", e);

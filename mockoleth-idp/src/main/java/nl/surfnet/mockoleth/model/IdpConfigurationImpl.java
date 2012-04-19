@@ -57,10 +57,8 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
         try {
             keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null, keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            privateKeyPasswords.put("idp", keystorePassword);
-            privateKeyPasswords.put("sp", keystorePassword);
+            appendToKeyStore(keyStore, "http://mock-idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+            privateKeyPasswords.put("http://mock-idp", keystorePassword);
         } catch (Exception e) {
             LOGGER.error("Unable to create default keystore", e);
         }
