@@ -17,7 +17,7 @@ Thus, Mockoloth makes testing your stack a breeze!
 
 The default Identity Provider configuration is as follows:
 
-* The Entity ID is "idp"
+* The Entity ID is "http://mock-idp"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
 * It has the following attributes
