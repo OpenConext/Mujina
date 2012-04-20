@@ -10,11 +10,26 @@
 Mockoleth
 =========
 
-Mockoleth mocks a SAML Identity and Service Provider.
+Mockoleth mocks a SAML2 Identity and Service Provider.
 There is a default configuration, which you can override using a REST API.
 This approach removes the need for special test configuration sets in your setup.
 Thus, Mockoloth makes testing your stack a breeze!
+Mockoloth can be used in combination with testsuites like Selenium to automate authentication 
+testing for your applications
 
+Features
+--------
+- A rest api to allow for the just-in-time manipulation of:
+  * IdP user credentials (username + password)
+  * IdP user role
+  * IdP user attributes
+  * IdP signing certificate
+  * IdP entityID
+  * SP entityID
+  * SP signing certificate
+
+Defaults
+--------
 The default Identity Provider configuration is as follows:
 
 * The Entity ID is "http://mock-idp"
@@ -34,7 +49,7 @@ The default Identity Provider configuration is as follows:
 
 The default Service Provider configuration is as follows:
 
-* The Entity ID is "sp"
+* The Entity ID is "http://mock-sp"
 * There is a default certificate and private key available
 
 In this document you will find some examples for overriding the default configuration.
@@ -112,7 +127,7 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/signing-credential
 </pre>
 
-Setting attribute urn:mace:dir:attribute-def:foo to bar
+Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
 -------------------------------------------------------
 
 This API is only available on the IDP.
