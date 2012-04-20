@@ -15,7 +15,7 @@ There is a default configuration, which you can override using a REST API.
 This approach removes the need for special test configuration sets in your setup.
 Thus, Mockoloth makes testing your stack a breeze!
 Mockoloth can be used in combination with testsuites like Selenium to automate authentication 
-testing for your applications
+testing for your applications.
 
 Features
 --------
