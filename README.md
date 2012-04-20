@@ -19,7 +19,9 @@ testing for your applications
 
 Features
 --------
-- A rest api to allow for the just-in-time manipulation of:
+- A SAML2 complient Identity Provider
+- A SAML2 complient Service Provider
+- A REST api to allow for the 'just-in-time' manipulation of:
   * IdP user credentials (username + password)
   * IdP user role
   * IdP user attributes
