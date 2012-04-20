@@ -19,16 +19,18 @@ testing for your applications.
 
 Features
 --------
-- A SAML2 complient Identity Provider
-- A SAML2 complient Service Provider
-- A REST api to allow for the 'just-in-time' manipulation of:
+- A SAML2 complient Identity Provider. A REST api allows for the 'just-in-time' manipulation of:
   * IdP user credentials (username + password)
   * IdP user role
   * IdP user attributes
   * IdP signing certificate
   * IdP entityID
+
+- A SAML2 complient Service Provider. A REST api allows for the 'just-in-time' manipulation of:
   * SP entityID
-  * SP signing certificate
+  * SP signing certificate  
+The SP displays the attributes as these were recieved from an IdP
+
 
 Defaults
 --------
