@@ -30,7 +30,7 @@ Features
   * entityID
   * signing certificate  
   * sso Service URL
-The SP displays the attributes as these were recieved from an IdP
+  The SP displays the attributes as these were recieved from an IdP
 
 
 Defaults
