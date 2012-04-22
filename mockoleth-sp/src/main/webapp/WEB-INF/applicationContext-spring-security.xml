@@ -39,6 +39,7 @@
     <intercept-url pattern="/api/**" filters="none" />
     <intercept-url pattern="/social/**" filters="none" />
     <intercept-url pattern="/assets/**" filters="none" />
+    <intercept-url pattern="/favicon.ico" filters="none" />
   </http>
 
   <authentication-manager alias="authenticationManager">

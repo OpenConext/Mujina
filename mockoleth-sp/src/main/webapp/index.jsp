@@ -44,6 +44,7 @@
 
 <a href="user.jsp">protected user page</a> <br/>
 <a href="admin.jsp">protected admin page</a> <br/>
+<a href="social/social-queries.shtml">unprotected oauth test framework</a> <br/>
 <a href="j_spring_security_logout">End your session with the Service Provider</a>
 <i>Does not end your session with the IDP</i> <br/>
 

@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="sec"
 	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
@@ -51,72 +53,247 @@
 				OpenSocial API.</p>
 		</div>
 	</div>
-	<div class="row">
-		<div class="span5 columns">
-			<div class="accordion" id="mainOptions">
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseZero"> <span
-							class="badge badge-info">0</span> API Settings </a>
-					</div>
-					<div id="collapseZero" class="accordion-body collapse in">
-						<div class="accordion-inner">TODO: settings, oauth version,
-							end-points, preferences</div>
-					</div>
-				</div>
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseOne"> <span
-							class="badge badge-info">1</span> Authorize SP application </a>
-					</div>
-					<div id="collapseOne" class="accordion-body collapse in">
-						<div class="accordion-inner">TODO: enter authorization URL,
-							redirect to showing request / response</div>
-					</div>
-				</div>
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseTwo"> <span
-							class="badge badge-info">2</span> Exchange authorization code for
-							tokens </a>
-					</div>
-					<div id="collapseTwo" class="accordion-body collapse">
-						<div class="accordion-inner">TODO: show authorization code +
-							tokens</div>
-					</div>
-				</div>
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse"
-							data-parent="#mainOptions" href="#collapseThree"> <span
-							class="badge badge-info">3</span> Configure request to API </a>
-					</div>
-					<div id="collapseThree" class="accordion-body collapse">
-						<div class="accordion-inner">TODO show input box for request
-							url + examples, show request/ response</div>
-					</div>
-				</div>
-			</div>
-			<a class="btn btn-small btn-info" href="#"> <i
-				class="icon-info-sign"></i> More Info</a>
 
+	<div class="row">
+		<div class="span7 columns">
+			<form:form action="/social/api.shtml" commandName="settings"
+				method="post" class="form-horizontal">
+				<div class="accordion" id="mainOptions">
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#mainOptions" href="#step1"> <span
+								class="badge badge-info">1</span> OAuth Settings</a>
+						</div>
+						<div id="step1" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<fieldset>
+									<div class="control-group">
+										<label class="control-label" for="version">OAuth
+											Version</label>
+										<div class="controls">
+											<form:select id="version" path="version" items="${versions}" />
+											<p class="help-block">Note: the OAuth endpoints are
+												different per version in api.surfconext</p>
+										</div>
+										<div class="control-group">
+											<label class="control-label" for="oauthKey">OAuth key</label>
+											<div class="controls">
+												<form:input path="oauthKey" id="oauthKey" name="oauthKey"
+													class="input-xxlarge" />
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label" for="oauthSecret">OAuth
+												secret</label>
+											<div class="controls">
+												<form:input path="oauthSecret" id="oauthSecret"
+													name="oauthSecret" class="input-xxlarge" />
+											</div>
+										</div>
+									</div>
+									<div id="oauth10a" ${settings.version==
+										'1.0a' ? '' : 'style="display: none;"'}>
+										<div class="control-group">
+											<label class="control-label" for="twoLegged">Two-Legged</label>
+											<div class="controls">
+												<label class="checkbox"> <form:checkbox
+														id="twoLegged" name="twoLegged" path="twoLegged" /> </label>
+											</div>
+										</div>
+										<div id="oauth10aInput" ${settings.twoLegged==
+											false ? '' : 'style="display: none;"'}>
+											<div class="control-group">
+												<label class="control-label" for="requestTokenEndPoint">RequestToken
+													URL</label>
+												<div class="controls">
+													<form:input path="requestTokenEndPoint"
+														id="requestTokenEndPoint" name="requestTokenEndPoint"
+														class="input-xxlarge" />
+													<p class="help-block">Hint:
+														https://api.env.surfconext.nl/oauth1/requestToken</p>
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="accessTokenEndPoint">AccessToken
+													URL</label>
+												<div class="controls">
+													<form:input path="accessTokenEndPoint"
+														id="accessTokenEndPoint" name="accessTokenEndPoint"
+														class="input-xxlarge" />
+													<p class="help-block">Hint:
+														https://api.env.surfconext.nl/oauth1/accessToken</p>
+												</div>
+											</div>
+											<div class="control-group">
+												<label class="control-label" for="authorizationURL">Authorization
+													URL</label>
+												<div class="controls">
+													<form:input path="authorizationURL" id="authorizationURL"
+														name="authorizationURL" class="input-xxlarge" />
+													<p class="help-block">Hint:
+														https://api.env.surfconext.nl/oauth1/confirm_access</p>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div id="oauth20" ${settings.version==
+										'2.0' ? '' : 'style="display: none;"'}>
+										<div class="control-group">
+											<label class="control-label" for="implicitGrant">Implicit
+												Grant</label>
+											<div class="controls">
+												<label class="checkbox"> <form:checkbox
+														id="implicitGrant" name="implicitGrant"
+														path="implicitGrant" /> </label>
+											</div>
+										</div>
+										<div id="oauth20Input" ${settings.implicitGrant==
+											false ? '' : 'style="display: none;"'}>
+											<div class="control-group">
+												<label class="control-label" for="accessTokenEndPoint2">AccessToken
+													URL</label>
+												<div class="controls">
+													<form:input path="accessTokenEndPoint2"
+														id="accessTokenEndPoint2" name="accessTokenEndPoint2"
+														class="input-xxlarge" />
+													<p class="help-block">Hint:
+														https://api.env.surfconext.nl/oauth2/accessToken</p>
+												</div>
+											</div>
+										</div>
+										<div class="control-group">
+											<label class="control-label" for="authorizationURL2">Authorization
+												URL</label>
+											<div class="controls">
+												<form:input path="authorizationURL2" id="authorizationURL2"
+													name="authorizationURL2" class="input-xxlarge" />
+												<p class="help-block">Hint:
+													https://api.env.surfconext.nl/oauth2/confirm_access</p>
+											</div>
+										</div>
+									</div>
+									<div class="form-actions">
+										<button name="step1" class="btn btn-primary">Next</button>
+										<button name="reset" class="btn">Reset</button>
+									</div>
+
+								</fieldset>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#mainOptions" href="#step2"> <span
+								class="badge badge-info">2</span> OAuth Authorization</a>
+						</div>
+						<div id="step2" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<fieldset>
+									<div class="control-group">
+										<label class="control-label">Authorization URL</label>
+										<div class="controls">
+											<p>
+												<c:out value="${authorizationUrlAfter}" />
+											</p>
+											<p class="help-block">Note: this is the URL to redirect
+												to for user authentication</p>
+										</div>
+									</div>
+									<div class="form-actions">
+										<button name="step2" class="btn btn-primary">Next</button>
+										<button name="reset" class="btn">Reset</button>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+					<div class="accordion-group">
+						<div class="accordion-heading">
+							<a class="accordion-toggle" data-toggle="collapse"
+								data-parent="#mainOptions" href="#step3"> <span
+								class="badge badge-info">3</span> OAuth Requests </a>
+						</div>
+						<div id="step3" class="accordion-body collapse">
+							<div class="accordion-inner">
+								<fieldset>
+									<div class="control-group">
+										<label class="control-label">Access token</label>
+										<div class="controls">
+											<p class="help-block">
+												<c:out value="${accessToken.token}" />
+											</p>
+											<p class="help-block">Note: this is the accessToken for
+												all subsequent OAuth queries</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="count">Count </label>
+										<div class="controls">
+											<form:input path="count" id="count" name="count"
+												class="input-mini" />
+											<p class="help-block">The count query parameter is the
+												maximum number of items (e.g. groups or teammembers) to
+												return</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="startIndex">Start
+											Index </label>
+										<div class="controls">
+											<form:input path="startIndex" id="startIndex"
+												name="startIndex" class="input-mini" />
+											<p class="help-block">The startIndex query parameter
+												determines how many items to skip (in order to support
+												pagination)</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="sortBy">Sorting </label>
+										<div class="controls">
+											<form:input path="sortBy" id="sortBy" name="sortBy"
+												class="input-mini" />
+											<p class="help-block">The sortBy query parameter
+												determines how items are sorted (the compound sortBy
+												parameter is supported, e.g. name.familyName)</p>
+										</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="requestURL">API
+											Request </label>
+										<div class="controls">
+											<form:input path="requestURL" id="requestURL"
+												name="requestURL" class="input-xxlarge" />
+											<p class="help-block">Hint:
+												https://api.dev.surfconext.nl/social/rest/groups/@me</p>
+										</div>
+									</div>
+									<div class="form-actions">
+										<button name="step3" class="btn btn-primary">Fetch</button>
+										<button name="reset" class="btn">Reset</button>
+									</div>
+								</fieldset>
+							</div>
+						</div>
+					</div>
+				</div>
+				<a class="btn btn-small btn-info" href="#"> <i
+					class="icon-info-sign"></i> More Info</a>
+				<input id="step" type="hidden"
+					value="<c:out value="${settings.step}"/>" name="step" />
+			</form:form>
 		</div>
-		<div class="span6 columns">
+		<div class="span5 columns">
 			<div id="request">
 				<div class="alert alert-info alert-http">HTTP Request</div>
-				<pre class="prettyprint pre-scrollable pre-json">
-					<c:out value="${requestInfo}" />
-				</pre>
+				<pre class="prettyprint pre-scrollable pre-json"><c:out value="${requestInfo}" /></pre>
 			</div>
 			<div id="response">
 				<div class="alert alert-info alert-http">HTTP Response</div>
-				<pre class="prettyprint pre-scrollable pre-json">
-					<c:out value="${responseInfo}" />
-				</pre>
+				<pre class="prettyprint pre-scrollable pre-json"><c:out value="${responseInfo}" /></pre>
 			</div>
+
 		</div>
 	</div>
 
