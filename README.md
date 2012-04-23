@@ -60,6 +60,16 @@ The default Service Provider configuration is as follows:
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
 
+Build Mockoleth
+---------------
+[Maven 3](http://maven.apache.org) is needed to build and run Mockoleth.
+
+Mockoleth may depend on artifacts (poms, jars) from open source projects that are not available in a public Maven
+repository. Dependencies with groupId org.surfnet.coin can be built from source from the following locations:
+
+  - coin-master: git://github.com/OpenConext/OpenConext-parent.git
+  - coin-test: git://github.com/OpenConext/OpenConext-test.git
+
 Run the IDP using jetty
 -----------------------
 
