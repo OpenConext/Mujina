@@ -48,17 +48,6 @@ public class ConfigurableApi10a extends DefaultApi10a {
     return new ConfigurableOAuth10aServiceImpl(this, config);
   }
 
-  public void setAuthorizationUrl(String authorizationUrl) {
-    this.authorizationUrl = authorizationUrl;
-  }
-
-  public void setRequestTokenEndpoint(String requestTokenEndpoint) {
-    this.requestTokenEndpoint = requestTokenEndpoint;
-  }
-
-  public void setAccessTokenEndpoint(String accessTokenEndpoint) {
-    this.accessTokenEndpoint = accessTokenEndpoint;
-  }
 
   /* (non-Javadoc)
    * @see org.scribe.builder.api.DefaultApi10a#getRequestTokenEndpoint()

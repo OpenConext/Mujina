@@ -15,3 +15,7 @@ body {
 	font-size: 10px;
 	line-height: 14px;
 }
+.break-word {
+	word-wrap: break-word;
+	width: 475px;
+}

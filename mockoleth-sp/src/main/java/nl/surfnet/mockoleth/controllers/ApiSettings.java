@@ -18,6 +18,8 @@
  */
 package nl.surfnet.mockoleth.controllers;
 
+import nl.surfnet.mockoleth.oauth.OAuthVersion;
+
 import org.scribe.model.Token;
 
 /**
@@ -43,6 +45,7 @@ public class ApiSettings {
   private int count;
   private int startIndex;
   private String sortBy;
+  private String parseAnchorForAccesstoken;
 
   public int getCount() {
     return count;
@@ -112,6 +115,14 @@ public class ApiSettings {
     return twoLegged;
   }
 
+  public boolean isTwoLeggedOauth() {
+    return twoLegged && isOAuth10a();
+  }
+
+  public boolean isOAuth10a() {
+    return OAuthVersion.version10a.getVersion().equals(getVersion());
+  }
+  
   public void setTwoLegged(boolean twoLegged) {
     this.twoLegged = twoLegged;
   }
@@ -152,6 +163,10 @@ public class ApiSettings {
     return implicitGrant;
   }
 
+  public boolean isImplicitGrantOauth() {
+    return implicitGrant && !isOAuth10a();
+  }
+
   public void setImplicitGrant(boolean implicitGrant) {
     this.implicitGrant = implicitGrant;
   }
@@ -171,4 +186,13 @@ public class ApiSettings {
   public void setRequestURL(String requestURL) {
     this.requestURL = requestURL;
   }
+  
+  public String getParseAnchorForAccesstoken() {
+    return parseAnchorForAccesstoken;
+  }
+
+  public void setParseAnchorForAccesstoken(String parseAnchorForAccesstoken) {
+    this.parseAnchorForAccesstoken = parseAnchorForAccesstoken;
+  }
+
 }

@@ -81,9 +81,12 @@
 											<div class="controls">
 												<form:input path="oauthKey" id="oauthKey" name="oauthKey"
 													class="input-xxlarge" />
+												<p class="help-block">Hint: https://testsp.dev.surfconext.nl/shibboleth</p>	
 											</div>
 										</div>
-										<div class="control-group">
+										<div class="control-group" id="secretInput"
+											${settings.implicitGrant==
+											false ? '' : 'style="display: none;"'}>
 											<label class="control-label" for="oauthSecret">OAuth
 												secret</label>
 											<div class="controls">
@@ -111,7 +114,7 @@
 														id="requestTokenEndPoint" name="requestTokenEndPoint"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.env.surfconext.nl/oauth1/requestToken</p>
+														https://api.dev.surfconext.nl/oauth1/requestToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -122,7 +125,7 @@
 														id="accessTokenEndPoint" name="accessTokenEndPoint"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.env.surfconext.nl/oauth1/accessToken</p>
+														https://api.dev.surfconext.nl/oauth1/accessToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -132,7 +135,7 @@
 													<form:input path="authorizationURL" id="authorizationURL"
 														name="authorizationURL" class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.env.surfconext.nl/oauth1/confirm_access</p>
+														https://api.dev.surfconext.nl/oauth1/confirm_access</p>
 												</div>
 											</div>
 										</div>
@@ -158,7 +161,7 @@
 														id="accessTokenEndPoint2" name="accessTokenEndPoint2"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.env.surfconext.nl/oauth2/accessToken</p>
+														https://api.dev.surfconext.nl/oauth2/token</p>
 												</div>
 											</div>
 										</div>
@@ -169,7 +172,7 @@
 												<form:input path="authorizationURL2" id="authorizationURL2"
 													name="authorizationURL2" class="input-xxlarge" />
 												<p class="help-block">Hint:
-													https://api.env.surfconext.nl/oauth2/confirm_access</p>
+													https://api.dev.surfconext.nl/oauth2/authorize</p>
 											</div>
 										</div>
 									</div>
@@ -194,7 +197,7 @@
 									<div class="control-group">
 										<label class="control-label">Authorization URL</label>
 										<div class="controls">
-											<p>
+											<p class="break-word">
 												<c:out value="${authorizationUrlAfter}" />
 											</p>
 											<p class="help-block">Note: this is the URL to redirect
@@ -221,7 +224,7 @@
 									<div class="control-group">
 										<label class="control-label">Access token</label>
 										<div class="controls">
-											<p class="help-block">
+											<p id="accessTokenValue" class="help-block">
 												<c:out value="${accessToken.token}" />
 											</p>
 											<p class="help-block">Note: this is the accessToken for
@@ -270,7 +273,7 @@
 										</div>
 									</div>
 									<div class="form-actions">
-										<button name="step3" class="btn btn-primary">Fetch</button>
+										<button id="step3" name="step3" class="btn btn-primary">Fetch</button>
 										<button name="reset" class="btn">Reset</button>
 									</div>
 								</fieldset>
@@ -278,10 +281,13 @@
 						</div>
 					</div>
 				</div>
-				<a class="btn btn-small btn-info" href="#"> <i
-					class="icon-info-sign"></i> More Info</a>
+				<a class="btn btn-small btn-info" target="_blank"
+					href="http://tutorials.jenkov.com/oauth2/authorization-code-request-response.html">
+					<i class="icon-info-sign"></i> More Info</a>
 				<input id="step" type="hidden"
 					value="<c:out value="${settings.step}"/>" name="step" />
+				<input id="parseAnchorForAccesstoken" type="hidden"
+					value="<c:out value="${parseAnchorForAccesstoken}"/>" name="parseAnchorForAccesstoken" />
 			</form:form>
 		</div>
 		<div class="span5 columns">
@@ -291,7 +297,7 @@
 			</div>
 			<div id="response">
 				<div class="alert alert-info alert-http">HTTP Response</div>
-				<pre class="prettyprint pre-scrollable pre-json"><c:out value="${responseInfo}" /></pre>
+				<pre id="responseInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${responseInfo}" /></pre>
 			</div>
 
 		</div>
