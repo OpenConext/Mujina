@@ -282,7 +282,7 @@
 					</div>
 				</div>
 				<a class="btn btn-small btn-info" target="_blank"
-					href="http://tutorials.jenkov.com/oauth2/authorization-code-request-response.html">
+					href="https://wiki.surfnetlabs.nl/display/conextdocumentation/api.surfconext.nl">
 					<i class="icon-info-sign"></i> More Info</a>
 				<input id="step" type="hidden"
 					value="<c:out value="${settings.step}"/>" name="step" />
