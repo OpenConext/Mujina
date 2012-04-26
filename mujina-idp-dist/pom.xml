@@ -19,7 +19,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
-    <artifactId>mockoleth</artifactId>
+    <artifactId>mujina</artifactId>
     <groupId>org.surfnet.coin</groupId>
     <version>2.2.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
@@ -27,13 +27,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.surfnet.coin</groupId>
-  <artifactId>mockoleth-idp-dist</artifactId>
+  <artifactId>mujina-idp-dist</artifactId>
   <packaging>pom</packaging>
-  <description>Mockoleth Idp distribution package</description>
+  <description>Mujina Idp distribution package</description>
 
   <build>
-
-
     <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
@@ -74,7 +72,7 @@
   <dependencies>
     <dependency>
       <groupId>org.surfnet.coin</groupId>
-      <artifactId>mockoleth-idp</artifactId>
+      <artifactId>mujina-idp</artifactId>
       <type>war</type>
       <version>${project.version}</version>
     </dependency>
