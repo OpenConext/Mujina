@@ -48,7 +48,7 @@
     <beans:constructor-arg value="/login.jsp"/>
   </beans:bean>
 
-  <beans:bean id="authnFailureHandler" class="nl.surfnet.mockoleth.spring.RealAuthenticationFailureHandler">
+  <beans:bean id="authnFailureHandler" class="nl.surfnet.mujina.spring.RealAuthenticationFailureHandler">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
     <beans:constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
@@ -56,7 +56,7 @@
     <beans:constructor-arg ref="simpleUrlAuthenticationFailureHandler"/>
   </beans:bean>
   
-  <beans:bean id="customAuthenticationProvider" class="nl.surfnet.mockoleth.spring.security.CustomAuthenticationProvider" />
+  <beans:bean id="customAuthenticationProvider" class="nl.surfnet.mujina.spring.security.CustomAuthenticationProvider" />
 
   <authentication-manager>
     <authentication-provider ref="customAuthenticationProvider" />

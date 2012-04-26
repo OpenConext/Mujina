@@ -46,12 +46,12 @@
     <authentication-provider ref="samlAuthenticationProvider"/>
   </authentication-manager>
 
-  <beans:bean id="samlAuthenticationProvider" class="nl.surfnet.mockoleth.spring.SAMLResponseAuthenticationProvider">
+  <beans:bean id="samlAuthenticationProvider" class="nl.surfnet.mujina.spring.SAMLResponseAuthenticationProvider">
     <beans:constructor-arg ref="assertionConsumer"/>
   </beans:bean>
 
 
-  <beans:bean id="authenticationFailureHandler" class="nl.surfnet.mockoleth.spring.RealAuthenticationFailureHandler">
+  <beans:bean id="authenticationFailureHandler" class="nl.surfnet.mujina.spring.RealAuthenticationFailureHandler">
 
     <beans:constructor-arg>
       <beans:bean class="org.springframework.security.web.savedrequest.HttpSessionRequestCache"/>
@@ -59,7 +59,7 @@
 
   </beans:bean>
 
-  <beans:bean id="samlSolicitedFilter" class="nl.surfnet.mockoleth.spring.SAMLResponseAuthenticationProcessingFilter">
+  <beans:bean id="samlSolicitedFilter" class="nl.surfnet.mujina.spring.SAMLResponseAuthenticationProcessingFilter">
     <beans:constructor-arg value="${ASSERTION_CONSUMER_URI}"/>
     <beans:property name="filterProcessesUrl" value="${ASSERTION_CONSUMER_URI}"/>
     <beans:property name="bindingAdapter" ref="bindingAdpater"/>
@@ -67,7 +67,7 @@
     <beans:property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
   </beans:bean>
 
-  <beans:bean id="samlAuthenticationEntryPoint" class="nl.surfnet.mockoleth.spring.SAMLAuthenticationEntryPoint">
+  <beans:bean id="samlAuthenticationEntryPoint" class="nl.surfnet.mujina.spring.SAMLAuthenticationEntryPoint">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
     <beans:property name="assertionConsumerServiceURL" value="${ASSERTION_CONSUMER_URL}"/>

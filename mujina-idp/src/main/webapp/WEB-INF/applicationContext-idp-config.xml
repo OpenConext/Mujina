@@ -27,17 +27,17 @@
 
   <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
-  <bean id="timeService" class="nl.surfnet.mockoleth.util.TimeService"/>
-  <bean id="idService" class="nl.surfnet.mockoleth.util.IDService"/>
-  <bean id="samlValidaotrSuite" class="nl.surfnet.mockoleth.saml.xml.SAML2ValidatorSuite"/>
+  <bean id="timeService" class="nl.surfnet.mujina.util.TimeService"/>
+  <bean id="idService" class="nl.surfnet.mujina.util.IDService"/>
+  <bean id="samlValidaotrSuite" class="nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite"/>
 
-  <bean id="singleSignOnService" class="nl.surfnet.mockoleth.saml.SingleSignOnService">
+  <bean id="singleSignOnService" class="nl.surfnet.mujina.saml.SingleSignOnService">
     <constructor-arg value="${AUTHN_RESPONDER_URI}"/>
     <constructor-arg ref="bindingAdpater"/>
     <constructor-arg ref="samlValidaotrSuite"/>
   </bean>
 
-  <bean id="authnResponder" class="nl.surfnet.mockoleth.saml.SSOSuccessAuthnResponder">
+  <bean id="authnResponder" class="nl.surfnet.mujina.saml.SSOSuccessAuthnResponder">
     <constructor-arg ref="timeService"/>
     <constructor-arg ref="bindingAdpater"/>
     <constructor-arg ref="idService"/>
@@ -66,7 +66,7 @@
     <constructor-arg ref="samlParserPool"/>
   </bean>
 
-  <bean id="bindingAdpater" class="nl.surfnet.mockoleth.saml.PostBindingAdapter">
+  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.PostBindingAdapter">
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
@@ -77,7 +77,7 @@
     <constructor-arg ref="securityPolicy"/>
   </bean>
 
-  <bean id="securityPolicy" class="nl.surfnet.mockoleth.saml.SecurityPolicyDelegate">
+  <bean id="securityPolicy" class="nl.surfnet.mujina.saml.SecurityPolicyDelegate">
     <constructor-arg>
       <list>
         <ref bean="issueInstantRule"/>
@@ -104,17 +104,17 @@
 
   </bean>
 
-  <bean id="signatureSecurityPolicyRule" class="nl.surfnet.mockoleth.saml.SignatureSecurityPolicyRule">
+  <bean id="signatureSecurityPolicyRule" class="nl.surfnet.mujina.saml.SignatureSecurityPolicyRule">
     <constructor-arg ref="keyStoreCredentialResolverDelegate"></constructor-arg>
     <constructor-arg>
       <bean class="org.opensaml.security.SAMLSignatureProfileValidator"></bean>
     </constructor-arg>
   </bean>
 
-  <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mockoleth.saml.KeyStoreCredentialResolverDelegate">
+  <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mujina.saml.KeyStoreCredentialResolverDelegate">
     <property name="configuration" ref="idpConfiguration" />
   </bean>
 
-  <bean id="idpConfiguration" class="nl.surfnet.mockoleth.model.IdpConfigurationImpl"/>
+  <bean id="idpConfiguration" class="nl.surfnet.mujina.model.IdpConfigurationImpl"/>
 
 </beans>
