@@ -1,14 +1,17 @@
-<pre>                   _         _      _   _
-  /\/\   ___   ___| | _____ | | ___| |_| |__
- /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
-/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
-\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+<pre>___  ___        _  _
+|  \/  |       (_)(_)
+| .  . | _   _  _  _  _ __    __ _
+| |\/| || | | || || || '_ \  / _` |
+| |  | || |_| || || || | | || (_| |
+\_|  |_/ \__,_|| ||_||_| |_| \__,_|
+              _/ |
+             |__/
 
   Mock Identity and Service Provider using OpenSAML
 </pre>
 
 Mujina
-=========
+======
 
 Mujina mocks a SAML2 Identity and Service Provider.
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up. Thus, Mockoloth makes testing your stack a breeze! Mockoloth can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
