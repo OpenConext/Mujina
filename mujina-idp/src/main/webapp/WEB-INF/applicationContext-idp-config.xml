@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012 SURFnet bv, The Netherlands
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	    http://www.springframework.org/schema/context
+	    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+  <context:annotation-config />
+
+  <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
+
+  <bean id="timeService" class="nl.surfnet.mujina.util.TimeService"/>
+  <bean id="idService" class="nl.surfnet.mujina.util.IDService"/>
+  <bean id="samlValidaotrSuite" class="nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite"/>
+
+  <bean id="singleSignOnService" class="nl.surfnet.mujina.saml.SingleSignOnService">
+    <constructor-arg value="${AUTHN_RESPONDER_URI}"/>
+    <constructor-arg ref="bindingAdpater"/>
+    <constructor-arg ref="samlValidaotrSuite"/>
+  </bean>
+
+  <bean id="authnResponder" class="nl.surfnet.mujina.saml.SSOSuccessAuthnResponder">
+    <constructor-arg ref="timeService"/>
+    <constructor-arg ref="bindingAdpater"/>
+    <constructor-arg ref="idService"/>
+    <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
+    <property name="responseValidityTimeInSeconds" value="${ASSERTION_VALIDITY_TIME_INS_SECONDS}"/>
+  </bean>
+
+  <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+    <property name="preferFileSystemAccess" value="false"/>
+    <property name="velocityProperties">
+      <props>
+        <prop key="resource.loader">classpath</prop>
+        <prop key="classpath.resource.loader.class">
+          org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+        </prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="samlParserPool" class="org.opensaml.xml.parse.BasicParserPool">
+
+    <property name="maxPoolSize" value="${MAX_PARSER_POOL_SIZE}"/>
+  </bean>
+
+  <bean id="decoder" class="org.opensaml.saml2.binding.decoding.HTTPPostSimpleSignDecoder">
+    <constructor-arg ref="samlParserPool"/>
+  </bean>
+
+  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.PostBindingAdapter">
+    <constructor-arg ref="decoder"/>
+    <constructor-arg ref="securityPolicyResolver"/>
+    <property name="velocityEngine" ref="velocityEngine"/>
+    <property name="configuration" ref="idpConfiguration" />
+  </bean>
+
+  <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
+    <constructor-arg ref="securityPolicy"/>
+  </bean>
+
+  <bean id="securityPolicy" class="nl.surfnet.mujina.saml.SecurityPolicyDelegate">
+    <constructor-arg>
+      <list>
+        <ref bean="issueInstantRule"/>
+        <ref bean="messageReplayRule"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="mapBasedStorageService" class="org.opensaml.util.storage.MapBasedStorageService"/>
+
+  <bean id="replayCache" class="org.opensaml.util.storage.ReplayCache">
+    <constructor-arg ref="mapBasedStorageService"/>
+    <constructor-arg value="${REPLAY_CACHE_LIFE_IN_MILLIS}"></constructor-arg>
+  </bean>
+
+  <bean id="messageReplayRule" class="org.opensaml.common.binding.security.MessageReplayRule">
+    <constructor-arg ref="replayCache"/>
+  </bean>
+
+  <bean id="issueInstantRule" class="org.opensaml.common.binding.security.IssueInstantRule">
+    <constructor-arg index="0" value="${ISSUE_INSTANT_CHECK_CLOCK_SKEW_IN_SECONDS}"/>
+    <constructor-arg index="1" value="${ISSUE_INSTANT_CHECK_VALIDITY_TIME_IN_SECONDS}"/>
+    <property name="requiredRule" value="true"/>
+
+  </bean>
+
+  <bean id="signatureSecurityPolicyRule" class="nl.surfnet.mujina.saml.SignatureSecurityPolicyRule">
+    <constructor-arg ref="keyStoreCredentialResolverDelegate"></constructor-arg>
+    <constructor-arg>
+      <bean class="org.opensaml.security.SAMLSignatureProfileValidator"></bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mujina.saml.KeyStoreCredentialResolverDelegate">
+    <property name="configuration" ref="idpConfiguration" />
+  </bean>
+
+  <bean id="idpConfiguration" class="nl.surfnet.mujina.model.IdpConfigurationImpl"/>
+
+</beans>
