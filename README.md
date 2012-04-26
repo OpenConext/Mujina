@@ -1,39 +1,27 @@
-<pre>                   _         _      _   _
-  /\/\   ___   ___| | _____ | | ___| |_| |__
- /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
-/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
-\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+<pre>___  ___        _  _               
+|  \/  |       (_)(_)              
+| .  . | _   _  _  _  _ __    __ _ 
+| |\/| || | | || || || '_ \  / _` |
+| |  | || |_| || || || | | || (_| |
+\_|  |_/ \__,_|| ||_||_| |_| \__,_|
+              _/ |                 
+             |__/  
+
 
   Mock Identity and Service Provider using OpenSAML
 </pre>
 
-Mockoleth
-=========
+Mujina
+======
 
-Mockoleth mocks a SAML2 Identity and Service Provider. 
-Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up. Thus, Mockoloth makes testing your stack a breeze! Mockoloth can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
+Mujina mocks a SAML Identity and Service Provider.
+There is a default configuration, which you can override using a REST API.
+This approach removes the need for special test configuration sets in your setup.
+Thus, Mujina makes testing your stack a breeze!
 
-Features
---------
-- A SAML2 complient Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. A REST api allows for the 'just-in-time' manipulation of:
-  * user credentials (either a specific username & password or allow any username and password)
-  * user role
-  * any user attributes
-  * signing certificate
-  * entityID
-
-- A SAML2 complient Service Provider. The SP displays the attributes as these were recieved from an IdP. A REST api allows for the 'just-in-time' manipulation of:
-  * entityID
-  * signing certificate  
-  * sso Service URL
-  
-
-
-Defaults
---------
 The default Identity Provider configuration is as follows:
 
-* The Entity ID is "http://mock-idp"
+* The Entity ID is "idp"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
 * It has the following attributes
@@ -50,28 +38,18 @@ The default Identity Provider configuration is as follows:
 
 The default Service Provider configuration is as follows:
 
-* The Entity ID is "http://mock-sp"
+* The Entity ID is "sp"
 * There is a default certificate and private key available
 
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
-
-Build Mockoleth
----------------
-[Maven 3](http://maven.apache.org) is needed to build and run Mockoleth.
-
-Mockoleth may depend on artifacts (poms, jars) from open source projects that are not available in a public Maven
-repository. Dependencies with groupId org.surfnet.coin can be built from source from the following locations:
-
-  - coin-master: git://github.com/OpenConext/OpenConext-parent.git
-  - coin-test: git://github.com/OpenConext/OpenConext-test.git
 
 Run the IDP using jetty
 -----------------------
 
 <pre>
 mvn clean install
-cd mockoleth-idp
+cd Mujina-idp
 mvn jetty:run
 </pre>
 
@@ -82,7 +60,7 @@ Run the SP using jetty
 
 <pre>
 mvn clean install
-cd mockoleth-sp
+cd Mujina-sp
 mvn jetty:run
 </pre>
 
@@ -138,7 +116,7 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/signing-credential
 </pre>
 
-Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
+Setting attribute urn:mace:dir:attribute-def:foo to bar
 -------------------------------------------------------
 
 This API is only available on the IDP.
@@ -192,10 +170,11 @@ The authentication method API has two possible values.
 * ALL
 
 The default setting is USER.
-This setting requires a valid user to be known in Mockoleth's IdP.
+This setting requires a valid user to be known in Mujina's IdP.
 
 The ALL setting allows any username and password combination.
-As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the username each time a user logs in.
+As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to
+the username each time a user logs in.
 
 Setting the SSO Service URL
 -------------

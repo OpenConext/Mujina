@@ -120,12 +120,6 @@
       <artifactId>slf4j-simple</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.surfnet.coin</groupId>
-      <artifactId>coin-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-ISSUING_ENTITY_ID=sp
+ISSUING_ENTITY_ID=http://mock-sp
 
 WEB_APPLICATION_CHANNEL=https
 WEB_APPLICATION_HOST_AND_PORT=mockoleth-sp.acc.surfconext.nl

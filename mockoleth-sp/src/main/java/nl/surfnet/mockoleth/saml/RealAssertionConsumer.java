@@ -57,16 +57,12 @@ public class RealAssertionConsumer implements AssertionConsumer {
 
     @Override
     public User consume(Response samlResponse) throws AuthenticationException {
-
-
         try {
             validatorSuite.validate(samlResponse);
         } catch (ValidationException ve) {
             log.warn("Response Message failed Validation", ve);
             throw new ServiceProviderAuthenticationException("Invalid SAML REsponse Message", ve);
         }
-
-
 
         checkResponseStatus(samlResponse);
 
