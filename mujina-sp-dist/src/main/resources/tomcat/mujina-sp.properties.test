@@ -17,7 +17,7 @@
 ISSUING_ENTITY_ID=sp
 
 WEB_APPLICATION_CHANNEL=https
-WEB_APPLICATION_HOST_AND_PORT=mockoleth-sp.dev.surfconext.nl
+WEB_APPLICATION_HOST_AND_PORT=mujina-sp.test.surfconext.nl
 WEB_APPLICATION_CONTEXT_PATH=
 
 ASSERTION_CONSUMER_URI=/AssertionConsumerService
@@ -25,10 +25,10 @@ ASSERTION_CONSUMER_URL=${WEB_APPLICATION_CHANNEL}://${WEB_APPLICATION_HOST_AND_P
 
 MAX_PARSER_POOL_SIZE=2
 
-IDP_SSO_SERVICE_URL=https://engine.dev.surfconext.nl/authentication/idp/single-sign-on
+IDP_SSO_SERVICE_URL=https://engine.test.surfconext.nl/authentication/idp/single-sign-on
 
 REPLAY_CACHE_LIFE_IN_MILLIS=14400000
 ISSUE_INSTANT_CHECK_CLOCK_SKEW_IN_SECONDS=90
 ISSUE_INSTANT_CHECK_VALIDITY_TIME_IN_SECONDS=300
 
-OAUTH_CALLBACK_URL=http://mockoleth-sp.dev.surfconext.nl/social/oauth-callback.shtml
+OAUTH_CALLBACK_URL=http://mujina-sp.test.surfconext.nl/social/oauth-callback.shtml

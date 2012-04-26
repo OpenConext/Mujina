@@ -7,10 +7,10 @@
   Mock Identity and Service Provider using OpenSAML
 </pre>
 
-Mockoleth
+Mujina
 =========
 
-Mockoleth mocks a SAML2 Identity and Service Provider. 
+Mujina mocks a SAML2 Identity and Service Provider.
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up. Thus, Mockoloth makes testing your stack a breeze! Mockoloth can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
 
 Features
@@ -56,11 +56,11 @@ The default Service Provider configuration is as follows:
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
 
-Build Mockoleth
+Build Mujina
 ---------------
-[Maven 3](http://maven.apache.org) is needed to build and run Mockoleth.
+[Maven 3](http://maven.apache.org) is needed to build and run Mujina.
 
-Mockoleth may depend on artifacts (poms, jars) from open source projects that are not available in a public Maven
+Mujina may depend on artifacts (poms, jars) from open source projects that are not available in a public Maven
 repository. Dependencies with groupId org.surfnet.coin can be built from source from the following locations:
 
   - coin-master: git://github.com/OpenConext/OpenConext-parent.git
@@ -71,7 +71,7 @@ Run the IDP using jetty
 
 <pre>
 mvn clean install
-cd mockoleth-idp
+cd mujina-idp
 mvn jetty:run
 </pre>
 
@@ -82,7 +82,7 @@ Run the SP using jetty
 
 <pre>
 mvn clean install
-cd mockoleth-sp
+cd mujina-sp
 mvn jetty:run
 </pre>
 
@@ -192,7 +192,7 @@ The authentication method API has two possible values.
 * ALL
 
 The default setting is USER.
-This setting requires a valid user to be known in Mockoleth's IdP.
+This setting requires a valid user to be known in Mujina's IdP.
 
 The ALL setting allows any username and password combination.
 As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the username each time a user logs in.

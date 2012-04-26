@@ -21,7 +21,7 @@
 
   <bean id="mappings"
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="classpath:mockoleth-sp.properties" />
+    <property name="location" value="classpath:mujina-sp.properties" />
   </bean>
 
 </beans>

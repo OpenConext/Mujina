@@ -22,18 +22,21 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Mockoleth IdP User Page</title>
+  <title>Mujina IdP User Page</title>
 </head>
 <body>
 
 <pre style="front-weight: bold;">
-                   _         _      _   _
-  /\/\   ___   ___| | _____ | | ___| |_| |__
- /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
-/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
-\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+___  ___        _  _
+|  \/  |       (_)(_)
+| .  . | _   _  _  _  _ __    __ _
+| |\/| || | | || || || '_ \  / _` |
+| |  | || |_| || || || | | || (_| |
+\_|  |_/ \__,_|| ||_||_| |_| \__,_|
+              _/ |
+             |__/
 
-              Identity Provider
+          Identity Provider
 </pre>
 
 <h1>Identity Provider User Page</h1>

@@ -22,18 +22,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <title>Mockoleth Login Page</title>
+  <title>Mujina Login Page</title>
 </head>
 <body onload='document.f.j_username.focus();'>
 
 <pre style="front-weight: bold;">
-                   _         _      _   _
-  /\/\   ___   ___| | _____ | | ___| |_| |__
- /    \ / _ \ / __| |/ / _ \| |/ _ \ __| '_ \
-/ /\/\ \ (_) | (__|   &lt; (_) | |  __/ |_| | | |
-\/    \/\___/ \___|_|\_\___/|_|\___|\__|_| |_|
+___  ___        _  _
+|  \/  |       (_)(_)
+| .  . | _   _  _  _  _ __    __ _
+| |\/| || | | || || || '_ \  / _` |
+| |  | || |_| || || || | | || (_| |
+\_|  |_/ \__,_|| ||_||_| |_| \__,_|
+              _/ |
+             |__/
 
-              Identity Provider
+          Identity Provider
 </pre>
 
 <c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION }">
