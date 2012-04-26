@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2012 SURFnet bv, The Netherlands
 
@@ -14,16 +15,13 @@
   limitations under the License.
   -->
 
-<project name="Mockoleth" default="build-all" basedir=".">
-  <description>Root build file to trigger both idp and sp</description>
-  <target name="build-all" description="Triggers build in all sub modules">
-    <ant antfile="build.xml" target="build" dir="mockoleth-idp-dist"/>
-    <ant antfile="build.xml" target="build" dir="mockoleth-sp-dist"/>
-  </target>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <target name="scp-all" description="Triggers scp in all sub modules">
-    <ant antfile="build.xml" target="scp" dir="mockoleth-idp-dist"/>
-    <ant antfile="build.xml" target="scp" dir="mockoleth-sp-dist"/>
-  </target>
+  <bean id="mappings"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:mockoleth-sp.properties" />
+  </bean>
 
-</project>
+</beans>
