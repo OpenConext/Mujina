@@ -14,16 +14,16 @@
   limitations under the License.
   -->
 
-<project name="Mockoleth" default="build-all" basedir=".">
+<project name="Mujina" default="build-all" basedir=".">
   <description>Root build file to trigger both idp and sp</description>
   <target name="build-all" description="Triggers build in all sub modules">
-    <ant antfile="build.xml" target="build" dir="mockoleth-idp-dist"/>
-    <ant antfile="build.xml" target="build" dir="mockoleth-sp-dist"/>
+    <ant antfile="build.xml" target="build" dir="mujina-idp-dist"/>
+    <ant antfile="build.xml" target="build" dir="mujina-sp-dist"/>
   </target>
 
   <target name="scp-all" description="Triggers scp in all sub modules">
-    <ant antfile="build.xml" target="scp" dir="mockoleth-idp-dist"/>
-    <ant antfile="build.xml" target="scp" dir="mockoleth-sp-dist"/>
+    <ant antfile="build.xml" target="scp" dir="mujina-idp-dist"/>
+    <ant antfile="build.xml" target="scp" dir="mujina-sp-dist"/>
   </target>
 
 </project>

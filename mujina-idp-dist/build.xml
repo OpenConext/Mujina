@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<project name="mockoleth-idp-dist-build" default="build" basedir=".">
+<project name="mujina-idp-dist-build" default="build" basedir=".">
 
   <!-- Ant for replacing the property version in the spring config -->
 
@@ -31,7 +31,7 @@
   <!-- Cannot directly call executable 'scp', because ant does not support the wildcard use -->
   <target name="scp" description="SecureCoPies the tar.gz to the configured machine">
     <exec executable="sh" failonerror="true" failifexecutionfails="true">
-      <arg line="-cv 'scp ${basedir}/target/mockoleth-idp-dist-*.tar.gz ${machine}:/home/bamboo/dist/'"/>
+      <arg line="-cv 'scp ${basedir}/target/mujina-idp-dist-*.tar.gz ${machine}:/home/bamboo/dist/'"/>
     </exec>
   </target>
 

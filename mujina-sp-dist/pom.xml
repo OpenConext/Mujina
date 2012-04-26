@@ -29,7 +29,7 @@
   <groupId>org.surfnet.coin</groupId>
   <artifactId>mujina-sp-dist</artifactId>
   <packaging>pom</packaging>
-  <description>Mockoleth SP distribution package</description>
+  <description>Mujina SP distribution package</description>
 
   <build>
 

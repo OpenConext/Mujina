@@ -22,7 +22,7 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Mockoleth IdP User Page</title>
+  <title>Mujina IdP User Page</title>
 </head>
 <body>
 

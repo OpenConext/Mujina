@@ -72,7 +72,7 @@ public class OpenSocialAPI {
     // a hack.
     Properties properties = new Properties();
     try {
-      properties.load(new ClassPathResource("mockoleth-sp.properties").getInputStream());
+      properties.load(new ClassPathResource("mujina-sp.properties").getInputStream());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
