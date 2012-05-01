@@ -43,7 +43,7 @@
 <body>
 	<div class="page-header">
 		<h1>
-			<small>SURFconext API test framework</small>
+			<small>SURFconext API Playground</small>
 		</h1>
 	</div>
 	<div class="row">
@@ -114,7 +114,7 @@
 														id="requestTokenEndPoint" name="requestTokenEndPoint"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.dev.surfconext.nl/oauth1/requestToken</p>
+														https://api.dev.surfconext.nl/v1/oauth1/requestToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -125,7 +125,7 @@
 														id="accessTokenEndPoint" name="accessTokenEndPoint"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.dev.surfconext.nl/oauth1/accessToken</p>
+														https://api.dev.surfconext.nl/v1/oauth1/accessToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -135,7 +135,7 @@
 													<form:input path="authorizationURL" id="authorizationURL"
 														name="authorizationURL" class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.dev.surfconext.nl/oauth1/confirm_access</p>
+														https://api.dev.surfconext.nl/v1/oauth1/confirm_access</p>
 												</div>
 											</div>
 										</div>
@@ -161,7 +161,7 @@
 														id="accessTokenEndPoint2" name="accessTokenEndPoint2"
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
-														https://api.dev.surfconext.nl/oauth2/token</p>
+														https://api.dev.surfconext.nl/v1/oauth2/token</p>
 												</div>
 											</div>
 										</div>
@@ -172,7 +172,7 @@
 												<form:input path="authorizationURL2" id="authorizationURL2"
 													name="authorizationURL2" class="input-xxlarge" />
 												<p class="help-block">Hint:
-													https://api.dev.surfconext.nl/oauth2/authorize</p>
+													https://api.dev.surfconext.nl/v1/oauth2/authorize</p>
 											</div>
 										</div>
 									</div>
@@ -256,7 +256,7 @@
 										<label class="control-label" for="sortBy">Sorting </label>
 										<div class="controls">
 											<form:input path="sortBy" id="sortBy" name="sortBy"
-												class="input-mini" />
+												class="input-xlarge"/>
 											<p class="help-block">The sortBy query parameter
 												determines how items are sorted (the compound sortBy
 												parameter is supported, e.g. name.familyName)</p>
@@ -269,7 +269,7 @@
 											<form:input path="requestURL" id="requestURL"
 												name="requestURL" class="input-xxlarge" />
 											<p class="help-block">Hint:
-												https://api.dev.surfconext.nl/social/rest/groups/@me</p>
+												https://api.dev.surfconext.nl/v1/social/rest/groups/@me</p>
 										</div>
 									</div>
 									<div class="form-actions">
