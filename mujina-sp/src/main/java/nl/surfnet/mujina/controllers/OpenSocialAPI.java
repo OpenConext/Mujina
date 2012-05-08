@@ -61,15 +61,12 @@ public class OpenSocialAPI {
       DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).setSerializationInclusion(
       JsonSerialize.Inclusion.NON_NULL);
 
-  // @Value("${OAUTH_CALLBACK_URL}")
   private String oauthCallbackUrl;
 
   private final Token EMPTY_TOKEN = new Token("", "");
 
   public OpenSocialAPI() {
     super();
-    // @TODO find out why this does not get normally resolved by @Value. This is
-    // a hack.
     Properties properties = new Properties();
     try {
       properties.load(new ClassPathResource("mujina-sp.properties").getInputStream());
@@ -116,7 +113,8 @@ public class OpenSocialAPI {
       authorizationUrl = service.getAuthorizationUrl(requestToken);
       settings.setRequestToken(requestToken);
       modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
-      modelMap.addAttribute("responseInfo", oAuthResponseToString(oauthResponse));
+      modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oauthResponse));
+      modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oauthResponse));
     } else {
       ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
       authorizationUrl = service20.getAuthorizationUrl(EMPTY_TOKEN);
@@ -128,13 +126,21 @@ public class OpenSocialAPI {
 
   private static String oAuthRequestToString(OAuthRequest request) {
     return String
-        .format("@OAuthRequest(%s, %s, %s)", request.getVerb(), request.getUrl(), request.getOauthParameters());
+        .format("%s, %s, %s", request.getVerb(), request.getUrl(), request.getOauthParameters());
   }
 
-  private static String oAuthResponseToString(Object response) {
+  private static String oAuthResponseHeadersToString(Object response) {
     if (response instanceof Response) {
       Response realResponse = (Response) response;
-      return String.format("@OAuthResponse(%s, %s)", realResponse.getHeaders(), realResponse.getBody());
+      return String.format("%s, %s",realResponse.getCode(), realResponse.getHeaders());
+    }
+    return response.toString();
+  }
+
+  private static String oAuthResponseBodyToString(Object response) {
+    if (response instanceof Response) {
+      Response realResponse = (Response) response;
+      return realResponse.getBody();
     }
     return response.toString();
   }
@@ -175,7 +181,8 @@ public class OpenSocialAPI {
     service.signRequest(accessToken, oAuthRequest);
     Response oAuthResponse = oAuthRequest.send();
     modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
-    modelMap.addAttribute("responseInfo", oAuthResponseToString(oAuthResponse));
+    modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oAuthResponse));
+    modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oAuthResponse));
     modelMap.addAttribute("accessToken", accessToken);
     setupModelMap(settings, "step3", request, modelMap, service);
     return "social-queries";
@@ -234,7 +241,8 @@ public class OpenSocialAPI {
     
     request.getSession().setAttribute("accessToken", accessToken);
     modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
-    modelMap.addAttribute("responseInfo", oAuthResponseToString(oauthResponse));
+    modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oauthResponse));
+    modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oauthResponse));
     modelMap.addAttribute("accessToken", accessToken);
     setupModelMap(settings, "step3", request, modelMap, service);
     return "social-queries";

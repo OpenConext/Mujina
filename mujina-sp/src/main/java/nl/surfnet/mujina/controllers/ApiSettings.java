@@ -23,7 +23,7 @@ import nl.surfnet.mujina.oauth.OAuthVersion;
 import org.scribe.model.Token;
 
 /**
- * Backing form object
+ * Backing form object for all Oauth calls from the Test Framework
  * 
  */
 public class ApiSettings {

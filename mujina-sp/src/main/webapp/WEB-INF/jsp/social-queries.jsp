@@ -293,13 +293,16 @@
 		<div class="span5 columns">
 			<div id="request">
 				<div class="alert alert-info alert-http">HTTP Request</div>
-				<pre class="prettyprint pre-scrollable pre-json"><c:out value="${requestInfo}" /></pre>
+				<pre id="requestInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${requestInfo}" /></pre>
 			</div>
 			<div id="response">
-				<div class="alert alert-info alert-http">HTTP Response</div>
+				<div class="alert alert-info alert-http">HTTP Response Headers</div>
 				<pre id="responseInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${responseInfo}" /></pre>
 			</div>
-
+			<div id="raw-response">
+				<div class="alert alert-info alert-http">HTTP Response Body</div>
+				<pre id="rawResponseInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${rawResponseInfo}" /></pre>
+			</div>
 		</div>
 	</div>
 
