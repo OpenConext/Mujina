@@ -91,6 +91,18 @@ mvn jetty:run
 
 Then, go to http://localhost:9090/idp
 
+Resetting the IDP
+-----------------
+
+This API is available on both the IDP and the SP.
+
+<pre>
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X POST \
+        http://localhost:8080/api/reset
+</pre>
+
 Changing the entityID
 ---------------------
 

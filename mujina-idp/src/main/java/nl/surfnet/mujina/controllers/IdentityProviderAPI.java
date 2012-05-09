@@ -51,7 +51,7 @@ public class IdentityProviderAPI {
         this.configuration = configuration;
     }
 
-    @RequestMapping(value = {"/attributes/{name}"}, method = RequestMethod.PUT)
+    @RequestMapping(value = {"/attributes/{name:.+}"}, method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void setAttribute(@PathVariable String name, @RequestBody Attribute attribute) {
@@ -59,7 +59,7 @@ public class IdentityProviderAPI {
         configuration.getAttributes().put(name, attribute.getValue());
     }
 
-    @RequestMapping(value = {"/attributes/{name}"}, method = RequestMethod.DELETE)
+    @RequestMapping(value = {"/attributes/{name:.+}"}, method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
     public void removeAttribute(@PathVariable String name) {
