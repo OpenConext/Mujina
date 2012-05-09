@@ -19,7 +19,7 @@
 package nl.surfnet.mujina.oauth;
 
 /**
- * @author oharsta
+ * Available versions
  *
  */
 public enum OAuthVersion {
