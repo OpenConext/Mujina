@@ -19,6 +19,7 @@ package nl.surfnet.mujina.controllers;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
+import org.scribe.model.ParameterList;
 import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
@@ -114,7 +116,7 @@ public class OpenSocialAPI {
       settings.setRequestToken(requestToken);
       modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
       modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oauthResponse));
-      modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oauthResponse));
+      modelMap.addAttribute("rawResponseInfo", oAuthResponseBodyToString(oauthResponse));
     } else {
       ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
       authorizationUrl = service20.getAuthorizationUrl(EMPTY_TOKEN);
@@ -125,14 +127,23 @@ public class OpenSocialAPI {
   }
 
   private static String oAuthRequestToString(OAuthRequest request) {
-    return String
-        .format("%s, %s, %s", request.getVerb(), request.getUrl(), request.getOauthParameters());
+    ParameterList bodyParams = request.getBodyParams();
+    ParameterList queryStringParams = request.getQueryStringParams();
+    String br = System.getProperty("line.separator");
+    return String.format(
+        "%s %s %s %s",
+        "METHOD: ".concat(request.getVerb().toString()).concat(br),
+        "URL: ".concat(request.getUrl().toString()).concat(br),
+        (bodyParams != null && bodyParams.size() > 0) ? "BODY: ".concat(bodyParams.asFormUrlEncodedString()).concat(br)
+            : "",
+        (queryStringParams != null && queryStringParams.size() > 0) ? "QUERY: ".concat(
+            queryStringParams.asFormUrlEncodedString()).concat(br) : "");
   }
 
   private static String oAuthResponseHeadersToString(Object response) {
     if (response instanceof Response) {
       Response realResponse = (Response) response;
-      return String.format("%s, %s",realResponse.getCode(), realResponse.getHeaders());
+      return String.format("%s, %s", realResponse.getCode(), realResponse.getHeaders());
     }
     return response.toString();
   }
@@ -149,6 +160,10 @@ public class OpenSocialAPI {
   public void step2(ModelMap modelMap, @ModelAttribute("settings")
   ApiSettings settings, HttpServletRequest request, HttpServletResponse response) throws IOException {
     ApiSettings settingsFromSession = (ApiSettings) request.getSession().getAttribute("settings");
+    if (settings.isQueryParameters()) {
+      settingsFromSession.setQueryParameters(true);
+      request.getSession().setAttribute("settings", settingsFromSession);
+    }
     String authorizationUrl;
     OAuthService service = (OAuthService) request.getSession().getAttribute("service");
     if (settingsFromSession.isOAuth10a()) {
@@ -178,17 +193,27 @@ public class OpenSocialAPI {
       requestURL.append("sortBy=" + settings.getSortBy() + "&");
     }
     OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, requestURL.toString());
-    service.signRequest(accessToken, oAuthRequest);
+//    if (service instanceof ConfigurableOAuth20ServiceImpl) {
+//      ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
+//      if (!settings.isSignWithQueryParameter()) {
+//        service20.signRequestAsBodyParameter(accessToken, oAuthRequest);
+//      }
+//      
+//    } else {
+      service.signRequest(accessToken, oAuthRequest);
+//    }
+    long time = System.currentTimeMillis();
     Response oAuthResponse = oAuthRequest.send();
+    modelMap.addAttribute("responseTime", String.format("(Took %s ms)", (System.currentTimeMillis() - time)));
     modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
     modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oAuthResponse));
-    modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oAuthResponse));
+    modelMap.addAttribute("rawResponseInfo", oAuthResponseBodyToString(oAuthResponse));
     modelMap.addAttribute("accessToken", accessToken);
     setupModelMap(settings, "step3", request, modelMap, service);
     return "social-queries";
 
   }
-  
+
   @RequestMapping(value = "/api.shtml", method = RequestMethod.POST, params = "reset")
   public String reset(ModelMap modelMap, @ModelAttribute("settings")
   ApiSettings settings, HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -199,9 +224,9 @@ public class OpenSocialAPI {
   @ResponseBody
   public String parseAnchor(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String token = request.getParameter("access_token");
-    Token accessToken = new Token(token,"");
+    Token accessToken = new Token(token, "");
     request.getSession().setAttribute("accessToken", accessToken);
-    return request.getQueryString();  
+    return request.getQueryString();
   }
 
   @RequestMapping(value = "/oauth-callback.shtml", method = RequestMethod.GET)
@@ -214,10 +239,11 @@ public class OpenSocialAPI {
     OAuthRequest oAuthRequest;
     Object oauthResponse;
     if (settings.isImplicitGrantOauth()) {
-      //we will extract the token (which is in the anchor of the url and not accessible here) on the client
+      // we will extract the token (which is in the anchor of the url and not
+      // accessible here) on the client
       accessToken = EMPTY_TOKEN;
-      oAuthRequest = new OAuthRequest(Verb.GET, request.getRequestURL().append("?").append( 
-          request.getQueryString()).toString());
+      oAuthRequest = new OAuthRequest(Verb.GET, request.getRequestURL().append("?").append(request.getQueryString())
+          .toString());
       oauthResponse = "";
       modelMap.addAttribute("parseAnchorForAccesstoken", Boolean.TRUE);
     } else {
@@ -230,19 +256,19 @@ public class OpenSocialAPI {
         ConfigurableOAuth10aServiceImpl service10a = (ConfigurableOAuth10aServiceImpl) service;
         oAuthRequest = service10a.getAccessTokenRequest(requestToken, verifier);
         oauthResponse = service10a.getAccessTokenResponse(oAuthRequest);
-        accessToken = service10a.getAccessTokenFromResponse((Response)oauthResponse);
+        accessToken = service10a.getAccessTokenFromResponse((Response) oauthResponse);
       } else {
         ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
-        oAuthRequest = service20.getOAuthRequest(verifier);
+        oAuthRequest = service20.getOAuthRequest(verifier, settings.isQueryParameters());
         oauthResponse = service20.getOauthResponse(oAuthRequest);
-        accessToken = service20.getAccessToken((Response)oauthResponse);
-      }  
+        accessToken = service20.getAccessToken((Response) oauthResponse);
+      }
     }
-    
+
     request.getSession().setAttribute("accessToken", accessToken);
     modelMap.addAttribute("requestInfo", oAuthRequestToString(oAuthRequest));
     modelMap.addAttribute("responseInfo", oAuthResponseHeadersToString(oauthResponse));
-    modelMap.addAttribute("rawResponseInfo",oAuthResponseBodyToString(oauthResponse));
+    modelMap.addAttribute("rawResponseInfo", oAuthResponseBodyToString(oauthResponse));
     modelMap.addAttribute("accessToken", accessToken);
     setupModelMap(settings, "step3", request, modelMap, service);
     return "social-queries";

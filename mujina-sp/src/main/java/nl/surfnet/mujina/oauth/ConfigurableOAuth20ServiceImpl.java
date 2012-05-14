@@ -52,13 +52,22 @@ public class ConfigurableOAuth20ServiceImpl implements OAuthService{
     this.config = config;
   }
   
-  public OAuthRequest getOAuthRequest(Verifier verifier) {
+  public OAuthRequest getOAuthRequest(Verifier verifier, boolean useQueryString) {
     OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
-    request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
-    request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
-    request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
-    request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
-    if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+    if (useQueryString) {
+      request.addQuerystringParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
+      request.addQuerystringParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
+      request.addQuerystringParameter(OAuthConstants.CODE, verifier.getValue());
+      request.addQuerystringParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
+      if(config.hasScope()) request.addQuerystringParameter(OAuthConstants.SCOPE, config.getScope());
+    } else {
+      request.addBodyParameter(OAuthConstants.CLIENT_ID, config.getApiKey());
+      request.addBodyParameter(OAuthConstants.CLIENT_SECRET, config.getApiSecret());
+      request.addBodyParameter(OAuthConstants.CODE, verifier.getValue());
+      request.addBodyParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
+      if(config.hasScope()) request.addBodyParameter(OAuthConstants.SCOPE, config.getScope());
+      
+    }
     return request;
   }
 
@@ -78,7 +87,7 @@ public class ConfigurableOAuth20ServiceImpl implements OAuthService{
   public Token getAccessToken(Token requestToken, Verifier verifier)
   {
 
-    Response response = getOauthResponse(getOAuthRequest(verifier));
+    Response response = getOauthResponse(getOAuthRequest(verifier, true));
     return api.getAccessTokenExtractor().extract(response.getBody());
   }
 
@@ -104,6 +113,14 @@ public class ConfigurableOAuth20ServiceImpl implements OAuthService{
   public void signRequest(Token accessToken, OAuthRequest request)
   {
     request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getToken());
+  }
+
+  /**
+   * Use the Body parameter instead of the Query parameter
+   */
+  public void signRequestAsBodyParameter(Token accessToken, OAuthRequest request)
+  {
+    request.addBodyParameter(OAuthConstants.ACCESS_TOKEN, accessToken.getToken());
   }
 
   /**

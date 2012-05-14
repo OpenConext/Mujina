@@ -204,6 +204,16 @@
 												to for user authentication</p>
 										</div>
 									</div>
+									<div id="queryParametersOauth2" class="control-group" ${settings.version==
+										'2.0' ? '' : 'style="display: none;"'}>
+										<label class="control-label" for="queryParameters">Use query parameters?</label>
+										<div class="controls">
+											<label class="checkbox"> 
+												<form:checkbox id="queryParameters" name="queryParameters" path="queryParameters" /> 
+											</label>
+										</div>
+
+									</div>
 									<div class="form-actions">
 										<button name="step2" class="btn btn-primary">Next</button>
 										<button name="reset" class="btn">Reset</button>
@@ -230,6 +240,16 @@
 											<p class="help-block">Note: this is the accessToken for
 												all subsequent OAuth queries</p>
 										</div>
+									</div>
+									<div id="signWithQueryParameterOauth2" class="control-group" ${settings.version==
+										'2.0' ? '' : 'style="display: none;"'}>
+										<label class="control-label" for="signWithQueryParameter">Query parameter signing?</label>
+										<div class="controls">
+											<label class="checkbox"> 
+												<form:checkbox id="signWithQueryParameter" name="signWithQueryParameter" path="signWithQueryParameter" /> 
+											</label>
+										</div>
+
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="count">Count </label>
@@ -258,8 +278,7 @@
 											<form:input path="sortBy" id="sortBy" name="sortBy"
 												class="input-xlarge"/>
 											<p class="help-block">The sortBy query parameter
-												determines how items are sorted (the compound sortBy
-												parameter is supported, e.g. name.familyName)</p>
+												determines how items are sorted (sorting on groupMembers is not supported)</p>
 										</div>
 									</div>
 									<div class="control-group">
@@ -299,8 +318,12 @@
 				<div class="alert alert-info alert-http">HTTP Response Headers</div>
 				<pre id="responseInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${responseInfo}" /></pre>
 			</div>
+			<div id="responseTime">
+				<p class="help-block">
+				<c:out value="${responseTime}" /></p>
+			</div>
 			<div id="raw-response">
-				<div class="alert alert-info alert-http">HTTP Response Body</div>
+				<div class="alert alert-info alert-http">HTTP Response Body </div>
 				<pre id="rawResponseInfo" class="prettyprint pre-scrollable pre-json"><c:out value="${rawResponseInfo}" /></pre>
 			</div>
 		</div>

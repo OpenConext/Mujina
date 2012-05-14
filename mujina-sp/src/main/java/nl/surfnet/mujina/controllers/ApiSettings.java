@@ -40,6 +40,9 @@ public class ApiSettings {
   private String authorizationURL2;
   private String step;
   private Token requestToken;
+  
+  private boolean queryParameters;
+  private boolean signWithQueryParameter;
 
   private String requestURL;
   private int count;
@@ -193,6 +196,34 @@ public class ApiSettings {
 
   public void setParseAnchorForAccesstoken(String parseAnchorForAccesstoken) {
     this.parseAnchorForAccesstoken = parseAnchorForAccesstoken;
+  }
+
+  /**
+   * @return the queryParameters
+   */
+  public boolean isQueryParameters() {
+    return queryParameters;
+  }
+
+  /**
+   * @param queryParameters the queryParameters to set
+   */
+  public void setQueryParameters(boolean queryParameters) {
+    this.queryParameters = queryParameters;
+  }
+
+  /**
+   * @return the signWithQueryParameter
+   */
+  public boolean isSignWithQueryParameter() {
+    return signWithQueryParameter;
+  }
+
+  /**
+   * @param signWithQueryParameter the signWithQueryParameter to set
+   */
+  public void setSignWithQueryParameter(boolean signWithQueryParameter) {
+    this.signWithQueryParameter = signWithQueryParameter;
   }
 
 }
