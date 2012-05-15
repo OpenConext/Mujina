@@ -78,7 +78,7 @@ cd mujina-idp
 mvn jetty:run
 </pre>
 
-Then, go to https://localhost:8443/idp or http://localhost:8080/idp
+Then, go to https://localhost:8443/ or http://localhost:8080/
 
 Run the SP using jetty
 ----------------------
@@ -89,7 +89,8 @@ cd mujina-sp
 mvn jetty:run
 </pre>
 
-Then, go to http://localhost:9090/idp
+Then, go to http://localhost:9090/. You will be redirected to the IdP, where you can
+login with username admin and password secret.
 
 Resetting the IDP
 -----------------
