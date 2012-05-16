@@ -2,7 +2,7 @@ SURFconext
 Copyright 2012 SURFnet bv, The Netherlands
 
 Portions of this software were developed at SURFnet, as part of the SURFworks
-project.  This project was made possible by the support of the SURF, the
+project.  This project was made possible by the support of SURFnet, the
 higher education and research partnership organisation for Information and
 Communications Technology (ICT) in The Netherlands.  For more information
 about SURF, please visit www.surf.nl.
