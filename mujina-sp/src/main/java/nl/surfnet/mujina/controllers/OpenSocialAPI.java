@@ -129,15 +129,17 @@ public class OpenSocialAPI {
   private static String oAuthRequestToString(OAuthRequest request) {
     ParameterList bodyParams = request.getBodyParams();
     ParameterList queryStringParams = request.getQueryStringParams();
+    Map<String, String> headers = request.getHeaders();
     String br = System.getProperty("line.separator");
     return String.format(
-        "%s %s %s %s",
+        "%s %s %s %s %s",
         "METHOD: ".concat(request.getVerb().toString()).concat(br),
         "URL: ".concat(request.getUrl().toString()).concat(br),
         (bodyParams != null && bodyParams.size() > 0) ? "BODY: ".concat(bodyParams.asFormUrlEncodedString()).concat(br)
             : "",
         (queryStringParams != null && queryStringParams.size() > 0) ? "QUERY: ".concat(
-            queryStringParams.asFormUrlEncodedString()).concat(br) : "");
+            queryStringParams.asFormUrlEncodedString()).concat(br) : "",
+        (headers != null && !headers.isEmpty() ? "HEADERS: ".concat(headers.toString()) : ""));
   }
 
   private static String oAuthResponseHeadersToString(Object response) {
@@ -193,15 +195,12 @@ public class OpenSocialAPI {
       requestURL.append("sortBy=" + settings.getSortBy() + "&");
     }
     OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, requestURL.toString());
-//    if (service instanceof ConfigurableOAuth20ServiceImpl) {
-//      ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
-//      if (!settings.isSignWithQueryParameter()) {
-//        service20.signRequestAsBodyParameter(accessToken, oAuthRequest);
-//      }
-//      
-//    } else {
+    if (service instanceof ConfigurableOAuth20ServiceImpl && !settings.isSignWithQueryParameter()) {
+      ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
+      service20.signRequestAsHeader(accessToken, oAuthRequest);
+    } else {
       service.signRequest(accessToken, oAuthRequest);
-//    }
+    }
     long time = System.currentTimeMillis();
     Response oAuthResponse = oAuthRequest.send();
     modelMap.addAttribute("responseTime", String.format("(Took %s ms)", (System.currentTimeMillis() - time)));
@@ -258,8 +257,12 @@ public class OpenSocialAPI {
         oauthResponse = service10a.getAccessTokenResponse(oAuthRequest);
         accessToken = service10a.getAccessTokenFromResponse((Response) oauthResponse);
       } else {
+        // TODO make service20.getOAuthRequest spec compliant
+        // http://api.yandex.com/oauth/doc/dg/reference/obtain-access-token.xml
+        // https://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
         ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
-        oAuthRequest = service20.getOAuthRequest(verifier, settings.isQueryParameters());
+        oAuthRequest = service20.getOAuthRequestConformSpec(verifier);
+        // oAuthRequest = service20.getOAuthRequest(verifier,false);
         oauthResponse = service20.getOauthResponse(oAuthRequest);
         accessToken = service20.getAccessToken((Response) oauthResponse);
       }
