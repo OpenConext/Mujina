@@ -16,6 +16,8 @@
 
 package nl.surfnet.mujina.controllers;
 
+import static nl.surfnet.mujina.oauth.AccessTokenRequestOption.*;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +27,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.mujina.oauth.AccessTokenRequestOption;
 import nl.surfnet.mujina.oauth.ConfigurableApi10a;
 import nl.surfnet.mujina.oauth.ConfigurableApi20;
 import nl.surfnet.mujina.oauth.ConfigurableOAuth10aServiceImpl;
@@ -58,10 +61,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class OpenSocialAPI {
-
-  private final ObjectMapper objectMapper = new ObjectMapper().enable(
-      DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY).setSerializationInclusion(
-      JsonSerialize.Inclusion.NON_NULL);
 
   private String oauthCallbackUrl;
 
@@ -195,7 +194,9 @@ public class OpenSocialAPI {
       requestURL.append("sortBy=" + settings.getSortBy() + "&");
     }
     OAuthRequest oAuthRequest = new OAuthRequest(Verb.GET, requestURL.toString());
-    if (service instanceof ConfigurableOAuth20ServiceImpl && !settings.isSignWithQueryParameter()) {
+    if (service instanceof ConfigurableOAuth20ServiceImpl) { // &&
+                                                             // !settings.isSignWithQueryParameter())
+                                                             // {
       ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
       service20.signRequestAsHeader(accessToken, oAuthRequest);
     } else {
@@ -257,12 +258,25 @@ public class OpenSocialAPI {
         oauthResponse = service10a.getAccessTokenResponse(oAuthRequest);
         accessToken = service10a.getAccessTokenFromResponse((Response) oauthResponse);
       } else {
-        // TODO make service20.getOAuthRequest spec compliant
-        // http://api.yandex.com/oauth/doc/dg/reference/obtain-access-token.xml
-        // https://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3
         ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
-        oAuthRequest = service20.getOAuthRequestConformSpec(verifier);
-        // oAuthRequest = service20.getOAuthRequest(verifier,false);
+        switch (AccessTokenRequestOption.valueOfOption(settings.getAccessTokenRequestOption())) {
+        case AUTHENTICATION_HEADER: {
+          oAuthRequest = service20.getOAuthRequestConformSpec(verifier);
+          break;
+        }
+        case QUERY_STRING_PARAMETERS: {
+          oAuthRequest = service20.getOAuthRequest(verifier, true);
+          break;
+        }
+        case ENTITY_BODY_PARAMETERS: {
+          oAuthRequest = service20.getOAuthRequest(verifier, false);
+          break;
+        }
+        default: {
+          throw new RuntimeException(String.format("Unable to determine the AccessTokenRequestOption %s",
+              settings.getAccessTokenRequestOption()));
+        }
+        }
         oauthResponse = service20.getOauthResponse(oAuthRequest);
         accessToken = service20.getAccessToken((Response) oauthResponse);
       }
@@ -279,7 +293,14 @@ public class OpenSocialAPI {
 
   @ModelAttribute("versions")
   public Collection<String> populateOAuthVersions() {
-    return Arrays.asList(new String[] { OAuthVersion.version10a.getVersion(), OAuthVersion.version20.getVersion() });
+    return Arrays.asList(new String[] { OAuthVersion.VERSION10A.getVersion(), OAuthVersion.VERSION20.getVersion() });
+  }
+
+  @ModelAttribute("accessTokenRequestOptions")
+  public Collection<String> populateAccessTokenRequestOptions() {
+    return Arrays.asList(new String[] { AccessTokenRequestOption.AUTHENTICATION_HEADER.getOption(),
+        AccessTokenRequestOption.ENTITY_BODY_PARAMETERS.getOption(),
+        AccessTokenRequestOption.QUERY_STRING_PARAMETERS.getOption() });
   }
 
   private void setupModelMap(ApiSettings settings, String step, HttpServletRequest request, ModelMap modelMap,

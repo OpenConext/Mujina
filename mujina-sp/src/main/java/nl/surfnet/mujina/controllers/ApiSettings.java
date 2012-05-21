@@ -18,6 +18,7 @@
  */
 package nl.surfnet.mujina.controllers;
 
+import nl.surfnet.mujina.oauth.AccessTokenRequestOption;
 import nl.surfnet.mujina.oauth.OAuthVersion;
 
 import org.scribe.model.Token;
@@ -27,7 +28,7 @@ import org.scribe.model.Token;
  * 
  */
 public class ApiSettings {
-  private String version = "1.0a";
+  private String version = OAuthVersion.VERSION10A.getVersion();// "1.0a"
   private String requestTokenEndPoint;
   private String accessTokenEndPoint;
   private String accessTokenEndPoint2;
@@ -40,9 +41,9 @@ public class ApiSettings {
   private String authorizationURL2;
   private String step;
   private Token requestToken;
-  
+
   private boolean queryParameters;
-  private boolean signWithQueryParameter;
+  private String accessTokenRequestOption = AccessTokenRequestOption.ENTITY_BODY_PARAMETERS.getOption();// "Entity Body Parameters"
 
   private String requestURL;
   private int count;
@@ -123,9 +124,9 @@ public class ApiSettings {
   }
 
   public boolean isOAuth10a() {
-    return OAuthVersion.version10a.getVersion().equals(getVersion());
+    return OAuthVersion.VERSION10A.getVersion().equals(getVersion());
   }
-  
+
   public void setTwoLegged(boolean twoLegged) {
     this.twoLegged = twoLegged;
   }
@@ -189,7 +190,7 @@ public class ApiSettings {
   public void setRequestURL(String requestURL) {
     this.requestURL = requestURL;
   }
-  
+
   public String getParseAnchorForAccesstoken() {
     return parseAnchorForAccesstoken;
   }
@@ -206,24 +207,26 @@ public class ApiSettings {
   }
 
   /**
-   * @param queryParameters the queryParameters to set
+   * @param queryParameters
+   *          the queryParameters to set
    */
   public void setQueryParameters(boolean queryParameters) {
     this.queryParameters = queryParameters;
   }
 
   /**
-   * @return the signWithQueryParameter
+   * @return the accessTokenRequestOption
    */
-  public boolean isSignWithQueryParameter() {
-    return signWithQueryParameter;
+  public String getAccessTokenRequestOption() {
+    return accessTokenRequestOption;
   }
 
   /**
-   * @param signWithQueryParameter the signWithQueryParameter to set
+   * @param accessTokenRequestOption the accessTokenRequestOption to set
    */
-  public void setSignWithQueryParameter(boolean signWithQueryParameter) {
-    this.signWithQueryParameter = signWithQueryParameter;
+  public void setAccessTokenRequestOption(String accessTokenRequestOption) {
+    this.accessTokenRequestOption = accessTokenRequestOption;
   }
+
 
 }

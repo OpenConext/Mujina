@@ -8,14 +8,12 @@ $(function() {
 		case '1.0a':
 			$('#oauth10a').show();
 			$('#oauth20').hide();
-			$('#queryParametersOauth2').hide();
-			$('#signWithQueryParameterOauth2').hide();
+			$('#accessTokenRequestOptionsOauth2').hide();
 			break;
 		case '2.0':
 			$('#oauth10a').hide();
 			$('#oauth20').show();
-			$('#queryParametersOauth2').show();
-			$('#signWithQueryParameterOauth2').show();
+			$('#accessTokenRequestOptionsOauth2').show();
 			break;
 		}
 	});

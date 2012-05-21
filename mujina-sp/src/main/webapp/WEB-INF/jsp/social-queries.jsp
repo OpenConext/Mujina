@@ -204,15 +204,13 @@
 												to for user authentication</p>
 										</div>
 									</div>
-									<div id="queryParametersOauth2" class="control-group" ${settings.version==
+									<div id="accessTokenRequestOptionsOauth2" class="control-group" ${settings.version==
 										'2.0' ? '' : 'style="display: none;"'}>
-										<label class="control-label" for="queryParameters">Use query parameters?</label>
+										<label class="control-label" for="accessTokenRequestOptions">AccessToken request options</label>
 										<div class="controls">
-											<label class="checkbox"> 
-												<form:checkbox id="queryParameters" name="queryParameters" path="queryParameters" /> 
-											</label>
+											<form:select id="accessTokenRequestOption" path="accessTokenRequestOption" items="${accessTokenRequestOptions}" />
+											<p class="help-block">Note: the AccessToken oauth2 request method (see <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3" target="_blank">http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.1.3</a>)</p>
 										</div>
-
 									</div>
 									<div class="form-actions">
 										<button name="step2" class="btn btn-primary">Next</button>
@@ -240,16 +238,6 @@
 											<p class="help-block">Note: this is the accessToken for
 												all subsequent OAuth queries</p>
 										</div>
-									</div>
-									<div id="signWithQueryParameterOauth2" class="control-group" ${settings.version==
-										'2.0' ? '' : 'style="display: none;"'}>
-										<label class="control-label" for="signWithQueryParameter">Query parameter signing?</label>
-										<div class="controls">
-											<label class="checkbox"> 
-												<form:checkbox id="signWithQueryParameter" name="signWithQueryParameter" path="signWithQueryParameter" /> 
-											</label>
-										</div>
-
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="count">Count </label>
