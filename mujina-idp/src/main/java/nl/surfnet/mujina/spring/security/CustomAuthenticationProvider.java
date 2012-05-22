@@ -43,7 +43,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         final String password = authentication.getCredentials().toString();
 
         if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-            idpConfiguration.getAttributes().put("urn:mace:dir:attribute-def:uid", name);
             final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
             authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
             return new SimpleAuthentication(name, password, authorities);

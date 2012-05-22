@@ -17,6 +17,9 @@
 package nl.surfnet.mujina.saml.xml;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnStatement;
@@ -31,6 +34,7 @@ import org.opensaml.xml.signature.SignatureConstants;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
 
+import nl.surfnet.mujina.model.AuthenticationMethod;
 import nl.surfnet.mujina.model.IdpConfiguration;
 import nl.surfnet.mujina.model.SimpleAuthentication;
 import nl.surfnet.mujina.util.IDService;
@@ -80,7 +84,14 @@ public class AssertionGenerator {
         // extends this
         // assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(authToken.getAuthorities()));
 
-        assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(idpConfiguration.getAttributes()));
+        final Map<String,String> attributes = new HashMap<String, String>();
+        attributes.putAll(idpConfiguration.getAttributes());
+
+        if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
+            attributes.put("urn:mace:dir:attribute-def:uid", authToken.getName());
+        }
+
+        assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(attributes));
 
         assertion.setID(idService.generateID());
         assertion.setIssueInstant(timeService.getCurrentDateTime());
