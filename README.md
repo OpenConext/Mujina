@@ -84,22 +84,22 @@ coin-test 2.2.0
 Run the IDP using jetty
 -----------------------
 
-<pre>
+```bash
 mvn clean install
 cd mujina-idp
 mvn jetty:run
-</pre>
+```
 
 Then, go to https://localhost:8443/ or http://localhost:8080/
 
 Run the SP using jetty
 ----------------------
 
-<pre>
+```bash
 mvn clean install
 cd mujina-sp
 mvn jetty:run
-</pre>
+```
 
 Then, go to http://localhost:9090/. You will be redirected to the IdP, where you can
 login with username admin and password secret.
@@ -109,24 +109,24 @@ Resetting the IDP
 
 This API is available on both the IDP and the SP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST \
         http://localhost:8080/api/reset
-</pre>
+```
 
 Changing the entityID
 ---------------------
 
 This API is available on both the IDP and the SP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "myEntityId"}' \
         http://localhost:8080/api/entityid
-</pre>
+```
 
 Changing the signing credentials (Both IDP and SP)
 --------------------------------
@@ -135,7 +135,7 @@ This API is available on both the IDP and the SP.
 The certificate should be in PEM format.
 The key should be in base64 encoded pkcs6 DER format.
 
-<pre>
+```bash
 export CERT=MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJO\
 TDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECgwH\
 U3VyZm5ldDEPMA0GA1UECwwGQ29uZXh0MB4XDTEyMDMwODA4NTQyNFoXDTEzMDMw\
@@ -164,55 +164,55 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d "{\"certificate\": \"$CERT\",\"key\":\"$KEY\"}" \
         http://localhost:8080/api/signing-credential
-</pre>
+```
 
 Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
 -------------------------------------------------------
 
 This API is only available on the IDP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "bar"}' \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
-</pre>
+```
 
 Removing an attribute
 ---------------------
 
 This API is only available on the IDP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X DELETE \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
-</pre>
+```
 
 Adding a user
 -------------
 
 This API is only available on the IDP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
         http://localhost:8080/api/users
-</pre>
+```
 
 Setting the authentication method
 ---------------------------------
 
 This API is only available on the IDP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "ALL"}' \
         http://localhost:8080/api/authmethod
-</pre>
+```
 
 The authentication method API has two possible values.
 
@@ -230,9 +230,9 @@ Setting the SSO Service URL
 
 This API is only available on the SP.
 
-<pre>
+```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "http://localhost:8080/SingleSignOnService/vo:test"}' \
         http://localhost:9090/api/ssoServiceURL
-</pre>
+```
