@@ -115,6 +115,8 @@
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
 														https://api.dev.surfconext.nl/v1/oauth1/requestToken</p>
+													<p class="help-block">Hint:
+														https://os.dev.surfconext.nl/oauth/requestToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -126,6 +128,8 @@
 														class="input-xxlarge" />
 													<p class="help-block">Hint:
 														https://api.dev.surfconext.nl/v1/oauth1/accessToken</p>
+													<p class="help-block">Hint:
+														https://os.dev.surfconext.nl/oauth/accessToken</p>
 												</div>
 											</div>
 											<div class="control-group">
@@ -136,6 +140,8 @@
 														name="authorizationURL" class="input-xxlarge" />
 													<p class="help-block">Hint:
 														https://api.dev.surfconext.nl/v1/oauth1/confirm_access</p>
+													<p class="help-block">Hint:
+														https://os.dev.surfconext.nl/oauth/authorize</p>
 												</div>
 											</div>
 										</div>
@@ -277,6 +283,8 @@
 												name="requestURL" class="input-xxlarge" />
 											<p class="help-block">Hint:
 												https://api.dev.surfconext.nl/v1/social/rest/groups/@me</p>
+											<p class="help-block">Hint:
+												https://os.dev.surfconext.nl/social/rest/people/@me</p>
 										</div>
 									</div>
 									<div class="form-actions">
