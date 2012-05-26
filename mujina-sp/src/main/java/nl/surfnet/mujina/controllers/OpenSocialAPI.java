@@ -161,10 +161,6 @@ public class OpenSocialAPI {
   public void step2(ModelMap modelMap, @ModelAttribute("settings")
   ApiSettings settings, HttpServletRequest request, HttpServletResponse response) throws IOException {
     ApiSettings settingsFromSession = (ApiSettings) request.getSession().getAttribute("settings");
-    if (settings.isQueryParameters()) {
-      settingsFromSession.setQueryParameters(true);
-      request.getSession().setAttribute("settings", settingsFromSession);
-    }
     String authorizationUrl;
     OAuthService service = (OAuthService) request.getSession().getAttribute("service");
     if (settingsFromSession.isOAuth10a()) {
@@ -174,6 +170,8 @@ public class OpenSocialAPI {
     } else {
       ConfigurableOAuth20ServiceImpl service20 = (ConfigurableOAuth20ServiceImpl) service;
       authorizationUrl = service20.getAuthorizationUrl(EMPTY_TOKEN);
+      settingsFromSession.setAccessTokenRequestOption(settings.getAccessTokenRequestOption());
+      request.getSession().setAttribute("settings", settingsFromSession);
     }
     response.sendRedirect(authorizationUrl);
   }
