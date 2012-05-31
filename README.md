@@ -61,25 +61,8 @@ After you override configuration you can go back to the default using the reset 
 
 Build Mujina
 ---------------
+
 [Maven 3](http://maven.apache.org) is needed to build and run Mujina.
-
-### Build dependencies from source
-
-Mujina may depend on artifacts (poms, jars) from open source projects that are not available in a public Maven
-repository. Dependencies with groupId org.surfnet.coin can be built from source:
-
-coin-master 2.6.0-SNAPSHOT
-
-    git clone git://github.com/OpenConext/OpenConext-parent.git
-    cd OpenConext-parent
-    mvn install
-
-coin-test 2.2.0
-
-    git clone git://github.com/OpenConext/OpenConext-test.git
-    cd OpenConext-test
-    git checkout coin-test-2.2.0
-    mvn install
 
 Run the IDP using jetty
 -----------------------
