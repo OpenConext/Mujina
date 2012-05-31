@@ -30,6 +30,11 @@ Features
   * signing certificate  
   * sso Service URL
   
+- An OAuth 'form-based' client capable of making configurable OAuth calls (available under http://localhost:9090/social/social-queries.shtml):
+  * 2-legged and 3-legged OAuth1.0a
+  * Authorization code grant and Implicit grant
+  * Step by step detail information about the OAuth requests and responses
+  * OAuth 2.0 Access Token request using either query parameters, entity body parameters or the Authorization header
 
 
 Defaults
