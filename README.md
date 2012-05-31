@@ -16,6 +16,8 @@ Mujina
 Mujina mocks a SAML2 Identity and Service Provider.
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up. Thus, Mujina makes testing your stack a breeze! Mujina can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
 
+Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services. SURFconext also exposes a REST API for  Service Providers to offer the end-user context about the groups and memberships of the user (typically students, researchers and educational advisors). Mujina SP and IdP can be used to test the SURFconext cloud broker capabilities. The OAuth playground - part of Mujina - can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Twitter).
+
 Features
 --------
 - A SAML2 complient Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. A REST api allows for the 'just-in-time' manipulation of:
