@@ -13,10 +13,10 @@
 Mujina
 ======
 
-Mujina mocks a SAML2 Identity and Service Provider.
+Mujina mocks a SAML2 Identity and Service Provider (IdP & SP).
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up. Thus, Mujina makes testing your stack a breeze! Mujina can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
 
-Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services. SURFconext also exposes a REST API for  Service Providers to offer the end-user context about the groups and memberships of the user (typically students, researchers and educational advisors). Mujina SP and IdP can be used to test the SURFconext cloud broker capabilities. The OAuth playground - part of Mujina - can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Twitter).
+Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services. SURFconext also exposes a REST API for  Service Providers to offer the end-user context about the groups and memberships of the user (typically students, researchers and educational advisors). Mujina SP and IdP can be used to test the SURFconext cloud broker capabilities. The OAuth playground - part of Mujina SP - can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Foursquare).
 
 Features
 --------
@@ -34,9 +34,9 @@ Features
   
 - An OAuth 'form-based' client capable of making configurable OAuth calls (available under http://localhost:9090/social/social-queries.shtml):
   * 2-legged and 3-legged OAuth1.0a
-  * Authorization code grant and Implicit grant
+  * OAuth2.0 authorization code grant and implicit grant
+  * OAuth2.0 access token requests using either query parameters, entity body parameters or the authorization header
   * Step by step detail information about the OAuth requests and responses
-  * OAuth 2.0 Access Token request using either query parameters, entity body parameters or the Authorization header
 
 
 Defaults
