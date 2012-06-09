@@ -1,3 +1,7 @@
+<%@ page import="org.opensaml.saml2.core.AttributeStatement" %>
+<%@ page import="java.util.List" %>
+<%@ page import="org.opensaml.saml2.core.Attribute" %>
+<%@ page import="org.opensaml.xml.XMLObject" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
@@ -45,6 +49,30 @@ ___  ___        _  _
 <a href="admin.jsp">protected admin page</a> <br/>
 <a href="j_spring_security_logout">End your session with the Service Provider</a> <i>Does not end your session with the
   IDP</i> <br/>
+
+<h3>The following attributes were present:</h3>
+
+<dl id="assertionAttributes">
+<%
+  final List<AttributeStatement> attributeStatements = (List<AttributeStatement>)session.getAttribute("assertionAttributes");
+  if (attributeStatements != null) {
+    for (AttributeStatement attributeStatement : attributeStatements) {
+      final List<Attribute> attributes = attributeStatement.getAttributes();
+      for (Attribute attribute : attributes) {
+        out.print("<dt style=\"font-weight: bold;\">");
+        out.print(attribute.getName());
+        out.print("</dt><dd id=\"" + attribute.getName() + "\">");
+        final List<XMLObject> attributeValues = attribute.getAttributeValues();
+        for (XMLObject attributeValue : attributeValues) {
+          out.print(attributeValue.getDOM().getTextContent());
+          out.print(" ");
+        }
+        out.print("</dd>");
+      }
+    }
+  }
+%>
+</dl>
 
 <h3>Your current Spring Security Credentials are:</h3>
 
