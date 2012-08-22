@@ -28,10 +28,11 @@ import org.opensaml.saml2.core.Subject;
 import org.opensaml.saml2.core.impl.AssertionBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.security.keyinfo.KeyInfoGenerator;
-import org.opensaml.xml.signature.*;
+import org.opensaml.xml.signature.Signature;
+import org.opensaml.xml.signature.SignatureConstants;
+import org.opensaml.xml.signature.SignatureException;
+import org.opensaml.xml.signature.Signer;
 
 import nl.surfnet.mujina.model.AuthenticationMethod;
 import nl.surfnet.mujina.model.IdpConfiguration;
@@ -110,24 +111,17 @@ public class AssertionGenerator {
         signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
         signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
-        KeyInfoGenerator kiGenerator = SecurityHelper.getKeyInfoGenerator(signingCredential, null, null);
-        KeyInfo keyInfo;
-        try {
-            keyInfo = kiGenerator.generate(signingCredential);
-        } catch (org.opensaml.xml.security.SecurityException e) {
-            throw new RuntimeException("Cannot generate KeyInfo for signing the assertion", e);
-        }
-        signature.setKeyInfo(keyInfo);
-
         assertion.setSignature(signature);
 
         try {
             org.opensaml.Configuration.getMarshallerFactory().getMarshaller(assertion).marshall(assertion);
-            Signer.signObject(signature);
         } catch (MarshallingException e) {
-            throw new RuntimeException("Cannot Marshall the Signature for the Assertion", e);
+            e.printStackTrace();
+        }
+        try {
+            Signer.signObject(signature);
         } catch (SignatureException e) {
-            throw new RuntimeException("Cannot Sign Signature", e);
+            e.printStackTrace();
         }
     }
 
