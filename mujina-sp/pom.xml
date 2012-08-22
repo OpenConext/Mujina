@@ -149,11 +149,11 @@
         <configuration>
           <contextPath>/</contextPath>
           <scanIntervalSeconds>3</scanIntervalSeconds>
-          <stopPort>19966</stopPort>
+          <stopPort>9966</stopPort>
           <stopKey>foo</stopKey>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>19090</port>
+              <port>9090</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
