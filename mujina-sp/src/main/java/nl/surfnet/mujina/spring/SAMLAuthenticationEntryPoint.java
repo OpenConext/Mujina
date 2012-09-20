@@ -24,13 +24,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.surfnet.mujina.model.SpConfiguration;
-import nl.surfnet.mujina.saml.AuthnRequestGenerator;
-import nl.surfnet.mujina.saml.BindingAdapter;
-import nl.surfnet.mujina.saml.xml.EndpointGenerator;
-import nl.surfnet.mujina.util.IDService;
-import nl.surfnet.mujina.util.TimeService;
-
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.metadata.Endpoint;
@@ -49,6 +42,13 @@ import org.springframework.security.authentication.encoding.MessageDigestPasswor
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.StringUtils;
+
+import nl.surfnet.mujina.model.SpConfiguration;
+import nl.surfnet.mujina.saml.AuthnRequestGenerator;
+import nl.surfnet.mujina.saml.BindingAdapter;
+import nl.surfnet.mujina.saml.xml.EndpointGenerator;
+import nl.surfnet.mujina.util.IDService;
+import nl.surfnet.mujina.util.TimeService;
 
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -111,7 +111,9 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
       Credential signingCredential = credentialResolver.resolveSingle(criteriaSet);
       Validate.notNull(signingCredential);
 
-      bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, response);
+      String relayState = null; // Not needed here.
+
+      bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, relayState, response);
     } catch (MessageEncodingException mee) {
       log.error("Could not send authnRequest to Identity Provider.", mee);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

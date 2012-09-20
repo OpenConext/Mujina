@@ -21,13 +21,14 @@ import org.springframework.security.core.AuthenticationException;
 @SuppressWarnings("serial")
 public class IdentityProviderAuthenticationException extends AuthenticationException {
 
-  @SuppressWarnings("deprecation")
-  public IdentityProviderAuthenticationException(String msg, Object extraInformation) {
-    super(msg, extraInformation);
-  }
+    @Deprecated
+    public IdentityProviderAuthenticationException(String msg, Object extraInformation) {
+        super(msg, extraInformation);
+    }
 
-  public IdentityProviderAuthenticationException(String msg) {
-    super(msg);
-  }
+
+    public IdentityProviderAuthenticationException(String msg) {
+        super(msg);
+    }
 
 }
