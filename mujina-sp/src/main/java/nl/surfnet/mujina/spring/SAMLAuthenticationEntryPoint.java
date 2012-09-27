@@ -36,8 +36,10 @@ import org.opensaml.xml.security.criteria.UsageCriteria;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.util.StringUtils;
 
 import nl.surfnet.mujina.model.SpConfiguration;
 import nl.surfnet.mujina.saml.AuthnRequestGenerator;
@@ -93,7 +95,9 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
         AuthnRequestGenerator authnRequestGenerator = new AuthnRequestGenerator(spConfiguration.getEntityID(), timeService, idService);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-        final String singleSignOnServiceURL = spConfiguration.getSingleSignOnServiceURL();
+        String singleSignOnServiceURL = spConfiguration.getSingleSignOnServiceURL();
+        
+        singleSignOnServiceURL = transparentProxying(request, singleSignOnServiceURL);
 
         Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
 
@@ -117,5 +121,17 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
             log.error("Unable to retrieve signing credential", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /*
+     * If there is an entityID query parameter then append this as a path variable MD5- hashed
+     */
+    private String transparentProxying(HttpServletRequest request, String singleSignOnServiceURL) {
+      String entityID = request.getParameter("entityID");
+      if (StringUtils.hasText(entityID)) {
+        String encodeEntityID = new MessageDigestPasswordEncoder("MD5").encodePassword(entityID, null);
+        singleSignOnServiceURL = singleSignOnServiceURL.concat("/").concat(encodeEntityID);
+      }
+      return singleSignOnServiceURL;
     }
 }
