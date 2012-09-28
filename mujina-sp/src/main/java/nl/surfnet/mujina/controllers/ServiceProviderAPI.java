@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import nl.surfnet.mujina.model.AssertionConsumerServiceURL;
+import nl.surfnet.mujina.model.ProtocolBinding;
 import nl.surfnet.mujina.model.SSOServiceURL;
 import nl.surfnet.mujina.model.SpConfiguration;
 
@@ -46,9 +48,26 @@ public class ServiceProviderAPI {
     @RequestMapping(value = {"/ssoServiceURL"}, method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @ResponseBody
-    public void setAttribute(@RequestBody SSOServiceURL ssoServiceURL) {
+    public void setSsoServiceURL(@RequestBody SSOServiceURL ssoServiceURL) {
         log.debug("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
         configuration.setSingleSignOnServiceURL(ssoServiceURL.getValue());
     }
-
+    
+    @RequestMapping(value = {"/protocolBinding"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void setProtocolBinding(@RequestBody ProtocolBinding protocolBinding) {
+        log.debug("Request to set protocolBinding to {}", protocolBinding.getValue());
+        configuration.setProtocolBinding(protocolBinding.getValue());
+    }
+ 
+    @RequestMapping(value = {"/assertionConsumerServiceURL"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void setAssertionConsumerServiceURL(@RequestBody AssertionConsumerServiceURL assertionConsumerServiceURL) {
+        log.debug("Request to set assertionConsumerServiceURL to {}", assertionConsumerServiceURL.getValue());
+        configuration.setAssertionConsumerServiceURL(assertionConsumerServiceURL.getValue());
+    }
+ 
+ 
 }

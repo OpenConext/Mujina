@@ -64,6 +64,8 @@ public class TestHelper {
     private String singleSignOnServiceURL = "http://localhost:80";
     private String issuer = "sp";
 
+    private String protocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+
     public boolean responseHasAttribute(final String name, final String value, final Response resp) {
         final List<org.opensaml.saml2.core.Attribute> attributes = resp.getAssertions().get(0).getAttributeStatements().get(0).getAttributes();
         for (org.opensaml.saml2.core.Attribute attribute : attributes) {
@@ -126,7 +128,7 @@ public class TestHelper {
         IDService idService = new IDService();
         authnRequestGenerator = new AuthnRequestGenerator(issuer, timeService, idService);
         Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL, assertionConsumerServiceURL);
-        AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, assertionConsumerServiceURL);
+        AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, assertionConsumerServiceURL, protocolBinding );
         MockHttpServletResponse authnResponse = new MockHttpServletResponse();
         postBindingAdapter.sendSAMLMessage(authnReqeust, endpoint, null, authnResponse);
         assertEquals(authnResponse.getStatus(), 200);

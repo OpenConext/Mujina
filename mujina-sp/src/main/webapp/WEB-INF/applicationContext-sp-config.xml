@@ -102,7 +102,8 @@
   </bean>
 
   <bean id="spConfiguration" class="nl.surfnet.mujina.model.SpConfigurationImpl">
-    <constructor-arg value="${IDP_SSO_SERVICE_URL}" />
+    <constructor-arg index="0" value="${IDP_SSO_SERVICE_URL}" />
+    <constructor-arg index="1" value="${ASSERTION_CONSUMER_URL}" />
   </bean>
 
 </beans>

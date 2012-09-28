@@ -17,6 +17,18 @@
 package nl.surfnet.mujina.model;
 
 public interface SpConfiguration extends CommonConfiguration {
-    public void setSingleSignOnServiceURL(String singleSignOnServiceURL);
-    public String getSingleSignOnServiceURL();
+
+  void setSingleSignOnServiceURL(String singleSignOnServiceURL);
+
+  String getSingleSignOnServiceURL();
+
+  String getProtocolBinding();
+
+  void setProtocolBinding(String protocolBinding);
+  
+  void setAssertionConsumerServiceURL(String assertionConsumerServiceURL);
+  
+  String getAssertionConsumerServiceURL() ;
+
+
 }

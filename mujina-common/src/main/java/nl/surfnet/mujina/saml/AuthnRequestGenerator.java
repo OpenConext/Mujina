@@ -20,45 +20,44 @@ import org.opensaml.Configuration;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.impl.AuthnRequestBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.springframework.util.StringUtils;
 
 import nl.surfnet.mujina.saml.xml.IssuerGenerator;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
 
-
 public class AuthnRequestGenerator {
 
-    private XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+  private XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-    private final String issuingEntityName;
-    private final TimeService timeService;
-    private final IDService idService;
-    private IssuerGenerator issuerGenerator;
+  private final TimeService timeService;
+  private final IDService idService;
+  private IssuerGenerator issuerGenerator;
 
-    public AuthnRequestGenerator(String issuingEntityName, TimeService timeService, IDService idService) {
-        super();
-        this.issuingEntityName = issuingEntityName;
-        this.timeService = timeService;
-        this.idService = idService;
+  public AuthnRequestGenerator(String issuingEntityName, TimeService timeService, IDService idService) {
+    super();
+    this.timeService = timeService;
+    this.idService = idService;
 
-        issuerGenerator = new IssuerGenerator(issuingEntityName);
+    issuerGenerator = new IssuerGenerator(issuingEntityName);
+  }
+
+  public AuthnRequest generateAuthnRequest(String destination, String responseLocation, String protocolBinding) {
+    AuthnRequestBuilder authnRequestBuilder = (AuthnRequestBuilder) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
+
+    AuthnRequest authnRequest = authnRequestBuilder.buildObject();
+    if (StringUtils.hasText(responseLocation)) {
+      authnRequest.setAssertionConsumerServiceURL(responseLocation);
     }
-
-    public AuthnRequest generateAuthnRequest(String destination, String responseLocation) {
-
-        AuthnRequestBuilder authnRequestBuilder = (AuthnRequestBuilder) builderFactory.getBuilder(AuthnRequest.DEFAULT_ELEMENT_NAME);
-
-        AuthnRequest authnRequest = authnRequestBuilder.buildObject();
-
-        authnRequest.setAssertionConsumerServiceURL(responseLocation);
-        authnRequest.setID(idService.generateID());
-        authnRequest.setIssueInstant(timeService.getCurrentDateTime());
-        authnRequest.setDestination(destination);
-
-        authnRequest.setIssuer(issuerGenerator.generateIssuer());
-
-        return authnRequest;
+    authnRequest.setID(idService.generateID());
+    authnRequest.setIssueInstant(timeService.getCurrentDateTime());
+    authnRequest.setDestination(destination);
+    if (StringUtils.hasText(protocolBinding)) {
+      authnRequest.setProtocolBinding(protocolBinding);
     }
+    authnRequest.setIssuer(issuerGenerator.generateIssuer());
 
+    return authnRequest;
+  }
 
 }

@@ -70,7 +70,6 @@
   <beans:bean id="samlAuthenticationEntryPoint" class="nl.surfnet.mujina.spring.SAMLAuthenticationEntryPoint">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
-    <beans:property name="assertionConsumerServiceURL" value="${ASSERTION_CONSUMER_URL}"/>
     <beans:property name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
     <beans:property name="bindingAdapter" ref="bindingAdpater"/>
     <beans:property name="configuration" ref="spConfiguration" />
