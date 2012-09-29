@@ -27,28 +27,29 @@ import org.scribe.oauth.OAuthService;
 
 /**
  * @author oharsta
- *
+ * 
  */
 public class ConfigurableApi20 extends DefaultApi20 {
 
   private String accessTokenEndPoint;
   private String authorizationUrl;
   private boolean implicitGrant;
-  
+
   public ConfigurableApi20(String accessTokenEndPoint, String authorizationUrl, boolean implicitGrant) {
     super();
     this.accessTokenEndPoint = accessTokenEndPoint;
     this.authorizationUrl = authorizationUrl;
     this.implicitGrant = implicitGrant;
   }
-  
+
   @Override
   public OAuthService createService(OAuthConfig config) {
     return new ConfigurableOAuth20ServiceImpl(this, config);
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.scribe.builder.api.DefaultApi20#getAccessTokenEndpoint()
    */
   @Override
@@ -56,13 +57,17 @@ public class ConfigurableApi20 extends DefaultApi20 {
     return accessTokenEndPoint + "?grant_type=authorization_code";
   }
 
-  /* (non-Javadoc)
-   * @see org.scribe.builder.api.DefaultApi20#getAuthorizationUrl(org.scribe.model.OAuthConfig)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.scribe.builder.api.DefaultApi20#getAuthorizationUrl(org.scribe.model
+   * .OAuthConfig)
    */
   @Override
   public String getAuthorizationUrl(OAuthConfig config) {
     String type = (implicitGrant ? "token" : "code");
-    StringBuilder url = new StringBuilder(String.format(authorizationUrl+ "?response_type=%s&client_id=%s", type ,config.getApiKey()));
+    StringBuilder url = new StringBuilder(String.format(authorizationUrl + "?response_type=%s&client_id=%s", type, config.getApiKey()));
     if (config.hasScope()) {
       url.append("&scope=").append(config.getScope());
     }

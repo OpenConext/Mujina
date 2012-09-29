@@ -28,31 +28,30 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
 
 public class AuthnStatementGenerator {
 
+  private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-    private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+  public AuthnStatement generateAuthnStatement(DateTime authnInstant) {
 
-    public AuthnStatement generateAuthnStatement(DateTime authnInstant) {
+    // Response/Assertion/AuthnStatement/AuthContext/AuthContextClassRef
+    AuthnContextClassRefBuilder authnContextClassRefBuilder = (AuthnContextClassRefBuilder) builderFactory
+        .getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+    AuthnContextClassRef authnContextClassRef = authnContextClassRefBuilder.buildObject();
+    // urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
+    authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
 
+    // Response/Assertion/AuthnStatement/AuthContext
+    AuthnContextBuilder authnContextBuilder = (AuthnContextBuilder) builderFactory.getBuilder(AuthnContext.DEFAULT_ELEMENT_NAME);
+    AuthnContext authnContext = authnContextBuilder.buildObject();
+    authnContext.setAuthnContextClassRef(authnContextClassRef);
 
-        //Response/Assertion/AuthnStatement/AuthContext/AuthContextClassRef
-        AuthnContextClassRefBuilder authnContextClassRefBuilder = (AuthnContextClassRefBuilder) builderFactory.getBuilder(AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        AuthnContextClassRef authnContextClassRef = authnContextClassRefBuilder.buildObject();
-        //urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
-        authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
+    // Response/Assertion/AuthnStatement
+    AuthnStatementBuilder authnStatementBuilder = (AuthnStatementBuilder) builderFactory.getBuilder(AuthnStatement.DEFAULT_ELEMENT_NAME);
+    AuthnStatement authnStatement = authnStatementBuilder.buildObject();
+    authnStatement.setAuthnContext(authnContext);
 
-        //Response/Assertion/AuthnStatement/AuthContext
-        AuthnContextBuilder authnContextBuilder = (AuthnContextBuilder) builderFactory.getBuilder(AuthnContext.DEFAULT_ELEMENT_NAME);
-        AuthnContext authnContext = authnContextBuilder.buildObject();
-        authnContext.setAuthnContextClassRef(authnContextClassRef);
+    authnStatement.setAuthnInstant(authnInstant);
 
-        //Response/Assertion/AuthnStatement
-        AuthnStatementBuilder authnStatementBuilder = (AuthnStatementBuilder) builderFactory.getBuilder(AuthnStatement.DEFAULT_ELEMENT_NAME);
-        AuthnStatement authnStatement = authnStatementBuilder.buildObject();
-        authnStatement.setAuthnContext(authnContext);
+    return authnStatement;
 
-        authnStatement.setAuthnInstant(authnInstant);
-
-        return authnStatement;
-
-    }
+  }
 }

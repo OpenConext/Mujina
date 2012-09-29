@@ -77,11 +77,10 @@ public class ConfigurableOAuth20ServiceImpl implements OAuthService {
 
   public OAuthRequest getOAuthRequestConformSpec(Verifier verifier) {
     OAuthRequest request = new OAuthRequest(api.getAccessTokenVerb(), api.getAccessTokenEndpoint());
-    
+
     String encodeBase64String = Base64.encodeBase64String((config.getApiKey() + ":" + config.getApiSecret()).getBytes());
     encodeBase64String = encodeBase64String.replaceAll("\n", "").replaceAll("\r", "");
-    request.addHeader("Authorization",
-        "Basic " + encodeBase64String);
+    request.addHeader("Authorization", "Basic " + encodeBase64String);
     request.addBodyParameter(OAuthConstants.CODE, verifier.getValue());
     request.addBodyParameter(OAuthConstants.REDIRECT_URI, config.getCallback());
     request.addBodyParameter("grant_type", "authorization_code");
@@ -113,8 +112,7 @@ public class ConfigurableOAuth20ServiceImpl implements OAuthService {
    * {@inheritDoc}
    */
   public Token getRequestToken() {
-    throw new UnsupportedOperationException(
-        "Unsupported operation, please use 'getAuthorizationUrl' and redirect your users there");
+    throw new UnsupportedOperationException("Unsupported operation, please use 'getAuthorizationUrl' and redirect your users there");
   }
 
   /**

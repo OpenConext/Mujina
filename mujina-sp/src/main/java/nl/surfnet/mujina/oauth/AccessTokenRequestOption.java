@@ -45,7 +45,6 @@ public enum AccessTokenRequestOption {
         return option;
       }
     }
-    throw new RuntimeException(
-        String.format("Can't convert %s to an instance of AccessTokenRequestOption", optionValue));
+    throw new RuntimeException(String.format("Can't convert %s to an instance of AccessTokenRequestOption", optionValue));
   }
 }

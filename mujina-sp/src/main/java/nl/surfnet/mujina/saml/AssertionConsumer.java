@@ -16,13 +16,13 @@
 
 package nl.surfnet.mujina.saml;
 
+import nl.surfnet.mujina.spring.User;
+
 import org.opensaml.saml2.core.Response;
 import org.springframework.security.core.AuthenticationException;
 
-import nl.surfnet.mujina.spring.User;
-
 public interface AssertionConsumer {
 
-    User consume(Response samlResponse) throws AuthenticationException;
+  User consume(Response samlResponse) throws AuthenticationException;
 
 }

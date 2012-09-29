@@ -26,22 +26,22 @@ import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 
 public class SecurityPolicyDelegate implements SecurityPolicy {
 
-    private final BasicSecurityPolicy basicSecurityPolicy;
+  private final BasicSecurityPolicy basicSecurityPolicy;
 
-    public SecurityPolicyDelegate(List<SecurityPolicyRule> securityPolicyRules) {
-        super();
-        basicSecurityPolicy = new BasicSecurityPolicy();
-        basicSecurityPolicy.getPolicyRules().addAll(securityPolicyRules);
-    }
+  public SecurityPolicyDelegate(List<SecurityPolicyRule> securityPolicyRules) {
+    super();
+    basicSecurityPolicy = new BasicSecurityPolicy();
+    basicSecurityPolicy.getPolicyRules().addAll(securityPolicyRules);
+  }
 
-    @Override
-    public void evaluate(MessageContext messageContext) throws SecurityPolicyException {
-        basicSecurityPolicy.evaluate(messageContext);
-    }
+  @Override
+  public void evaluate(MessageContext messageContext) throws SecurityPolicyException {
+    basicSecurityPolicy.evaluate(messageContext);
+  }
 
-    @Override
-    public List<SecurityPolicyRule> getPolicyRules() {
-        return basicSecurityPolicy.getPolicyRules();
-    }
+  @Override
+  public List<SecurityPolicyRule> getPolicyRules() {
+    return basicSecurityPolicy.getPolicyRules();
+  }
 
 }

@@ -16,15 +16,15 @@
 
 package nl.surfnet.mujina.saml;
 
+import nl.surfnet.mujina.saml.xml.IssuerGenerator;
+import nl.surfnet.mujina.util.IDService;
+import nl.surfnet.mujina.util.TimeService;
+
 import org.opensaml.Configuration;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.impl.AuthnRequestBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.springframework.util.StringUtils;
-
-import nl.surfnet.mujina.saml.xml.IssuerGenerator;
-import nl.surfnet.mujina.util.IDService;
-import nl.surfnet.mujina.util.TimeService;
 
 public class AuthnRequestGenerator {
 

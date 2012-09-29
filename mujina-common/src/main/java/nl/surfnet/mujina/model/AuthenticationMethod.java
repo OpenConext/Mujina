@@ -23,20 +23,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AuthenticationMethod implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private String value;
+  private String value;
 
-    public String getValue() {
-        return value;
-    }
+  public String getValue() {
+    return value;
+  }
 
-    @XmlElement
-    public void setValue(final String value) {
-        this.value = value;
-    }
+  @XmlElement
+  public void setValue(final String value) {
+    this.value = value;
+  }
 
-    public enum Method {
-        USER, ALL
-    }
+  public enum Method {
+    USER, ALL
+  }
 }

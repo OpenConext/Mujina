@@ -28,26 +28,27 @@ import org.slf4j.LoggerFactory;
 
 public class EndpointGenerator {
 
-    private final static Logger logger = LoggerFactory.getLogger(EndpointGenerator.class);
+  private final static Logger logger = LoggerFactory.getLogger(EndpointGenerator.class);
 
-    private XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+  private XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-    public Endpoint generateEndpoint(QName service, String location, String responseLocation) {
+  @SuppressWarnings("unchecked")
+  public Endpoint generateEndpoint(QName service, String location, String responseLocation) {
 
-        logger.debug("end point service: {}", service);
-        logger.debug("end point location: {}", location);
-        logger.debug("end point responseLocation: {}", responseLocation);
+    logger.debug("end point service: {}", service);
+    logger.debug("end point location: {}", location);
+    logger.debug("end point responseLocation: {}", responseLocation);
 
-        SAMLObjectBuilder<Endpoint> endpointBuilder = (SAMLObjectBuilder<Endpoint>) builderFactory.getBuilder(service);
-        Endpoint samlEndpoint = endpointBuilder.buildObject();
+    SAMLObjectBuilder<Endpoint> endpointBuilder = (SAMLObjectBuilder<Endpoint>) builderFactory.getBuilder(service);
+    Endpoint samlEndpoint = endpointBuilder.buildObject();
 
-        samlEndpoint.setLocation(location);
+    samlEndpoint.setLocation(location);
 
-        // this does not have to be set
-        if (StringUtils.isNotEmpty(responseLocation))
-            samlEndpoint.setResponseLocation(responseLocation);
+    // this does not have to be set
+    if (StringUtils.isNotEmpty(responseLocation))
+      samlEndpoint.setResponseLocation(responseLocation);
 
-        return samlEndpoint;
-    }
+    return samlEndpoint;
+  }
 
 }

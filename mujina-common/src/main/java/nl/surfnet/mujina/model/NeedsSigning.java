@@ -23,17 +23,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class NeedsSigning implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private boolean value;
+  private boolean value;
 
-    public boolean getValue() {
-        return value;
-    }
+  public boolean getValue() {
+    return value;
+  }
 
-    @XmlElement
-    public void setValue(final boolean value) {
-        this.value = value;
-    }
+  @XmlElement
+  public void setValue(final boolean value) {
+    this.value = value;
+  }
 
 }

@@ -35,47 +35,45 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 public class CommonAPI {
 
-    private final static Logger log = LoggerFactory.getLogger(CommonAPI.class);
+  private final static Logger log = LoggerFactory.getLogger(CommonAPI.class);
 
-    private CommonConfiguration configuration;
+  private CommonConfiguration configuration;
 
-    @Autowired
-    public CommonAPI(final CommonConfiguration configuration) {
-        this.configuration = configuration;
-    }
+  @Autowired
+  public CommonAPI(final CommonConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
-    @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void reset() {
-        log.debug("Resetting to default configuration");
-        configuration.reset();
-    }
+  @RequestMapping(value = { "/reset" }, method = RequestMethod.POST)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void reset() {
+    log.debug("Resetting to default configuration");
+    configuration.reset();
+  }
 
-    @RequestMapping(value = {"/entityid"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setEntityID(@RequestBody EntityID entityID) {
-        log.debug("Request to set entityID {}", entityID.getValue());
-        configuration.setEntityID(entityID.getValue());
-    }
+  @RequestMapping(value = { "/entityid" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setEntityID(@RequestBody EntityID entityID) {
+    log.debug("Request to set entityID {}", entityID.getValue());
+    configuration.setEntityID(entityID.getValue());
+  }
 
-    @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setSigningCredential(@RequestBody Credential credential) {
-        log.debug("Request to set signing credential");
-        configuration.injectCredential(credential.getCertificate(), credential.getKey());
-    }
-    
-    @RequestMapping(value = {"/needs-signing"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setSigningNeeded(@RequestBody NeedsSigning needsSigning) {
-        log.debug("Request to set signing needed");
-        configuration.setSigning(needsSigning.getValue()) ;
-    }
-    
+  @RequestMapping(value = { "/signing-credential" }, method = RequestMethod.POST)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setSigningCredential(@RequestBody Credential credential) {
+    log.debug("Request to set signing credential");
+    configuration.injectCredential(credential.getCertificate(), credential.getKey());
+  }
 
+  @RequestMapping(value = { "/needs-signing" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setSigningNeeded(@RequestBody NeedsSigning needsSigning) {
+    log.debug("Request to set signing needed");
+    configuration.setSigning(needsSigning.getValue());
+  }
 
 }

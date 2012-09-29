@@ -22,12 +22,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.mujina.model.IdpConfiguration;
+import nl.surfnet.mujina.model.SimpleAuthentication;
+import nl.surfnet.mujina.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mujina.saml.xml.EndpointGenerator;
+import nl.surfnet.mujina.spring.AuthnRequestInfo;
+import nl.surfnet.mujina.util.IDService;
+import nl.surfnet.mujina.util.TimeService;
+
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.*;
+import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -40,91 +48,81 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
 
-import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.model.SimpleAuthentication;
-import nl.surfnet.mujina.saml.xml.AuthnResponseGenerator;
-import nl.surfnet.mujina.saml.xml.EndpointGenerator;
-import nl.surfnet.mujina.spring.AuthnRequestInfo;
-import nl.surfnet.mujina.util.IDService;
-import nl.surfnet.mujina.util.TimeService;
-
 public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
-    private final TimeService timeService;
-    private final IDService idService;
-    private int responseValidityTimeInSeconds;
-    private final BindingAdapter adapter;
-    private CredentialResolver credentialResolver;
+  private final TimeService timeService;
+  private final IDService idService;
+  private int responseValidityTimeInSeconds;
+  private final BindingAdapter adapter;
+  private CredentialResolver credentialResolver;
 
-    @Autowired
-    IdpConfiguration idpConfiguration;
+  @Autowired
+  IdpConfiguration idpConfiguration;
 
-    private final static Logger logger = LoggerFactory
-            .getLogger(SSOSuccessAuthnResponder.class);
+  private final static Logger logger = LoggerFactory.getLogger(SSOSuccessAuthnResponder.class);
 
+  public SSOSuccessAuthnResponder(TimeService timeService, IDService idService, BindingAdapter adapter,
+      CredentialResolver credentialResolver) {
+    super();
+    this.timeService = timeService;
+    this.idService = idService;
+    this.adapter = adapter;
+    this.credentialResolver = credentialResolver;
+  }
 
-    public SSOSuccessAuthnResponder(TimeService timeService,
-                                    IDService idService,
-                                    BindingAdapter adapter,
-                                    CredentialResolver credentialResolver) {
-        super();
-        this.timeService = timeService;
-        this.idService = idService;
-        this.adapter = adapter;
-        this.credentialResolver = credentialResolver;
+  @Required
+  public void setResponseValidityTimeInSeconds(int responseValidityTimeInSeconds) {
+    this.responseValidityTimeInSeconds = responseValidityTimeInSeconds;
+  }
+
+  @Override
+  public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    AuthnRequestInfo info = (AuthnRequestInfo) request.getSession().getAttribute(AuthnRequestInfo.class.getName());
+
+    if (info == null) {
+      logger.warn("Could not find AuthnRequest on the request.  Responding with SC_FORBIDDEN.");
+      response.sendError(HttpServletResponse.SC_FORBIDDEN);
+      return;
     }
 
+    logger.debug("AuthnRequestInfo: {}", info);
 
-    @Required
-    public void setResponseValidityTimeInSeconds(int responseValidityTimeInSeconds) {
-        this.responseValidityTimeInSeconds = responseValidityTimeInSeconds;
+    SimpleAuthentication authToken = (SimpleAuthentication) SecurityContextHolder.getContext().getAuthentication();
+    DateTime authnInstant = new DateTime(request.getSession().getCreationTime());
+
+    CriteriaSet criteriaSet = new CriteriaSet();
+    criteriaSet.add(new EntityIDCriteria(idpConfiguration.getEntityID()));
+    criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
+    Credential signingCredential = null;
+    try {
+      signingCredential = credentialResolver.resolveSingle(criteriaSet);
+    } catch (org.opensaml.xml.security.SecurityException e) {
+      logger.warn("Unable to resolve EntityID while signing", e);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      return;
     }
+    Validate.notNull(signingCredential);
 
-    @Override
-    public void handleRequest(HttpServletRequest request,
-                              HttpServletResponse response) throws ServletException, IOException {
-        AuthnRequestInfo info = (AuthnRequestInfo) request.getSession().getAttribute(AuthnRequestInfo.class.getName());
+    AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(),
+        timeService, idService, idpConfiguration);
+    EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-        if (info == null) {
-            logger.warn("Could not find AuthnRequest on the request.  Responding with SC_FORBIDDEN.");
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+    final String remoteIP = request.getRemoteAddr();
 
-        logger.debug("AuthnRequestInfo: {}", info);
+    Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConumerURL(),
+        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
+    Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME,
+        info.getAssertionConumerURL(), null);
 
-        SimpleAuthentication authToken = (SimpleAuthentication) SecurityContextHolder.getContext().getAuthentication();
-        DateTime authnInstant = new DateTime(request.getSession().getCreationTime());
+    request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
 
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(idpConfiguration.getEntityID()));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-        Credential signingCredential = null;
-        try {
-            signingCredential = credentialResolver.resolveSingle(criteriaSet);
-        } catch (org.opensaml.xml.security.SecurityException e) {
-            logger.warn("Unable to resolve EntityID while signing", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
-        }
-        Validate.notNull(signingCredential);
-
-        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(), timeService, idService, idpConfiguration);
-        EndpointGenerator endpointGenerator = new EndpointGenerator();
-
-        final String remoteIP = request.getRemoteAddr();
-
-        Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConumerURL(), responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
-        Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME, info.getAssertionConumerURL(), null);
-
-        request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
-
-        //we could use a different adapter to send the response based on request issuer...
-        try {
-            adapter.sendSAMLMessage(authResponse, endpoint, signingCredential, response);
-        } catch (MessageEncodingException mee) {
-            logger.error("Exception encoding SAML message", mee);
-            response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-        }
+    // we could use a different adapter to send the response based on request
+    // issuer...
+    try {
+      adapter.sendSAMLMessage(authResponse, endpoint, signingCredential, response);
+    } catch (MessageEncodingException mee) {
+      logger.error("Exception encoding SAML message", mee);
+      response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     }
+  }
 }

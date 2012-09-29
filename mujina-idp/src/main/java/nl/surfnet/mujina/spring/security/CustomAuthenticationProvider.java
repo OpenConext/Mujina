@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import nl.surfnet.mujina.model.AuthenticationMethod;
+import nl.surfnet.mujina.model.IdpConfiguration;
+import nl.surfnet.mujina.model.SimpleAuthentication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,37 +32,36 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
-import nl.surfnet.mujina.model.AuthenticationMethod;
-import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.model.SimpleAuthentication;
-
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private IdpConfiguration idpConfiguration;
-    
-    @Override
-    public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
-        final String name = authentication.getName();
-        final String password = authentication.getCredentials().toString();
+  @Autowired
+  private IdpConfiguration idpConfiguration;
 
-        if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-            final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-            authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-            return new SimpleAuthentication(name, password, authorities);
-        } else {
-            final Collection<SimpleAuthentication> users = idpConfiguration.getUsers();
-            for (SimpleAuthentication user : users) {
-                if (user.getPrincipal().equals(name) && user.getCredentials().equals(password)) {
-                    return user;
-                }
-            }
-            throw new AuthenticationException("Can not log in") {};
+  @SuppressWarnings("serial")
+  @Override
+  public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
+    final String name = authentication.getName();
+    final String password = authentication.getCredentials().toString();
+
+    if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
+      final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+      authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+      return new SimpleAuthentication(name, password, authorities);
+    } else {
+      final Collection<SimpleAuthentication> users = idpConfiguration.getUsers();
+      for (SimpleAuthentication user : users) {
+        if (user.getPrincipal().equals(name) && user.getCredentials().equals(password)) {
+          return user;
         }
+      }
+      throw new AuthenticationException("Can not log in") {
+      };
     }
+  }
 
-    @Override
-    public boolean supports(final Class method) {
-        return method.equals(UsernamePasswordAuthenticationToken.class);
-    }
+  @SuppressWarnings("rawtypes")
+  @Override
+  public boolean supports(final Class method) {
+    return method.equals(UsernamePasswordAuthenticationToken.class);
+  }
 }

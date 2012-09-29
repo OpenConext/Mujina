@@ -222,11 +222,11 @@ public class ApiSettings {
   }
 
   /**
-   * @param accessTokenRequestOption the accessTokenRequestOption to set
+   * @param accessTokenRequestOption
+   *          the accessTokenRequestOption to set
    */
   public void setAccessTokenRequestOption(String accessTokenRequestOption) {
     this.accessTokenRequestOption = accessTokenRequestOption;
   }
-
 
 }

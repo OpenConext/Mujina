@@ -24,12 +24,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.mujina.model.SpConfiguration;
+import nl.surfnet.mujina.saml.AuthnRequestGenerator;
+import nl.surfnet.mujina.saml.BindingAdapter;
+import nl.surfnet.mujina.saml.xml.EndpointGenerator;
+import nl.surfnet.mujina.util.IDService;
+import nl.surfnet.mujina.util.TimeService;
+
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.*;
+import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -42,13 +49,6 @@ import org.springframework.security.authentication.encoding.MessageDigestPasswor
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.util.StringUtils;
-
-import nl.surfnet.mujina.model.SpConfiguration;
-import nl.surfnet.mujina.saml.AuthnRequestGenerator;
-import nl.surfnet.mujina.saml.BindingAdapter;
-import nl.surfnet.mujina.saml.xml.EndpointGenerator;
-import nl.surfnet.mujina.util.IDService;
-import nl.surfnet.mujina.util.TimeService;
 
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -94,11 +94,12 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
     singleSignOnServiceURL = transparentProxying(request, singleSignOnServiceURL);
 
     String localAssertionConsumerServiceURL = spConfiguration.getAssertionConsumerServiceURL();
-    
+
     Endpoint endpoint = endpointGenerator.generateEndpoint(SingleSignOnService.DEFAULT_ELEMENT_NAME, singleSignOnServiceURL,
         localAssertionConsumerServiceURL);
 
-    AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, localAssertionConsumerServiceURL, spConfiguration.getProtocolBinding());
+    AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, localAssertionConsumerServiceURL,
+        spConfiguration.getProtocolBinding());
 
     log.debug("Sending authnRequest to {}", singleSignOnServiceURL);
 

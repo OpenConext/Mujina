@@ -25,10 +25,9 @@ public interface SpConfiguration extends CommonConfiguration {
   String getProtocolBinding();
 
   void setProtocolBinding(String protocolBinding);
-  
-  void setAssertionConsumerServiceURL(String assertionConsumerServiceURL);
-  
-  String getAssertionConsumerServiceURL() ;
 
+  void setAssertionConsumerServiceURL(String assertionConsumerServiceURL);
+
+  String getAssertionConsumerServiceURL();
 
 }

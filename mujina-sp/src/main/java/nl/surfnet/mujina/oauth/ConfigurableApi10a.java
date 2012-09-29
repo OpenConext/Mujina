@@ -25,7 +25,7 @@ import org.scribe.oauth.OAuthService;
 
 /**
  * {@link DefaultApi10a} that is run-time configurable
- *
+ * 
  */
 public class ConfigurableApi10a extends DefaultApi10a {
 
@@ -48,8 +48,9 @@ public class ConfigurableApi10a extends DefaultApi10a {
     return new ConfigurableOAuth10aServiceImpl(this, config);
   }
 
-
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.scribe.builder.api.DefaultApi10a#getRequestTokenEndpoint()
    */
   @Override
@@ -57,16 +58,21 @@ public class ConfigurableApi10a extends DefaultApi10a {
     return requestTokenEndpoint;
   }
 
-
-  /* (non-Javadoc)
-   * @see org.scribe.builder.api.DefaultApi10a#getAuthorizationUrl(org.scribe.model.Token)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * org.scribe.builder.api.DefaultApi10a#getAuthorizationUrl(org.scribe.model
+   * .Token)
    */
   @Override
   public String getAuthorizationUrl(Token requestToken) {
-    return authorizationUrl + "?oauth_token="+requestToken.getToken();
+    return authorizationUrl + "?oauth_token=" + requestToken.getToken();
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see org.scribe.builder.api.DefaultApi10a#getAccessTokenEndpoint()
    */
   @Override

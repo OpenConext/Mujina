@@ -141,8 +141,7 @@ public class ConfigurableOAuth10aServiceImpl implements OAuthService {
   public Token getAccessTokenFromResponse(Response response) {
     return api.getAccessTokenExtractor().extract(response.getBody());
   }
-  
-  
+
   /**
    * {@inheritDoc}
    */

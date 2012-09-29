@@ -32,61 +32,59 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * Rule to check that the message has been signed by an issuer that has credentials
- * in the keystore.
+ * Rule to check that the message has been signed by an issuer that has
+ * credentials in the keystore.
  * <p/>
  * We could use a SAMLProtocolMessageXMLSignatureSecurityPolicyRule, but, that
- * relies on role info to be set (which we will not be using).  Also, we will insist
- * that the message be signed and not rely on an additional rule to check the isAuthenticated
- * flag on the message context.
+ * relies on role info to be set (which we will not be using). Also, we will
+ * insist that the message be signed and not rely on an additional rule to check
+ * the isAuthenticated flag on the message context.
  */
 public class SignatureSecurityPolicyRule implements InitializingBean, SecurityPolicyRule {
 
-    private final static Logger log = LoggerFactory.getLogger(SignatureSecurityPolicyRule.class);
+  private final static Logger log = LoggerFactory.getLogger(SignatureSecurityPolicyRule.class);
 
-    private final CredentialResolver credentialResolver;
-    private final SAMLSignatureProfileValidator samlSignatureProfileValidator;
-    ExplicitKeySignatureTrustEngine trustEngine;
+  private final CredentialResolver credentialResolver;
+  private final SAMLSignatureProfileValidator samlSignatureProfileValidator;
+  ExplicitKeySignatureTrustEngine trustEngine;
 
-    public SignatureSecurityPolicyRule(CredentialResolver credentialResolver, SAMLSignatureProfileValidator samlSignatureProfileValidator) {
-        super();
-        this.credentialResolver = credentialResolver;
-        this.samlSignatureProfileValidator = samlSignatureProfileValidator;
+  public SignatureSecurityPolicyRule(CredentialResolver credentialResolver, SAMLSignatureProfileValidator samlSignatureProfileValidator) {
+    super();
+    this.credentialResolver = credentialResolver;
+    this.samlSignatureProfileValidator = samlSignatureProfileValidator;
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+
+    KeyInfoCredentialResolver keyInfoCredResolver = Configuration.getGlobalSecurityConfiguration().getDefaultKeyInfoCredentialResolver();
+
+    trustEngine = new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoCredResolver);
+  }
+
+  @Override
+  public void evaluate(MessageContext messageContext) throws SecurityPolicyException {
+
+    log.debug("evaluating signature of {}", messageContext);
+
+    if (!(messageContext.getInboundMessage() instanceof SignableSAMLObject)) {
+      throw new SecurityPolicyException("Inbound Message is not a SignableSAMLObject");
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
+    SignableSAMLObject samlMessage = (SignableSAMLObject) messageContext.getInboundMessage();
 
-        KeyInfoCredentialResolver keyInfoCredResolver =
-                Configuration.getGlobalSecurityConfiguration().getDefaultKeyInfoCredentialResolver();
+    checkSignatureProfile(samlMessage);
+  }
 
-        trustEngine = new ExplicitKeySignatureTrustEngine(credentialResolver, keyInfoCredResolver);
+  private void checkSignatureProfile(SignableSAMLObject samlMessage) throws SecurityPolicyException {
+    try {
+      final Signature signature = samlMessage.getSignature();
+      if (signature != null) {
+        samlSignatureProfileValidator.validate(signature);
+      }
+    } catch (ValidationException ve) {
+
+      throw new SecurityPolicyException("Signature did not conform to SAML Signature profile", ve);
     }
-
-    @Override
-    public void evaluate(MessageContext messageContext) throws SecurityPolicyException {
-
-        log.debug("evaluating signature of {}", messageContext);
-
-        if (!(messageContext.getInboundMessage() instanceof SignableSAMLObject)) {
-            throw new SecurityPolicyException("Inbound Message is not a SignableSAMLObject");
-        }
-
-        SignableSAMLObject samlMessage = (SignableSAMLObject) messageContext.getInboundMessage();
-
-        checkSignatureProfile(samlMessage);
-    }
-
-    private void checkSignatureProfile(SignableSAMLObject samlMessage)
-            throws SecurityPolicyException {
-        try {
-            final Signature signature = samlMessage.getSignature();
-            if (signature != null) {
-                samlSignatureProfileValidator.validate(signature);
-            }
-        } catch (ValidationException ve) {
-
-            throw new SecurityPolicyException("Signature did not conform to SAML Signature profile", ve);
-        }
-    }
+  }
 }

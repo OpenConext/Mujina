@@ -20,22 +20,20 @@ package nl.surfnet.mujina.oauth;
 
 /**
  * Available versions
- *
+ * 
  */
 public enum OAuthVersion {
 
   VERSION10A("1.0a"), VERSION20("2.0");
-  
+
   private String version;
-  
+
   private OAuthVersion(String version) {
     this.version = version;
   }
-  
+
   public String getVersion() {
     return version;
   }
-  
-  
-  
+
 }

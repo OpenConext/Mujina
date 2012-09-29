@@ -16,34 +16,33 @@
 
 package nl.surfnet.mujina.saml;
 
+import nl.surfnet.mujina.model.CommonConfiguration;
+
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.KeyStoreCredentialResolver;
 
-import nl.surfnet.mujina.model.CommonConfiguration;
-
-
 public class KeyStoreCredentialResolverDelegate implements CredentialResolver {
 
-    private CommonConfiguration configuration;
+  private CommonConfiguration configuration;
 
-    @Override
-    public Iterable<Credential> resolve(CriteriaSet criteriaSet) throws SecurityException {
-        return getKeyStoreCredentialResolver().resolve(criteriaSet);
-    }
+  @Override
+  public Iterable<Credential> resolve(CriteriaSet criteriaSet) throws SecurityException {
+    return getKeyStoreCredentialResolver().resolve(criteriaSet);
+  }
 
-    @Override
-    public Credential resolveSingle(CriteriaSet criteriaSet) throws SecurityException {
-        return getKeyStoreCredentialResolver().resolveSingle(criteriaSet);
-    }
+  @Override
+  public Credential resolveSingle(CriteriaSet criteriaSet) throws SecurityException {
+    return getKeyStoreCredentialResolver().resolveSingle(criteriaSet);
+  }
 
-    public KeyStoreCredentialResolver getKeyStoreCredentialResolver() {
-        return new KeyStoreCredentialResolver(configuration.getKeyStore(), configuration.getPrivateKeyPasswords());
-    }
+  public KeyStoreCredentialResolver getKeyStoreCredentialResolver() {
+    return new KeyStoreCredentialResolver(configuration.getKeyStore(), configuration.getPrivateKeyPasswords());
+  }
 
-    public void setConfiguration(final CommonConfiguration configuration) {
-        this.configuration = configuration;
-    }
+  public void setConfiguration(final CommonConfiguration configuration) {
+    this.configuration = configuration;
+  }
 }

@@ -19,6 +19,12 @@ package nl.surfnet.mujina.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.surfnet.mujina.model.Attribute;
+import nl.surfnet.mujina.model.AuthenticationMethod;
+import nl.surfnet.mujina.model.IdpConfiguration;
+import nl.surfnet.mujina.model.SimpleAuthentication;
+import nl.surfnet.mujina.model.User;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,60 +39,54 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import nl.surfnet.mujina.model.Attribute;
-import nl.surfnet.mujina.model.AuthenticationMethod;
-import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.model.SimpleAuthentication;
-import nl.surfnet.mujina.model.User;
-
 @Controller
 public class IdentityProviderAPI {
 
-    private final static Logger log = LoggerFactory.getLogger(IdentityProviderAPI.class);
+  private final static Logger log = LoggerFactory.getLogger(IdentityProviderAPI.class);
 
-    final IdpConfiguration configuration;
+  final IdpConfiguration configuration;
 
-    @Autowired
-    public IdentityProviderAPI(final IdpConfiguration configuration) {
-        this.configuration = configuration;
+  @Autowired
+  public IdentityProviderAPI(final IdpConfiguration configuration) {
+    this.configuration = configuration;
+  }
+
+  @RequestMapping(value = { "/attributes/{name:.+}" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setAttribute(@PathVariable String name, @RequestBody Attribute attribute) {
+    log.debug("Request to set attribute {} to {}", attribute.getValue(), name);
+    configuration.getAttributes().put(name, attribute.getValue());
+  }
+
+  @RequestMapping(value = { "/attributes/{name:.+}" }, method = RequestMethod.DELETE)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void removeAttribute(@PathVariable String name) {
+    log.debug("Request to remove attribute {}", name);
+    configuration.getAttributes().remove(name);
+  }
+
+  @RequestMapping(value = { "/users" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void addUser(@RequestBody User user) {
+    log.debug("Request to add user {} with password {}", user.getName(), user.getPassword());
+    final List<GrantedAuthority> grants = new ArrayList<GrantedAuthority>();
+    final List<String> authorities = user.getAuthorities();
+    for (String authority : authorities) {
+      grants.add(new GrantedAuthorityImpl(authority));
     }
+    SimpleAuthentication auth = new SimpleAuthentication(user.getName(), user.getPassword(), grants);
+    configuration.getUsers().add(auth);
+  }
 
-    @RequestMapping(value = {"/attributes/{name:.+}"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setAttribute(@PathVariable String name, @RequestBody Attribute attribute) {
-        log.debug("Request to set attribute {} to {}", attribute.getValue(), name);
-        configuration.getAttributes().put(name, attribute.getValue());
-    }
-
-    @RequestMapping(value = {"/attributes/{name:.+}"}, method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void removeAttribute(@PathVariable String name) {
-        log.debug("Request to remove attribute {}", name);
-        configuration.getAttributes().remove(name);
-    }
-
-    @RequestMapping(value = {"/users"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void addUser(@RequestBody User user) {
-        log.debug("Request to add user {} with password {}", user.getName(), user.getPassword());
-        final List<GrantedAuthority> grants = new ArrayList<GrantedAuthority>();
-        final List<String> authorities = user.getAuthorities();
-        for (String authority : authorities) {
-            grants.add(new GrantedAuthorityImpl(authority));
-        }
-        SimpleAuthentication auth = new SimpleAuthentication(user.getName(), user.getPassword(), grants);
-        configuration.getUsers().add(auth);
-    }
-
-    @RequestMapping(value = {"/authmethod"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setAuthenticationMethod(@RequestBody AuthenticationMethod authenticationMethod) {
-        log.debug("Request to set auth method to {}", authenticationMethod.getValue());
-        final AuthenticationMethod.Method method = AuthenticationMethod.Method.valueOf(authenticationMethod.getValue());
-        configuration.setAuthentication(method);
-    }
+  @RequestMapping(value = { "/authmethod" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setAuthenticationMethod(@RequestBody AuthenticationMethod authenticationMethod) {
+    log.debug("Request to set auth method to {}", authenticationMethod.getValue());
+    final AuthenticationMethod.Method method = AuthenticationMethod.Method.valueOf(authenticationMethod.getValue());
+    configuration.setAuthentication(method);
+  }
 }

@@ -16,6 +16,8 @@
 
 package nl.surfnet.mujina.saml.xml;
 
+import nl.surfnet.mujina.util.TimeService;
+
 import org.opensaml.Configuration;
 import org.opensaml.saml2.core.NameID;
 import org.opensaml.saml2.core.NameIDType;
@@ -28,50 +30,50 @@ import org.opensaml.saml2.core.impl.SubjectConfirmationBuilder;
 import org.opensaml.saml2.core.impl.SubjectConfirmationDataBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 
-import nl.surfnet.mujina.util.TimeService;
-
 public class SubjectGenerator {
 
-    private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
-    private final TimeService timeService;
+  private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+  private final TimeService timeService;
 
-    public SubjectGenerator(TimeService timeService) {
-        super();
-        this.timeService = timeService;
-    }
+  public SubjectGenerator(TimeService timeService) {
+    super();
+    this.timeService = timeService;
+  }
 
-    public Subject generateSubject(String recepientAssertionConsumerURL, int validForInSeconds, String subjectName, String inResponseTo, String clientAddress) {
+  public Subject generateSubject(String recepientAssertionConsumerURL, int validForInSeconds, String subjectName, String inResponseTo,
+      String clientAddress) {
 
-        //Response/Assertion/Subject/NameID
-        NameIDBuilder nameIDBuilder = (NameIDBuilder) builderFactory.getBuilder(NameID.DEFAULT_ELEMENT_NAME);
-        NameID nameID = nameIDBuilder.buildObject();
-        nameID.setValue(subjectName);
-        nameID.setFormat(NameIDType.UNSPECIFIED);
+    // Response/Assertion/Subject/NameID
+    NameIDBuilder nameIDBuilder = (NameIDBuilder) builderFactory.getBuilder(NameID.DEFAULT_ELEMENT_NAME);
+    NameID nameID = nameIDBuilder.buildObject();
+    nameID.setValue(subjectName);
+    nameID.setFormat(NameIDType.UNSPECIFIED);
 
-        //Response/Assertion/Subject
-        SubjectBuilder subjectBuilder = (SubjectBuilder) builderFactory.getBuilder(Subject.DEFAULT_ELEMENT_NAME);
-        Subject subject = subjectBuilder.buildObject();
+    // Response/Assertion/Subject
+    SubjectBuilder subjectBuilder = (SubjectBuilder) builderFactory.getBuilder(Subject.DEFAULT_ELEMENT_NAME);
+    Subject subject = subjectBuilder.buildObject();
 
-        subject.setNameID(nameID);
+    subject.setNameID(nameID);
 
-        SubjectConfirmationBuilder subjectConfirmationBuilder = (SubjectConfirmationBuilder) builderFactory.getBuilder(SubjectConfirmation.DEFAULT_ELEMENT_NAME);
-        SubjectConfirmation subjectConfirmation = subjectConfirmationBuilder.buildObject();
-        subjectConfirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
+    SubjectConfirmationBuilder subjectConfirmationBuilder = (SubjectConfirmationBuilder) builderFactory
+        .getBuilder(SubjectConfirmation.DEFAULT_ELEMENT_NAME);
+    SubjectConfirmation subjectConfirmation = subjectConfirmationBuilder.buildObject();
+    subjectConfirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
-        SubjectConfirmationDataBuilder subjectConfirmationDataBuilder = (SubjectConfirmationDataBuilder) builderFactory.getBuilder(SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
-        SubjectConfirmationData subjectConfirmationData = subjectConfirmationDataBuilder.buildObject();
+    SubjectConfirmationDataBuilder subjectConfirmationDataBuilder = (SubjectConfirmationDataBuilder) builderFactory
+        .getBuilder(SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
+    SubjectConfirmationData subjectConfirmationData = subjectConfirmationDataBuilder.buildObject();
 
-        subjectConfirmationData.setRecipient(recepientAssertionConsumerURL);
-        subjectConfirmationData.setInResponseTo(inResponseTo);
-        subjectConfirmationData.setNotOnOrAfter(timeService.getCurrentDateTime().plusSeconds(validForInSeconds));
-        subjectConfirmationData.setAddress(clientAddress);
+    subjectConfirmationData.setRecipient(recepientAssertionConsumerURL);
+    subjectConfirmationData.setInResponseTo(inResponseTo);
+    subjectConfirmationData.setNotOnOrAfter(timeService.getCurrentDateTime().plusSeconds(validForInSeconds));
+    subjectConfirmationData.setAddress(clientAddress);
 
-        subjectConfirmation.setSubjectConfirmationData(subjectConfirmationData);
+    subjectConfirmation.setSubjectConfirmationData(subjectConfirmationData);
 
-        subject.getSubjectConfirmations().add(subjectConfirmation);
+    subject.getSubjectConfirmations().add(subjectConfirmation);
 
-        return subject;
-    }
-
+    return subject;
+  }
 
 }

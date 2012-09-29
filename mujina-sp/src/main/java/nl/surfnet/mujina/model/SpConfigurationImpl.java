@@ -23,65 +23,63 @@ import org.slf4j.LoggerFactory;
 
 public class SpConfigurationImpl extends CommonConfigurationImpl implements SpConfiguration {
 
-    private final static Logger log = LoggerFactory.getLogger(SpConfigurationImpl.class);
+  private final static Logger log = LoggerFactory.getLogger(SpConfigurationImpl.class);
 
-    private final String defaultIdpSSOServiceURL;
-    private String idpSSOServiceURL;
+  private final String defaultIdpSSOServiceURL;
+  private String idpSSOServiceURL;
 
-    private String defaultProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
-    private String protocolBinding;
-    
-    private final String defaultAssertionConsumerServiceURL;
-    private String assertionConsumerServiceURL;
+  private String defaultProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+  private String protocolBinding;
 
-    public SpConfigurationImpl(String defaultIdpSSOServiceURL, String defaultAssertionConsumerServiceURL) {
-        this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
-        this.defaultAssertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
-        this.protocolBinding = defaultProtocolBinding;
-        reset();
+  private final String defaultAssertionConsumerServiceURL;
+  private String assertionConsumerServiceURL;
+
+  public SpConfigurationImpl(String defaultIdpSSOServiceURL, String defaultAssertionConsumerServiceURL) {
+    this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
+    this.defaultAssertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
+    this.protocolBinding = defaultProtocolBinding;
+    reset();
+  }
+
+  @Override
+  public void reset() {
+    entityId = "http://mock-sp";
+    setSigning(false);
+    try {
+      keyStore = KeyStore.getInstance("JKS");
+      keyStore.load(null, keystorePassword.toCharArray());
+      appendToKeyStore(keyStore, "http://mock-sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+      privateKeyPasswords.put("http://mock-sp", keystorePassword);
+      idpSSOServiceURL = defaultIdpSSOServiceURL;
+      protocolBinding = defaultProtocolBinding;
+      assertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
+    } catch (Exception e) {
+      log.error("Unable to create default keystore", e);
     }
+  }
 
-    @Override
-    public void reset() {
-        entityId = "http://mock-sp";
-        setSigning(false);
-        try {
-            keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(null, keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "http://mock-sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            privateKeyPasswords.put("http://mock-sp", keystorePassword);
-            idpSSOServiceURL = defaultIdpSSOServiceURL;
-            protocolBinding = defaultProtocolBinding;
-            assertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
-        } catch (Exception e) {
-            log.error("Unable to create default keystore", e);
-        }
-    }
+  public void setSingleSignOnServiceURL(String idpSSOServiceURL) {
+    this.idpSSOServiceURL = idpSSOServiceURL;
+  }
 
-    public void setSingleSignOnServiceURL(String idpSSOServiceURL) {
-        this.idpSSOServiceURL = idpSSOServiceURL;
-    }
+  public String getSingleSignOnServiceURL() {
+    return idpSSOServiceURL;
+  }
 
-    public String getSingleSignOnServiceURL() {
-        return idpSSOServiceURL;
-    }
+  public String getProtocolBinding() {
+    return protocolBinding;
+  }
 
-    public String getProtocolBinding() {
-      return protocolBinding;
-    }
+  public void setProtocolBinding(String protocolBinding) {
+    this.protocolBinding = protocolBinding;
+  }
 
-    public void setProtocolBinding(String protocolBinding) {
-      this.protocolBinding = protocolBinding;
-    }
+  public String getAssertionConsumerServiceURL() {
+    return assertionConsumerServiceURL;
+  }
 
-    public String getAssertionConsumerServiceURL() {
-      return assertionConsumerServiceURL;
-    }
-
-    public void setAssertionConsumerServiceURL(String assertionConsumerServiceURL) {
-      this.assertionConsumerServiceURL = assertionConsumerServiceURL;
-    }
-
-  
+  public void setAssertionConsumerServiceURL(String assertionConsumerServiceURL) {
+    this.assertionConsumerServiceURL = assertionConsumerServiceURL;
+  }
 
 }

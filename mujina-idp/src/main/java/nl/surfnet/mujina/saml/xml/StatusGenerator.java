@@ -27,50 +27,47 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
 
 public class StatusGenerator {
 
-    private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+  private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
+  public Status generateStatus(String value) {
 
-    public Status generateStatus(String value) {
+    StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
 
-        StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
+    Status status = (Status) builder.buildObject();
 
-        Status status = (Status) builder.buildObject();
+    StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
 
-        StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
+    StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
+    statusCode.setValue(value);
+    status.setStatusCode(statusCode);
 
-        StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
-        statusCode.setValue(value);
-        status.setStatusCode(statusCode);
+    return status;
+  }
 
-        return status;
-    }
+  public Status generateStatus(String value, String subStatus, String message) {
 
-    public Status generateStatus(String value, String subStatus, String message) {
+    StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
 
-        StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
+    Status status = (Status) builder.buildObject();
 
-        Status status = (Status) builder.buildObject();
+    StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
+    StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
+    statusCode.setValue(value);
 
+    StatusCode subStatusCode = (StatusCode) codeBuilder.buildObject();
+    subStatusCode.setValue(subStatus);
+    statusCode.setStatusCode(subStatusCode);
 
-        StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
-        StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
-        statusCode.setValue(value);
+    status.setStatusCode(statusCode);
 
-        StatusCode subStatusCode = (StatusCode) codeBuilder.buildObject();
-        subStatusCode.setValue(subStatus);
-        statusCode.setStatusCode(subStatusCode);
+    StatusMessageBuilder statusMessageBuilder = (StatusMessageBuilder) builderFactory.getBuilder(StatusMessage.DEFAULT_ELEMENT_NAME);
 
+    StatusMessage statusMessage = statusMessageBuilder.buildObject();
 
-        status.setStatusCode(statusCode);
+    statusMessage.setMessage(message);
+    status.setStatusMessage(statusMessage);
 
-        StatusMessageBuilder statusMessageBuilder = (StatusMessageBuilder) builderFactory.getBuilder(StatusMessage.DEFAULT_ELEMENT_NAME);
-
-        StatusMessage statusMessage = statusMessageBuilder.buildObject();
-
-        statusMessage.setMessage(message);
-        status.setStatusMessage(statusMessage);
-
-        return status;
-    }
+    return status;
+  }
 
 }

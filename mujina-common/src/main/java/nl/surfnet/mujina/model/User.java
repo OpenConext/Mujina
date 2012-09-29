@@ -25,36 +25,36 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class User implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    
-    private String name;
-    private String password;
-    private List<String> authorities;
+  private static final long serialVersionUID = 1L;
 
-    public String getName() {
-        return name;
-    }
+  private String name;
+  private String password;
+  private List<String> authorities;
 
-    @XmlElement
-    public void setName(final String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  @XmlElement
+  public void setName(final String name) {
+    this.name = name;
+  }
 
-    @XmlElement
-    public void setPassword(final String password) {
-        this.password = password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public List<String> getAuthorities() {
-        return authorities;
-    }
+  @XmlElement
+  public void setPassword(final String password) {
+    this.password = password;
+  }
 
-    @XmlElement
-    public void setAuthorities(final List<String> authorities) {
-        this.authorities = authorities;
-    }
+  public List<String> getAuthorities() {
+    return authorities;
+  }
+
+  @XmlElement
+  public void setAuthorities(final List<String> authorities) {
+    this.authorities = authorities;
+  }
 }

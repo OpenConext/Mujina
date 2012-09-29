@@ -29,10 +29,12 @@ import org.opensaml.xml.security.credential.Credential;
 
 public interface BindingAdapter {
 
-    public void sendSAMLMessage(SignableSAMLObject samlMessage, Endpoint endpoint, Credential signingCredential, HttpServletResponse response) throws MessageEncodingException;
+  public void sendSAMLMessage(SignableSAMLObject samlMessage, Endpoint endpoint, Credential signingCredential, HttpServletResponse response)
+      throws MessageEncodingException;
 
-    public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws MessageDecodingException, SecurityException;
+  @SuppressWarnings("rawtypes")
+  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws MessageDecodingException, SecurityException;
 
-    public String extractSAMLMessage(HttpServletRequest request);
+  public String extractSAMLMessage(HttpServletRequest request);
 
 }

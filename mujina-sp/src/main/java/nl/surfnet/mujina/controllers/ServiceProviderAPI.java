@@ -16,6 +16,11 @@
 
 package nl.surfnet.mujina.controllers;
 
+import nl.surfnet.mujina.model.AssertionConsumerServiceURL;
+import nl.surfnet.mujina.model.ProtocolBinding;
+import nl.surfnet.mujina.model.SSOServiceURL;
+import nl.surfnet.mujina.model.SpConfiguration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,47 +32,40 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import nl.surfnet.mujina.model.AssertionConsumerServiceURL;
-import nl.surfnet.mujina.model.ProtocolBinding;
-import nl.surfnet.mujina.model.SSOServiceURL;
-import nl.surfnet.mujina.model.SpConfiguration;
-
 @Controller
 public class ServiceProviderAPI {
 
-    private final static Logger log = LoggerFactory
-            .getLogger(ServiceProviderAPI.class);
+  private final static Logger log = LoggerFactory.getLogger(ServiceProviderAPI.class);
 
-    final SpConfiguration configuration;
+  final SpConfiguration configuration;
 
-    @Autowired
-    public ServiceProviderAPI(final SpConfiguration configuration) {
-        this.configuration = configuration;
-    }
+  @Autowired
+  public ServiceProviderAPI(final SpConfiguration configuration) {
+    this.configuration = configuration;
+  }
 
-    @RequestMapping(value = {"/ssoServiceURL"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setSsoServiceURL(@RequestBody SSOServiceURL ssoServiceURL) {
-        log.debug("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
-        configuration.setSingleSignOnServiceURL(ssoServiceURL.getValue());
-    }
-    
-    @RequestMapping(value = {"/protocolBinding"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setProtocolBinding(@RequestBody ProtocolBinding protocolBinding) {
-        log.debug("Request to set protocolBinding to {}", protocolBinding.getValue());
-        configuration.setProtocolBinding(protocolBinding.getValue());
-    }
- 
-    @RequestMapping(value = {"/assertionConsumerServiceURL"}, method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @ResponseBody
-    public void setAssertionConsumerServiceURL(@RequestBody AssertionConsumerServiceURL assertionConsumerServiceURL) {
-        log.debug("Request to set assertionConsumerServiceURL to {}", assertionConsumerServiceURL.getValue());
-        configuration.setAssertionConsumerServiceURL(assertionConsumerServiceURL.getValue());
-    }
- 
- 
+  @RequestMapping(value = { "/ssoServiceURL" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setSsoServiceURL(@RequestBody SSOServiceURL ssoServiceURL) {
+    log.debug("Request to set ssoServiceURL to {}", ssoServiceURL.getValue());
+    configuration.setSingleSignOnServiceURL(ssoServiceURL.getValue());
+  }
+
+  @RequestMapping(value = { "/protocolBinding" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setProtocolBinding(@RequestBody ProtocolBinding protocolBinding) {
+    log.debug("Request to set protocolBinding to {}", protocolBinding.getValue());
+    configuration.setProtocolBinding(protocolBinding.getValue());
+  }
+
+  @RequestMapping(value = { "/assertionConsumerServiceURL" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setAssertionConsumerServiceURL(@RequestBody AssertionConsumerServiceURL assertionConsumerServiceURL) {
+    log.debug("Request to set assertionConsumerServiceURL to {}", assertionConsumerServiceURL.getValue());
+    configuration.setAssertionConsumerServiceURL(assertionConsumerServiceURL.getValue());
+  }
+
 }

@@ -20,20 +20,20 @@ import java.security.KeyStore;
 import java.util.Map;
 
 public interface CommonConfiguration {
-  
-    void reset();
 
-    KeyStore getKeyStore();
+  void reset();
 
-    String getEntityID();
+  KeyStore getKeyStore();
 
-    void setEntityID(String value);
+  String getEntityID();
 
-    void injectCredential(String certificate, String key);
+  void setEntityID(String value);
 
-    Map<String, String> getPrivateKeyPasswords();
-    
-    boolean needsSigning();
-    
-    void setSigning(boolean needsSigning);
+  void injectCredential(String certificate, String key);
+
+  Map<String, String> getPrivateKeyPasswords();
+
+  boolean needsSigning();
+
+  void setSigning(boolean needsSigning);
 }

@@ -30,69 +30,69 @@ import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 public class IdpConfigurationImpl extends CommonConfigurationImpl implements IdpConfiguration {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfigurationImpl.class);
+  private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfigurationImpl.class);
 
-    private Map<String, String> attributes = new TreeMap<String, String>();
-    private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
-    private AuthenticationMethod.Method authMethod;
+  private Map<String, String> attributes = new TreeMap<String, String>();
+  private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
+  private AuthenticationMethod.Method authMethod;
 
-    public IdpConfigurationImpl() {
-        reset();
+  public IdpConfigurationImpl() {
+    reset();
+  }
+
+  @Override
+  public void reset() {
+    authMethod = AuthenticationMethod.Method.USER;
+    entityId = "http://mock-idp";
+    attributes.clear();
+    attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
+    attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");
+    attributes.put("urn:mace:dir:attribute-def:givenName", "John");
+    attributes.put("urn:mace:dir:attribute-def:sn", "Doe");
+    attributes.put("urn:mace:dir:attribute-def:displayName", "John Doe");
+    attributes.put("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
+    attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
+    attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+    attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
+    try {
+      keyStore = KeyStore.getInstance("JKS");
+      keyStore.load(null, keystorePassword.toCharArray());
+      appendToKeyStore(keyStore, "http://mock-idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+      privateKeyPasswords.put("http://mock-idp", keystorePassword);
+    } catch (Exception e) {
+      LOGGER.error("Unable to create default keystore", e);
     }
+    users.clear();
+    List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+    authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+    authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
+    final SimpleAuthentication admin = new SimpleAuthentication("admin", "secret", authorities);
+    users.add(admin);
+    authorities = new ArrayList<GrantedAuthority>();
+    authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+    final SimpleAuthentication user = new SimpleAuthentication("user", "secret", authorities);
+    users.add(user);
+    setSigning(false);
+  }
 
-    @Override
-    public void reset() {
-        authMethod = AuthenticationMethod.Method.USER;
-        entityId = "http://mock-idp";
-        attributes.clear();
-        attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
-        attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");
-        attributes.put("urn:mace:dir:attribute-def:givenName", "John");
-        attributes.put("urn:mace:dir:attribute-def:sn", "Doe");
-        attributes.put("urn:mace:dir:attribute-def:displayName", "John Doe");
-        attributes.put("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-        attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-        attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
-        attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
-        try {
-            keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(null, keystorePassword.toCharArray());
-            appendToKeyStore(keyStore, "http://mock-idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
-            privateKeyPasswords.put("http://mock-idp", keystorePassword);
-        } catch (Exception e) {
-            LOGGER.error("Unable to create default keystore", e);
-        }
-        users.clear();
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-        authorities.add(new GrantedAuthorityImpl("ROLE_ADMIN"));
-        final SimpleAuthentication admin = new SimpleAuthentication("admin", "secret", authorities);
-        users.add(admin);
-        authorities = new ArrayList<GrantedAuthority>();
-        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-        final SimpleAuthentication user= new SimpleAuthentication("user", "secret", authorities);
-        users.add(user);
-        setSigning(false);
-    }
+  @Override
+  public Map<String, String> getAttributes() {
+    return attributes;
+  }
 
-    @Override
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
+  @Override
+  public Collection<SimpleAuthentication> getUsers() {
+    return users;
+  }
 
-    @Override
-    public Collection<SimpleAuthentication> getUsers() {
-        return users;
-    }
+  @Override
+  public AuthenticationMethod.Method getAuthentication() {
+    return authMethod;
+  }
 
-    @Override
-    public AuthenticationMethod.Method getAuthentication() {
-        return authMethod;
-    }
-
-    @Override
-    public void setAuthentication(final AuthenticationMethod.Method method) {
-        this.authMethod = method;
-    }
+  @Override
+  public void setAuthentication(final AuthenticationMethod.Method method) {
+    this.authMethod = method;
+  }
 
 }
