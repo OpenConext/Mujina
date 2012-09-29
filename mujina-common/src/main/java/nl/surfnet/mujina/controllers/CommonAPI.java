@@ -16,6 +16,11 @@
 
 package nl.surfnet.mujina.controllers;
 
+import nl.surfnet.mujina.model.CommonConfiguration;
+import nl.surfnet.mujina.model.Credential;
+import nl.surfnet.mujina.model.EntityID;
+import nl.surfnet.mujina.model.NeedsSigning;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import nl.surfnet.mujina.model.CommonConfiguration;
-import nl.surfnet.mujina.model.Credential;
-import nl.surfnet.mujina.model.EntityID;
 
 @Controller
 public class CommonAPI {
@@ -66,6 +67,15 @@ public class CommonAPI {
         log.debug("Request to set signing credential");
         configuration.injectCredential(credential.getCertificate(), credential.getKey());
     }
+    
+    @RequestMapping(value = {"/needs-signing"}, method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseBody
+    public void setSigningNeeded(@RequestBody NeedsSigning needsSigning) {
+        log.debug("Request to set signing needed");
+        configuration.setSigning(needsSigning.getValue()) ;
+    }
+    
 
 
 }

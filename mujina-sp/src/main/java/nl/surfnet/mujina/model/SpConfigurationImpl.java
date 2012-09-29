@@ -44,6 +44,7 @@ public class SpConfigurationImpl extends CommonConfigurationImpl implements SpCo
     @Override
     public void reset() {
         entityId = "http://mock-sp";
+        setSigning(false);
         try {
             keyStore = KeyStore.getInstance("JKS");
             keyStore.load(null, keystorePassword.toCharArray());

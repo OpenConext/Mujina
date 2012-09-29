@@ -48,7 +48,8 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
     private VelocityEngine velocityEngine;
 
     private final SAMLMessageDecoder decoder;
-    SAMLMessageEncoder encoder;
+    private SAMLMessageEncoder signedEncoder;
+    private SAMLMessageEncoder unsignedEncoder;
     private final SecurityPolicyResolver resolver;
 
     private CommonConfiguration configuration;
@@ -99,9 +100,15 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
         messageContext.setOutboundMessageTransport(outTransport);
         messageContext.setPeerEntityEndpoint(endpoint);
         messageContext.setOutboundSAMLMessage(samlMessage);
+        if (configuration.needsSigning()) {
+          messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
+        }
         messageContext.setOutboundMessageIssuer(configuration.getEntityID());
-
-        encoder.encode(messageContext);
+        if (configuration.needsSigning()) {
+          signedEncoder.encode(messageContext);
+        } else {
+          unsignedEncoder.encode(messageContext);
+        }
 
     }
 
@@ -118,8 +125,13 @@ public class PostBindingAdapter implements BindingAdapter, InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        encoder = new HTTPPostSimpleSignEncoder(velocityEngine,
-                "/templates/saml2-post-simplesign-binding.vm", true);
+      String unsignedTemplate = "/templates/saml2-post-simplesign-binding.vm";
+      String signedTemplate = "/templates/saml2-post-simplesign-binding.vm"; 
+      unsignedEncoder = new HTTPPostSimpleSignEncoder(velocityEngine,
+                unsignedTemplate, true);
+      signedEncoder = new HTTPPostSimpleSignEncoder(velocityEngine,
+          signedTemplate, true);
+        
     }
 
 

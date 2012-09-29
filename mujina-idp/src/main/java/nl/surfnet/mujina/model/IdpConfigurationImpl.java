@@ -72,6 +72,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
         authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
         final SimpleAuthentication user= new SimpleAuthentication("user", "secret", authorities);
         users.add(user);
+        setSigning(false);
     }
 
     @Override

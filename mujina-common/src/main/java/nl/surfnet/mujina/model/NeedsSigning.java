@@ -16,24 +16,24 @@
 
 package nl.surfnet.mujina.model;
 
-import java.security.KeyStore;
-import java.util.Map;
+import java.io.Serializable;
 
-public interface CommonConfiguration {
-  
-    void reset();
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
-    KeyStore getKeyStore();
+@XmlRootElement
+public class NeedsSigning implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    String getEntityID();
+    private boolean value;
 
-    void setEntityID(String value);
+    public boolean getValue() {
+        return value;
+    }
 
-    void injectCredential(String certificate, String key);
+    @XmlElement
+    public void setValue(final boolean value) {
+        this.value = value;
+    }
 
-    Map<String, String> getPrivateKeyPasswords();
-    
-    boolean needsSigning();
-    
-    void setSigning(boolean needsSigning);
 }

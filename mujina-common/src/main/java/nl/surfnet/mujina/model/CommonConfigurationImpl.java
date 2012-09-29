@@ -42,6 +42,7 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
 
     protected KeyStore keyStore;
     protected String keystorePassword = "secret";
+    private boolean needsSigning;
 
     @Override
     public Map<String, String> getPrivateKeyPasswords() {
@@ -55,6 +56,15 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
     public KeyStore getKeyStore() {
         return keyStore;
     }
+    
+    public boolean needsSigning() {
+      return needsSigning;
+    }
+    
+    public void setSigning(boolean needsSigning) {
+      this.needsSigning = needsSigning;
+    }
+
 
     @Override
     public String getEntityID() {
