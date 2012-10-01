@@ -20,6 +20,9 @@ import java.security.KeyStore;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+
+import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
 
 public class SpConfigurationImpl extends CommonConfigurationImpl implements SpConfiguration {
 
@@ -48,7 +51,7 @@ public class SpConfigurationImpl extends CommonConfigurationImpl implements SpCo
     try {
       keyStore = KeyStore.getInstance("JKS");
       keyStore.load(null, keystorePassword.toCharArray());
-      appendToKeyStore(keyStore, "http://mock-sp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+      KeyStoreUtil.appendToKeyStore(keyStore, "http://mock-sp", new ClassPathResource("idp-crt.pem").getInputStream(), new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
       privateKeyPasswords.put("http://mock-sp", keystorePassword);
       idpSSOServiceURL = defaultIdpSSOServiceURL;
       protocolBinding = defaultProtocolBinding;

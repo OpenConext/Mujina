@@ -124,7 +124,10 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.surfnet.coin</groupId>
+      <artifactId>spring-security-opensaml</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

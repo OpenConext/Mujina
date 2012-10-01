@@ -25,8 +25,11 @@ import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
+
+import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
 
 public class IdpConfigurationImpl extends CommonConfigurationImpl implements IdpConfiguration {
 
@@ -57,7 +60,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     try {
       keyStore = KeyStore.getInstance("JKS");
       keyStore.load(null, keystorePassword.toCharArray());
-      appendToKeyStore(keyStore, "http://mock-idp", "idp-crt.pem", "idp-key.pkcs8.der", keystorePassword.toCharArray());
+      KeyStoreUtil.appendToKeyStore(keyStore, "http://mock-idp", new ClassPathResource("idp-crt.pem").getInputStream(), new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
       privateKeyPasswords.put("http://mock-idp", keystorePassword);
     } catch (Exception e) {
       LOGGER.error("Unable to create default keystore", e);
