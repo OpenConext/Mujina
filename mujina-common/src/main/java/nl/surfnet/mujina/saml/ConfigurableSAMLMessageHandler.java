@@ -41,7 +41,8 @@ public class ConfigurableSAMLMessageHandler extends SAMLMessageHandlerImpl {
     return configuration.getEntityID();
   }
 
-  public boolean needsSigning() {
+  @Override
+  public boolean isNeedsSigning() {
     return configuration.needsSigning();
   }
 }
