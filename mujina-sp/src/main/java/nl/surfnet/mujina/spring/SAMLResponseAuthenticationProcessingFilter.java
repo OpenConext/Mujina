@@ -22,8 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.surfnet.mujina.saml.BindingAdapter;
-
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
@@ -35,14 +33,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+
 public class SAMLResponseAuthenticationProcessingFilter extends AbstractAuthenticationProcessingFilter {
 
   private final static Logger logger = LoggerFactory.getLogger(SAMLResponseAuthenticationProcessingFilter.class);
 
-  private BindingAdapter bindingAdapter;
+  private SAMLMessageHandler bindingAdapter;
 
   @Required
-  public void setBindingAdapter(BindingAdapter bindingAdapter) {
+  public void setBindingAdapter(SAMLMessageHandler bindingAdapter) {
     this.bindingAdapter = bindingAdapter;
   }
 

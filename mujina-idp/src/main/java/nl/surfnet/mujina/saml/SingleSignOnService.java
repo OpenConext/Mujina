@@ -22,9 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite;
-import nl.surfnet.mujina.spring.AuthnRequestInfo;
-
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
@@ -35,15 +32,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.web.HttpRequestHandler;
 
+import nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite;
+import nl.surfnet.mujina.spring.AuthnRequestInfo;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+
 public class SingleSignOnService implements HttpRequestHandler {
 
   private final static Logger logger = LoggerFactory.getLogger(SingleSignOnService.class);
 
-  private final BindingAdapter adapter;
+  private final SAMLMessageHandler adapter;
   private final String authnResponderURI;
   private final SAML2ValidatorSuite validatorSuite;
 
-  public SingleSignOnService(BindingAdapter adapter, String authnResponderURI, SAML2ValidatorSuite validatorSuite) {
+  public SingleSignOnService(SAMLMessageHandler adapter, String authnResponderURI, SAML2ValidatorSuite validatorSuite) {
     super();
     this.adapter = adapter;
     this.authnResponderURI = authnResponderURI;

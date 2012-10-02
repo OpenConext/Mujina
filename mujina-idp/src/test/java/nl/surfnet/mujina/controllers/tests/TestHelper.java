@@ -32,13 +32,14 @@ import org.w3c.dom.Element;
 
 import nl.surfnet.mujina.model.SimpleAuthentication;
 import nl.surfnet.mujina.saml.AuthnRequestGenerator;
-import nl.surfnet.mujina.saml.PostBindingAdapter;
 import nl.surfnet.mujina.saml.SSOSuccessAuthnResponder;
 import nl.surfnet.mujina.saml.SingleSignOnService;
 import nl.surfnet.mujina.saml.xml.EndpointGenerator;
 import nl.surfnet.mujina.spring.security.CustomAuthenticationProvider;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
+
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -51,7 +52,7 @@ public class TestHelper {
     private SSOSuccessAuthnResponder ssoSuccessAuthnResponder;
 
     @Autowired
-    private PostBindingAdapter postBindingAdapter;
+    private SAMLMessageHandler samlMessageHandler;
 
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
@@ -132,7 +133,7 @@ public class TestHelper {
     AuthnRequest authnReqeust = authnRequestGenerator.generateAuthnRequest(singleSignOnServiceURL, assertionConsumerServiceURL,
         protocolBinding);
     MockHttpServletResponse authnResponse = new MockHttpServletResponse();
-    postBindingAdapter.sendSAMLMessage(authnReqeust, endpoint, null, null, authnResponse);
+    samlMessageHandler.sendSAMLMessage(authnReqeust, endpoint, authnResponse, null, null);
     assertEquals(authnResponse.getStatus(), 200);
     return readSamlRequestFromResponse(authnResponse);
   }

@@ -47,13 +47,14 @@ import nl.surfnet.mujina.saml.xml.EndpointGenerator;
 import nl.surfnet.mujina.spring.AuthnRequestInfo;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
     private final TimeService timeService;
     private final IDService idService;
     private int responseValidityTimeInSeconds;
-    private final BindingAdapter adapter;
+    private final SAMLMessageHandler adapter;
     private CredentialResolver credentialResolver;
 
     @Autowired
@@ -65,7 +66,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
     public SSOSuccessAuthnResponder(TimeService timeService,
                                     IDService idService,
-                                    BindingAdapter adapter,
+                                    SAMLMessageHandler adapter,
                                     CredentialResolver credentialResolver) {
         super();
         this.timeService = timeService;
@@ -125,7 +126,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
       //we could use a different adapter to send the response based on request issuer...
         try {
-            adapter.sendSAMLMessage(authResponse, endpoint, signingCredential, relayState, response);
+            adapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingCredential);
         } catch (MessageEncodingException mee) {
             logger.error("Exception encoding SAML message", mee);
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);

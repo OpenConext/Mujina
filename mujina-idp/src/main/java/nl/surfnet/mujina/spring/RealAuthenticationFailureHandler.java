@@ -41,11 +41,11 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.saml.BindingAdapter;
 import nl.surfnet.mujina.saml.xml.AuthnResponseGenerator;
 import nl.surfnet.mujina.saml.xml.EndpointGenerator;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 public class RealAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
@@ -56,7 +56,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
     private final TimeService timeService;
     private final IDService idService;
     private final CredentialResolver credentialResolver;
-    private final BindingAdapter bindingAdapter;
+    private final SAMLMessageHandler bindingAdapter;
     private final AuthenticationFailureHandler nonSSOAuthnFailureHandler;
 
 
@@ -66,7 +66,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
     public RealAuthenticationFailureHandler(TimeService timeService,
                                             IDService idService,
                                             CredentialResolver credentialResolver,
-                                            BindingAdapter bindingAdapter,
+                                            SAMLMessageHandler bindingAdapter,
                                             AuthenticationFailureHandler nonSSOAuthnFailureHandler) {
         super();
         this.timeService = timeService;
@@ -121,7 +121,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
       String relayState = request.getParameter("RelayState");
         try {
-            bindingAdapter.sendSAMLMessage(authResponse, endpoint, signingCredential, relayState, response);
+            bindingAdapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingCredential);
         } catch (MessageEncodingException mee) {
             logger.error("Exception encoding SAML message", mee);
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);

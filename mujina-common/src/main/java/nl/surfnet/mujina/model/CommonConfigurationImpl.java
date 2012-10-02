@@ -93,7 +93,7 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
     ByteArrayInputStream certificateInputStream = new ByteArrayInputStream(wrappedCert.getBytes());
 
     byte[] key = Base64.decodeBase64(pemKey);
-    KeyStoreUtil.appendToKeyStore(keyStore, alias, certificateInputStream, new ByteArrayInputStream(key), keystorePassword.toCharArray());
+    KeyStoreUtil.appendKeyToKeyStore(keyStore, alias, certificateInputStream, new ByteArrayInputStream(key), keystorePassword.toCharArray());
 
   }
 

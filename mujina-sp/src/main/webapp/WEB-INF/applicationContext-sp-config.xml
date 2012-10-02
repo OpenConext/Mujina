@@ -46,7 +46,7 @@
     <constructor-arg ref="samlParserPool"/>
   </bean>
 
-  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.PostBindingAdapter">
+  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.ConfigurableSAMLMessageHandler">
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>

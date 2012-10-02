@@ -45,10 +45,10 @@ import org.springframework.util.StringUtils;
 
 import nl.surfnet.mujina.model.SpConfiguration;
 import nl.surfnet.mujina.saml.AuthnRequestGenerator;
-import nl.surfnet.mujina.saml.BindingAdapter;
 import nl.surfnet.mujina.saml.xml.EndpointGenerator;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
@@ -57,7 +57,7 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
   private final TimeService timeService;
   private final IDService idService;
 
-  private BindingAdapter bindingAdapter;
+  private SAMLMessageHandler bindingAdapter;
   private CredentialResolver credentialResolver;
 
   private SpConfiguration spConfiguration;
@@ -69,7 +69,7 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
   }
 
   @Required
-  public void setBindingAdapter(BindingAdapter bindingAdapter) {
+  public void setBindingAdapter(SAMLMessageHandler bindingAdapter) {
     this.bindingAdapter = bindingAdapter;
   }
 
@@ -113,7 +113,7 @@ public class SAMLAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
       String relayState = null; // Not needed here.
 
-      bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, signingCredential, relayState, response);
+      bindingAdapter.sendSAMLMessage(authnReqeust, endpoint, response, relayState, signingCredential);
     } catch (MessageEncodingException mee) {
       log.error("Could not send authnRequest to Identity Provider.", mee);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

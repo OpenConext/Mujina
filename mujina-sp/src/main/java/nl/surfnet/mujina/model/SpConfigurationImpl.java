@@ -51,7 +51,7 @@ public class SpConfigurationImpl extends CommonConfigurationImpl implements SpCo
     try {
       keyStore = KeyStore.getInstance("JKS");
       keyStore.load(null, keystorePassword.toCharArray());
-      KeyStoreUtil.appendToKeyStore(keyStore, "http://mock-sp", new ClassPathResource("idp-crt.pem").getInputStream(), new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
+      KeyStoreUtil.appendKeyToKeyStore(keyStore, "http://mock-sp", new ClassPathResource("idp-crt.pem").getInputStream(), new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
       privateKeyPasswords.put("http://mock-sp", keystorePassword);
       idpSSOServiceURL = defaultIdpSSOServiceURL;
       protocolBinding = defaultProtocolBinding;
