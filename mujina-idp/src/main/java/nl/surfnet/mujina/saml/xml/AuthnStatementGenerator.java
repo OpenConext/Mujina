@@ -18,9 +18,11 @@ package nl.surfnet.mujina.saml.xml;
 
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
+import org.opensaml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml2.core.AuthnContext;
 import org.opensaml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml2.core.AuthnStatement;
+import org.opensaml.saml2.core.impl.AuthenticatingAuthorityBuilder;
 import org.opensaml.saml2.core.impl.AuthnContextBuilder;
 import org.opensaml.saml2.core.impl.AuthnContextClassRefBuilder;
 import org.opensaml.saml2.core.impl.AuthnStatementBuilder;
@@ -30,7 +32,7 @@ public class AuthnStatementGenerator {
 
   private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-  public AuthnStatement generateAuthnStatement(DateTime authnInstant) {
+  public AuthnStatement generateAuthnStatement(DateTime authnInstant, String entityID) {
 
     // Response/Assertion/AuthnStatement/AuthContext/AuthContextClassRef
     AuthnContextClassRefBuilder authnContextClassRefBuilder = (AuthnContextClassRefBuilder) builderFactory
@@ -39,10 +41,17 @@ public class AuthnStatementGenerator {
     // urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
     authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
 
+    // Response/Assertion/AuthnStatement/AuthContext/AuthenticatingAuthority
+    AuthenticatingAuthorityBuilder authenticatingAuthorityBuilder = 
+        (AuthenticatingAuthorityBuilder) builderFactory.getBuilder(AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
+    AuthenticatingAuthority authenticatingAuthority = authenticatingAuthorityBuilder.buildObject();
+    authenticatingAuthority.setURI(entityID);
+    
     // Response/Assertion/AuthnStatement/AuthContext
     AuthnContextBuilder authnContextBuilder = (AuthnContextBuilder) builderFactory.getBuilder(AuthnContext.DEFAULT_ELEMENT_NAME);
     AuthnContext authnContext = authnContextBuilder.buildObject();
     authnContext.setAuthnContextClassRef(authnContextClassRef);
+    authnContext.getAuthenticatingAuthorities().add(authenticatingAuthority);
 
     // Response/Assertion/AuthnStatement
     AuthnStatementBuilder authnStatementBuilder = (AuthnStatementBuilder) builderFactory.getBuilder(AuthnStatement.DEFAULT_ELEMENT_NAME);

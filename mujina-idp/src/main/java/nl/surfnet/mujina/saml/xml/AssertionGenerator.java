@@ -76,8 +76,8 @@ public class AssertionGenerator {
 
     Issuer issuer = issuerGenerator.generateIssuer();
 
-    AuthnStatement authnStatement = authnStatementGenerator.generateAuthnStatement(authnInstant);
-
+    AuthnStatement authnStatement = authnStatementGenerator.generateAuthnStatement(authnInstant, idpConfiguration.getEntityID());
+    
     assertion.setIssuer(issuer);
     assertion.getAuthnStatements().add(authnStatement);
     assertion.setSubject(subject);
