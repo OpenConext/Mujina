@@ -24,7 +24,7 @@
 <head>
   <title>Mujina Login Page</title>
 </head>
-<body onload='document.f.j_username.focus();'>
+<body onload='document.login.j_username.focus();'>
 
 <pre style="front-weight: bold;">
 ___  ___        _  _
@@ -57,10 +57,7 @@ ___  ___        _  _
       <td><input type='password' name='j_password'/></td>
     </tr>
     <tr>
-      <td colspan='2'><input name="submit" type="submit"/></td>
-    </tr>
-    <tr>
-      <td colspan='2'><input name="reset" type="reset"/></td>
+      <td colspan='2'><input name="submit" type="submit" value="Login"/></td>
     </tr>
   </table>
 
