@@ -20,7 +20,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
-
+import static nl.surfnet.mujina.model.AuthenticationMethod.Method.*;
 import java.io.IOException;
 import java.util.Collections;
 
@@ -35,6 +35,7 @@ import nl.surfnet.mujina.model.EntityID;
 import nl.surfnet.mujina.model.User;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensaml.saml2.core.Response;
@@ -62,7 +63,7 @@ public class IdpRestAPITest {
   @Autowired
   private TestHelper testHelper;
 
-  @After
+  @Before
   public void reset() {
     commonAPI.reset();
   }
@@ -87,6 +88,8 @@ public class IdpRestAPITest {
   @Test
   public void testRemoveAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException,
       UnmarshallingException {
+    restApiController.setAuthenticationMethod(new AuthenticationMethod(USER.name()));
+    
     final String name = "urn:mace:dir:attribute-def:uid";
     final String value = "john.doe";
 
@@ -118,6 +121,10 @@ public class IdpRestAPITest {
 
   @Test(expected = Exception.class)
   public void testWrongUser() throws Exception {
+    AuthenticationMethod authenticationMethod = new AuthenticationMethod();
+    authenticationMethod.setValue("ALL");
+    restApiController.setAuthenticationMethod(new AuthenticationMethod(USER.name()));
+
     testHelper.doSamlLogin("hacker", "x0rr3d");
   }
 
@@ -154,9 +161,6 @@ public class IdpRestAPITest {
   @Test
   public void testSetAuthentication() throws IOException, XMLParserException, ServletException, MessageEncodingException,
       UnmarshallingException {
-    AuthenticationMethod authenticationMethod = new AuthenticationMethod();
-    authenticationMethod.setValue("ALL");
-    restApiController.setAuthenticationMethod(authenticationMethod);
     final Response response = testHelper.doSamlLogin("jaapie", "asdlkfjbdiufv");
     assertTrue(testHelper.responseHasAttribute("urn:mace:dir:attribute-def:uid", "jaapie", response));
   }

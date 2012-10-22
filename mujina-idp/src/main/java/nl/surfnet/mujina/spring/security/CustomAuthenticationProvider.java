@@ -16,9 +16,8 @@
 
 package nl.surfnet.mujina.spring.security;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import nl.surfnet.mujina.model.AuthenticationMethod;
 import nl.surfnet.mujina.model.IdpConfiguration;
@@ -43,20 +42,31 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     final String name = authentication.getName();
     final String password = authentication.getCredentials().toString();
 
+    /*
+     * First check if we know this user. Fallback user if Method.ALL otherwise an Exception
+     */
+    Authentication authenticationForUser = getAuthenticationForUser(name, password);
     if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-      final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-      authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
-      return new SimpleAuthentication(name, password, authorities);
+      return authenticationForUser != null ? authenticationForUser : new SimpleAuthentication(name, password,
+          Arrays.asList((GrantedAuthority) new GrantedAuthorityImpl("ROLE_USER")));
     } else {
-      final Collection<SimpleAuthentication> users = idpConfiguration.getUsers();
-      for (SimpleAuthentication user : users) {
-        if (user.getPrincipal().equals(name) && user.getCredentials().equals(password)) {
-          return user;
-        }
+      if (authenticationForUser == null) {
+        throw new AuthenticationException("Can not log in") {
+        };
       }
-      throw new AuthenticationException("Can not log in") {
-      };
+      return authenticationForUser;
+
     }
+  }
+
+  private Authentication getAuthenticationForUser(String name, String password) {
+    final Collection<SimpleAuthentication> users = idpConfiguration.getUsers();
+    for (SimpleAuthentication user : users) {
+      if (user.getPrincipal().equals(name) && user.getCredentials().equals(password)) {
+        return user;
+      }
+    }
+    return null;
   }
 
   @SuppressWarnings("rawtypes")

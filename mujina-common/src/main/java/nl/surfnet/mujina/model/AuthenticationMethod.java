@@ -21,11 +21,20 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@SuppressWarnings("serial")
 @XmlRootElement
 public class AuthenticationMethod implements Serializable {
-  private static final long serialVersionUID = 1L;
 
   private String value;
+
+  public AuthenticationMethod() {
+    super();
+  }
+
+  public AuthenticationMethod(String value) {
+    super();
+    this.value = value;
+  }
 
   public String getValue() {
     return value;
