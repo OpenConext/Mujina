@@ -71,7 +71,8 @@ public class AssertionGenerator {
     AssertionBuilder assertionBuilder = (AssertionBuilder) builderFactory.getBuilder(Assertion.DEFAULT_ELEMENT_NAME);
     Assertion assertion = assertionBuilder.buildObject();
 
-    Subject subject = subjectGenerator.generateSubject(recepientAssertionConsumerURL, validForInSeconds, authToken.getName(), inResponseTo,
+    String name = authToken.getName();
+    Subject subject = subjectGenerator.generateSubject(recepientAssertionConsumerURL, validForInSeconds, name, inResponseTo,
         remoteIP);
 
     Issuer issuer = issuerGenerator.generateIssuer();
@@ -82,15 +83,14 @@ public class AssertionGenerator {
     assertion.getAuthnStatements().add(authnStatement);
     assertion.setSubject(subject);
 
-    // extends this
-    // assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(authToken.getAuthorities()));
-
     final Map<String, String> attributes = new HashMap<String, String>();
     attributes.putAll(idpConfiguration.getAttributes());
 
     if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-      attributes.put("urn:mace:dir:attribute-def:uid", authToken.getName());
+      attributes.put("urn:mace:dir:attribute-def:uid", name);
+      attributes.put("urn:mace:dir:attribute-def:displayName", name);
     }
+    
 
     assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(attributes));
 
