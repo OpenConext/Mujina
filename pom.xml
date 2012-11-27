@@ -79,6 +79,7 @@
 
     <spring.version>3.0.6.RELEASE</spring.version>
     <opensaml.version>2.5.1</opensaml.version>
+    <spring-security-opensaml.version>2.14.0-SNAPSHOT</spring-security-opensaml.version>
     <mockito.version>1.9.0</mockito.version>
     <xmlunit.version>1.3</xmlunit.version>
     <xml-apis.version>1.4.01</xml-apis.version>
@@ -236,8 +237,9 @@
       <dependency>
         <groupId>org.surfnet.coin</groupId>
         <artifactId>spring-security-opensaml</artifactId>
-        <version>2.13.0</version>
+        <version>${spring-security-opensaml.version}</version>
       </dependency>
+
       <dependency>
         <groupId>org.opensaml</groupId>
         <artifactId>opensaml</artifactId>
