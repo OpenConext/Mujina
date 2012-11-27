@@ -43,12 +43,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     final String password = authentication.getCredentials().toString();
 
     /*
-     * First check if we know this user. Fallback user if Method.ALL otherwise an Exception
+     * First check if we know this user. Fallback user if Method.ALL otherwise
+     * an Exception
      */
     Authentication authenticationForUser = getAuthenticationForUser(name, password);
     if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-      return authenticationForUser != null ? authenticationForUser : new SimpleAuthentication(name, password,
-          Arrays.asList((GrantedAuthority) new GrantedAuthorityImpl("ROLE_USER")));
+      return authenticationForUser != null ? authenticationForUser : new SimpleAuthentication(name, password, Arrays.asList(
+          (GrantedAuthority) new GrantedAuthorityImpl("ROLE_USER"), (GrantedAuthority) new GrantedAuthorityImpl("ROLE_ADMIN")));
     } else {
       if (authenticationForUser == null) {
         throw new AuthenticationException("Can not log in") {
