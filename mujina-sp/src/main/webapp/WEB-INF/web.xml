@@ -57,11 +57,6 @@
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>api</servlet-name>
-    <url-pattern>/social/*</url-pattern>
-  </servlet-mapping>
-
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>/WEB-INF/applicationContext*.xml</param-value>

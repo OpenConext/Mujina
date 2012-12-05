@@ -14,5 +14,3 @@ IDP_SSO_SERVICE_URL=https://engine.demo.openconext.org/authentication/idp/single
 REPLAY_CACHE_LIFE_IN_MILLIS=14400000
 ISSUE_INSTANT_CHECK_CLOCK_SKEW_IN_SECONDS=90
 ISSUE_INSTANT_CHECK_VALIDITY_TIME_IN_SECONDS=300
-
-OAUTH_CALLBACK_URL=https://mujina-sp.demo.openconext.org/social/oauth-callback.shtml
