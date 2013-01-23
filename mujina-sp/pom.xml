@@ -116,12 +116,18 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.surfnet.coin</groupId>
       <artifactId>spring-security-opensaml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>nl.iprofs.modules.context-logging</groupId>
+      <artifactId>context-logging</artifactId>
     </dependency>
   </dependencies>
 

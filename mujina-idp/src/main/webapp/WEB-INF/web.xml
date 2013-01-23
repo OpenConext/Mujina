@@ -20,6 +20,10 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
   <display-name>spring-saml-idp</display-name>
 
+  <listener>
+    <listener-class>nl.iprofs.modules.contextlogging.InitParameterLogbackContextListener</listener-class>
+  </listener>
+
   <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
