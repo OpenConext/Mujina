@@ -20,18 +20,6 @@
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
-  <logger name="org.hibernate" level="warn">
-    <appender-ref ref="console" />
-  </logger>
-  <logger name="org.apache" level="warn">
-    <appender-ref ref="console" />
-  </logger>
-  <logger name="org.mortbay" level="warn">
-    <appender-ref ref="console" />
-  </logger>
-  <logger name="org.eclipse.jetty" level="warn">
-    <appender-ref ref="console" />
-  </logger>
   <logger name="nl.surfnet.coin" level="debug">
     <appender-ref ref="console" />
   </logger>
