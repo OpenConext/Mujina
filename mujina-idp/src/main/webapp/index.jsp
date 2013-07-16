@@ -45,6 +45,7 @@ ___  ___        _  _
 <a href="admin.jsp">protected IDP admin page</a> <br/>
 <a href="j_spring_security_logout">End your session with the Identity Provider</a> <i>Does not end your session with the
   SP</i> <br/>
+<a href="edit_attr.jsp">Edit the attributes that are stored in the browsers cookie</a>
 
 <h3>Your current Spring Security Credentials are:</h3>
 

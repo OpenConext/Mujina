@@ -17,17 +17,28 @@
 package nl.surfnet.mujina.saml;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import nl.surfnet.mujina.model.IdpConfiguration;
+import nl.surfnet.mujina.model.SimpleAuthentication;
+import nl.surfnet.mujina.saml.xml.AuthnResponseGenerator;
+import nl.surfnet.mujina.saml.xml.EndpointGenerator;
+import nl.surfnet.mujina.spring.AuthnRequestInfo;
+import nl.surfnet.mujina.util.IDService;
+import nl.surfnet.mujina.util.TimeService;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.security.*;
+import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.credential.CredentialResolver;
 import org.opensaml.xml.security.credential.UsageType;
@@ -39,15 +50,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestHandler;
-
-import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.model.SimpleAuthentication;
-import nl.surfnet.mujina.saml.xml.AuthnResponseGenerator;
-import nl.surfnet.mujina.saml.xml.EndpointGenerator;
-import nl.surfnet.mujina.spring.AuthnRequestInfo;
-import nl.surfnet.mujina.util.IDService;
-import nl.surfnet.mujina.util.TimeService;
-import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
@@ -114,11 +116,20 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         final String remoteIP = request.getRemoteAddr();
-
-      Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConumerURL(),
-        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant);
+        String attributeJson = null;
+        
+        if (null != request.getCookies()) {
+          for (Cookie current : request.getCookies()) {
+            if (current.getName().equalsIgnoreCase("mujina-attr")) {
+              logger.info("Found a attribute cookie, this is used for the assertion response");
+              attributeJson = URLDecoder.decode(current.getValue(), "UTF-8");
+            }
+          }
+        }
+      Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConsumerURL(),
+        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant, attributeJson);
       Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME,
-        info.getAssertionConumerURL(), null);
+        info.getAssertionConsumerURL(), null);
 
       request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
 

@@ -34,6 +34,8 @@
     <intercept-url pattern="/login.jsp" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
 
     <intercept-url pattern="/index.jsp" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
+    
+    <intercept-url pattern="/edit_attr.jsp" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
 
     <intercept-url pattern="${AUTHN_RESPONDER_URI}" access="ROLE_USER,ROLE_ADMIN"/>
 

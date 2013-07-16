@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
-
-import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
 
 public class IdpConfigurationImpl extends CommonConfigurationImpl implements IdpConfiguration {
 

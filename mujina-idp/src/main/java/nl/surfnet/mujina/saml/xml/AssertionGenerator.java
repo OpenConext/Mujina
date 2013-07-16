@@ -16,6 +16,7 @@
 
 package nl.surfnet.mujina.saml.xml;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,10 @@ import nl.surfnet.mujina.model.SimpleAuthentication;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnStatement;
@@ -38,9 +43,11 @@ import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureConstants;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AssertionGenerator {
-
+  private static final Logger logger = LoggerFactory.getLogger(AssertionGenerator.class);
   private final XMLObjectBuilderFactory builderFactory = org.opensaml.Configuration.getBuilderFactory();
 
   private final IssuerGenerator issuerGenerator;
@@ -64,9 +71,7 @@ public class AssertionGenerator {
   }
 
   public Assertion generateAssertion(String remoteIP, SimpleAuthentication authToken, String recepientAssertionConsumerURL,
-      int validForInSeconds, String inResponseTo, DateTime authnInstant) {
-    // org.apache.xml.security.utils.ElementProxy.setDefaultPrefix(namespaceURI,
-    // prefix).
+      int validForInSeconds, String inResponseTo, DateTime authnInstant, String attributeJson) {
 
     AssertionBuilder assertionBuilder = (AssertionBuilder) builderFactory.getBuilder(Assertion.DEFAULT_ELEMENT_NAME);
     Assertion assertion = assertionBuilder.buildObject();
@@ -84,13 +89,16 @@ public class AssertionGenerator {
     assertion.setSubject(subject);
 
     final Map<String, String> attributes = new HashMap<String, String>();
-    attributes.putAll(idpConfiguration.getAttributes());
-
-    if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-      attributes.put("urn:mace:dir:attribute-def:uid", name);
-      attributes.put("urn:mace:dir:attribute-def:displayName", name);
+    if (null != attributeJson) {
+      attributes.putAll(getAttributesFromCookie(attributeJson));
+    } else {
+      // use the attributes from the IDP Configuration
+      attributes.putAll(idpConfiguration.getAttributes());
+      if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
+        attributes.put("urn:mace:dir:attribute-def:uid", name);
+        attributes.put("urn:mace:dir:attribute-def:displayName", name);
+      }
     }
-    
 
     assertion.getAttributeStatements().add(attributeStatementGenerator.generateAttributeStatement(attributes));
 
@@ -100,6 +108,22 @@ public class AssertionGenerator {
     signAssertion(assertion);
 
     return assertion;
+  }
+
+  private Map<String, String> getAttributesFromCookie(String attributeJson) {
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, String> result = null;
+    try {
+      TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {};
+      result = mapper.readValue(attributeJson, typeReference);
+    } catch (JsonParseException e) {
+      logger.warn("could not parse json file for IDP attributes", e);
+    } catch (JsonMappingException e) {
+      logger.warn("could not parse json file for IDP attributes", e);
+    } catch (IOException e) {
+      logger.warn("could not parse json file for IDP attributes", e);
+    }
+    return result;
   }
 
   private void signAssertion(final Assertion assertion) {
