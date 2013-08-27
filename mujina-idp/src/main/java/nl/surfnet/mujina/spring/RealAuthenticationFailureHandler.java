@@ -112,10 +112,10 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
         timeService, idService, idpConfiguration);
       EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-      Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConumerURL(),
+      Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConsumerURL(),
         authnRequestInfo.getAuthnRequestID(), authenticationException);
       Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME,
-        authnRequestInfo.getAssertionConumerURL(), null);
+        authnRequestInfo.getAssertionConsumerURL(), null);
 
       request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
 
