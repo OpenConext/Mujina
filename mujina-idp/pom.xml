@@ -127,6 +127,10 @@
       <groupId>nl.iprofs.modules.context-logging</groupId>
       <artifactId>context-logging</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
