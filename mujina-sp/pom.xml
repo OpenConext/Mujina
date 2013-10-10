@@ -18,12 +18,12 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mujina-sp</artifactId>
   <packaging>war</packaging>
-  <version>3.9.0</version>
+  <version>3.9.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.surfnet.coin</groupId>
     <artifactId>mujina</artifactId>
-    <version>3.9.0</version>
+    <version>3.9.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
