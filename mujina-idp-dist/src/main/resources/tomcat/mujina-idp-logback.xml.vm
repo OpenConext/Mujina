@@ -34,7 +34,7 @@
   <logger name="org.springframework" level="warn">
     <appender-ref ref="file" />
   </logger>
-  <logger name="nl.surfnet.coin" level="debug">
+  <logger name="nl.surfnet.coin" level="info">
     <appender-ref ref="file" />
   </logger>
   <root level="info">
