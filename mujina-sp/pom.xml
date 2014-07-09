@@ -26,7 +26,9 @@
     <version>4.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-
+  <properties>
+    <httpPort>9090</httpPort>
+  </properties>
   <dependencies>
 
     <dependency>
@@ -160,7 +162,7 @@
           <stopKey>foo</stopKey>
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>9090</port>
+              <port>${httpPort}</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>

@@ -91,6 +91,11 @@ mvn jetty:run
 Then, go to http://localhost:9090/. You will be redirected to the IdP, where you can
 login with username admin and password secret.
 
+Changing port numbers
+----------------------
+Both the SP and IDP can be made to bind to a different tcp/ip port: 
+`mvn jetty:run -DhttpPort=8082 -DhttpsPort=8444`
+
 Resetting the IDP
 -----------------
 
