@@ -117,7 +117,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
 
         final String remoteIP = request.getRemoteAddr();
         String attributeJson = null;
-        
+
         if (null != request.getCookies()) {
           for (Cookie current : request.getCookies()) {
             if (current.getName().equalsIgnoreCase("mujina-attr")) {
@@ -127,7 +127,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
           }
         }
       Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConsumerURL(),
-        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant, attributeJson);
+        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant, attributeJson, info.getEntityId());
       Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME,
         info.getAssertionConsumerURL(), null);
 

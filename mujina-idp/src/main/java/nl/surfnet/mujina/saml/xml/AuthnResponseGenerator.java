@@ -53,7 +53,7 @@ public class AuthnResponseGenerator {
   }
 
   public Response generateAuthnResponse(String remoteIP, SimpleAuthentication authToken, String recepientAssertionConsumerURL,
-      int validForInSeconds, String inResponseTo, DateTime authnInstant, String attributeJson) {
+      int validForInSeconds, String inResponseTo, DateTime authnInstant, String attributeJson, String requestingEntityId) {
 
     ResponseBuilder responseBuilder = (ResponseBuilder) builderFactory.getBuilder(Response.DEFAULT_ELEMENT_NAME);
     Response authResponse = responseBuilder.buildObject();
@@ -61,7 +61,7 @@ public class AuthnResponseGenerator {
     Issuer responseIssuer = issuerGenerator.generateIssuer();
 
     Assertion assertion = assertionGenerator.generateAssertion(remoteIP, authToken, recepientAssertionConsumerURL, validForInSeconds,
-        inResponseTo, authnInstant, attributeJson);
+        inResponseTo, authnInstant, attributeJson, requestingEntityId);
 
     authResponse.setIssuer(responseIssuer);
     authResponse.setID(idService.generateID());
