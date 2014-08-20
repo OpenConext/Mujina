@@ -32,10 +32,16 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.Audience;
+import org.opensaml.saml2.core.AudienceRestriction;
 import org.opensaml.saml2.core.AuthnStatement;
+import org.opensaml.saml2.core.Conditions;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.Subject;
 import org.opensaml.saml2.core.impl.AssertionBuilder;
+import org.opensaml.saml2.core.impl.AudienceBuilder;
+import org.opensaml.saml2.core.impl.AudienceRestrictionBuilder;
+import org.opensaml.saml2.core.impl.ConditionsBuilder;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.credential.Credential;
@@ -70,20 +76,31 @@ public class AssertionGenerator {
     subjectGenerator = new SubjectGenerator(timeService);
   }
 
-  public Assertion generateAssertion(String remoteIP, SimpleAuthentication authToken, String recepientAssertionConsumerURL,
-      int validForInSeconds, String inResponseTo, DateTime authnInstant, String attributeJson) {
+  public Assertion generateAssertion(String remoteIP, SimpleAuthentication authToken, String recipientAssertionConsumerURL,
+      int validForInSeconds, String inResponseTo, DateTime authnInstant, String attributeJson, String requestingEntityId) {
 
     AssertionBuilder assertionBuilder = (AssertionBuilder) builderFactory.getBuilder(Assertion.DEFAULT_ELEMENT_NAME);
     Assertion assertion = assertionBuilder.buildObject();
 
     String name = authToken.getName();
-    Subject subject = subjectGenerator.generateSubject(recepientAssertionConsumerURL, validForInSeconds, name, inResponseTo,
+    Subject subject = subjectGenerator.generateSubject(recipientAssertionConsumerURL, validForInSeconds, name, inResponseTo,
         remoteIP);
 
     Issuer issuer = issuerGenerator.generateIssuer();
 
+    // include audience as per spec
+    final Audience audience = new AudienceBuilder().buildObject();
+    audience.setAudienceURI(requestingEntityId);
+    final AudienceRestriction audienceRestriction = new AudienceRestrictionBuilder().buildObject();
+    audienceRestriction.getAudiences().add(audience);
+
+    final Conditions conditions = new ConditionsBuilder().buildObject();
+    conditions.getAudienceRestrictions().add(audienceRestriction);
+    assertion.setConditions(conditions);
+
+
     AuthnStatement authnStatement = authnStatementGenerator.generateAuthnStatement(authnInstant, idpConfiguration.getEntityID());
-    
+
     assertion.setIssuer(issuer);
     assertion.getAuthnStatements().add(authnStatement);
     assertion.setSubject(subject);

@@ -25,11 +25,16 @@ public class AuthnRequestInfo implements Serializable {
 
   private final String assertionConsumerURL;
   private final String authnRequestID;
+  private final String entityId;
 
-  public AuthnRequestInfo(String assertionConumerURL, String authnRequestID) {
-    super();
-    this.assertionConsumerURL = assertionConumerURL;
+  public AuthnRequestInfo(String assertionConsumerURL, String authnRequestID, String entityId) {
+    this.assertionConsumerURL = assertionConsumerURL;
     this.authnRequestID = authnRequestID;
+    this.entityId = entityId;
+  }
+
+  public String getEntityId() {
+    return entityId;
   }
 
   public String getAssertionConsumerURL() {
@@ -42,7 +47,7 @@ public class AuthnRequestInfo implements Serializable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("assertionConumerURL", assertionConsumerURL).append("authnRequestID", authnRequestID).toString();
+    return new ToStringBuilder(this).append("assertionConumerURL", assertionConsumerURL).append("authnRequestID", authnRequestID).append("entityId", entityId).toString();
 
   }
 

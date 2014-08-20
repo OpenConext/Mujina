@@ -18,15 +18,17 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>mujina-idp</artifactId>
   <packaging>war</packaging>
-  <version>4.0.1-SNAPSHOT</version>
 
   <parent>
     <groupId>org.surfnet.coin</groupId>
     <artifactId>mujina</artifactId>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
-
+  <properties>
+    <httpPort>8080</httpPort>
+    <httpsPort>8443</httpsPort>
+  </properties>
   <dependencies>
 
     <dependency>
@@ -190,14 +192,14 @@
           <scanIntervalSeconds>3</scanIntervalSeconds>
           <connectors>
             <connector implementation="org.mortbay.jetty.security.SslSocketConnector">
-              <port>8443</port>
+              <port>${httpsPort}</port>
               <maxIdleTime>60000</maxIdleTime>
               <keystore>${project.build.directory}/jetty-ssl.keystore</keystore>
               <password>jetty6</password>
               <keyPassword>jetty6</keyPassword>
             </connector>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>8080</port>
+              <port>${httpPort}</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>

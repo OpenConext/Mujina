@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>mujina</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.1</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -53,12 +53,24 @@
       </snapshots>
       <releases>
         <enabled>true</enabled>
+      </releases>
+      <id>openconext-third-party-releases</id>
+      <name>OpenConext Third-party releases repository</name>
+      <url>https://build.surfconext.nl/repository/public/third-party</url>
+    </repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </releases>
       <id>openconext-releases</id>
       <name>OpenConext public releases repository</name>
       <url>https://build.surfconext.nl/repository/public/releases</url>
     </repository>
+
   </repositories>
 
   <distributionManagement>
@@ -78,6 +90,7 @@
     <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
     <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
     <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
+    <tag>mujina-4.0.1</tag>
   </scm>
 
   <properties>
@@ -98,7 +111,7 @@
     <javax.servlet.jstl.version>1.2</javax.servlet.jstl.version>
 
     <maven.plugin.compiler.version>2.3.2</maven.plugin.compiler.version>
-    <maven.plugin.release.version>2.2.2</maven.plugin.release.version>
+    <maven.plugin.release.version>2.5</maven.plugin.release.version>
     <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
     <maven.wagon.webdav.version>1.0-beta-2</maven.wagon.webdav.version>
 
@@ -156,7 +169,7 @@
         <version>${jackson.version}</version>
       </dependency>
 
-	  <dependency>
+      <dependency>
         <groupId>org.scribe</groupId>
         <artifactId>scribe</artifactId>
         <version>${scribe.version}</version>
@@ -229,6 +242,11 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>${maven.plugin.release.version}</version>
+          <configuration>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <pushChanges>false</pushChanges> <!--Release Plugin don't push to remote-->
+            <localCheckout>true</localCheckout> <!--Release Plugin clone from local repo-->
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
