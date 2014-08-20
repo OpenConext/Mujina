@@ -14,8 +14,7 @@
   limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -25,7 +24,7 @@
   </parent>
 
   <artifactId>mujina</artifactId>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>4.0.1</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -91,6 +90,7 @@
     <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
     <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
     <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
+    <tag>mujina-4.0.1</tag>
   </scm>
 
   <properties>
