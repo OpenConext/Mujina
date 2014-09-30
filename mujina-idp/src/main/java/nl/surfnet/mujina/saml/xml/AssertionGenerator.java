@@ -17,8 +17,10 @@
 package nl.surfnet.mujina.saml.xml;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import nl.surfnet.mujina.model.AuthenticationMethod;
 import nl.surfnet.mujina.model.IdpConfiguration;
@@ -51,6 +53,8 @@ import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.Arrays.asList;
 
 public class AssertionGenerator {
   private static final Logger logger = LoggerFactory.getLogger(AssertionGenerator.class);
@@ -105,15 +109,15 @@ public class AssertionGenerator {
     assertion.getAuthnStatements().add(authnStatement);
     assertion.setSubject(subject);
 
-    final Map<String, String> attributes = new HashMap<String, String>();
+    final Map<String, List<String>> attributes = new HashMap<>();
     if (null != attributeJson) {
       attributes.putAll(getAttributesFromCookie(attributeJson));
     } else {
       // use the attributes from the IDP Configuration
       attributes.putAll(idpConfiguration.getAttributes());
       if (idpConfiguration.getAuthentication() == AuthenticationMethod.Method.ALL) {
-        attributes.put("urn:mace:dir:attribute-def:uid", name);
-        attributes.put("urn:mace:dir:attribute-def:displayName", name);
+        attributes.put("urn:mace:dir:attribute-def:uid", asList(name));
+        attributes.put("urn:mace:dir:attribute-def:displayName", asList(name));
       }
     }
 
@@ -127,11 +131,12 @@ public class AssertionGenerator {
     return assertion;
   }
 
-  private Map<String, String> getAttributesFromCookie(String attributeJson) {
+  private Map<String, List<String>> getAttributesFromCookie(String attributeJson) {
     ObjectMapper mapper = new ObjectMapper();
-    Map<String, String> result = null;
+    Map<String, List<String>> result = null;
     try {
-      TypeReference<Map<String, String>> typeReference = new TypeReference<Map<String, String>>() {};
+      TypeReference<Map<String, List<String>>> typeReference = new TypeReference<Map<String, List<String>>>() {
+      };
       result = mapper.readValue(attributeJson, typeReference);
     } catch (JsonParseException e) {
       logger.warn("could not parse json file for IDP attributes", e);

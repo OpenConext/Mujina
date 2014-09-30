@@ -67,11 +67,11 @@ public class TestHelper {
 
   private String protocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
 
-  public boolean responseHasAttribute(final String name, final String value, final Response resp) {
+  public boolean responseHasAttribute(final String name, final List<String> value, final Response resp) {
         final List<org.opensaml.saml2.core.Attribute> attributes = resp.getAssertions().get(0).getAttributeStatements().get(0).getAttributes();
         for (org.opensaml.saml2.core.Attribute attribute : attributes) {
             if (name.equals(attribute.getName())) {
-                assertTrue(value.equals(attribute.getAttributeValues().get(0).getDOM().getTextContent()));
+                assertTrue(value.contains(attribute.getAttributeValues().get(0).getDOM().getTextContent()));
                 return true;
             }
         }

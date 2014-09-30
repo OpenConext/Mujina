@@ -16,23 +16,23 @@
 
 package nl.surfnet.mujina.model;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
+import java.util.List;
 
 @XmlRootElement
 public class Attribute implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  private String value;
+  private List<String> value;
 
-  public String getValue() {
+  public List<String> getValue() {
     return value;
   }
 
   @XmlElement
-  public void setValue(final String value) {
+  public void setValue(final List<String> value) {
     this.value = value;
   }
 }
