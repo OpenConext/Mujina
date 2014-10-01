@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>mujina</artifactId>
-  <version>4.0.2</version>
+  <version>4.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -90,7 +90,7 @@
     <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
     <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
     <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
-    <tag>mujina-4.0.2</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
