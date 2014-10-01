@@ -16,25 +16,9 @@
 
 package nl.surfnet.mujina.controllers.tests;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static nl.surfnet.mujina.model.AuthenticationMethod.Method.*;
-import java.io.IOException;
-import java.util.Collections;
-
-import javax.servlet.ServletException;
-
 import nl.surfnet.mujina.controllers.CommonAPI;
 import nl.surfnet.mujina.controllers.IdentityProviderAPI;
-import nl.surfnet.mujina.model.Attribute;
-import nl.surfnet.mujina.model.AuthenticationMethod;
-import nl.surfnet.mujina.model.Credential;
-import nl.surfnet.mujina.model.EntityID;
-import nl.surfnet.mujina.model.User;
-
-import org.junit.After;
+import nl.surfnet.mujina.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,9 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static junit.framework.Assert.*;
+import static nl.surfnet.mujina.model.AuthenticationMethod.Method.USER;
+
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:applicationContext-idp-config.xml", "classpath:applicationContext-property-mappings.xml",
-    "classpath:applicationContext-spring-security.xml", "classpath:api-servlet.xml", "classpath:test-beans.xml" })
+@ContextConfiguration(locations = {"classpath:applicationContext-idp-config.xml", "classpath:applicationContext-property-mappings.xml",
+  "classpath:applicationContext-spring-security.xml", "classpath:api-servlet.xml", "classpath:test-beans.xml"})
 public class IdpRestAPITest {
 
   public static final String DEFAULT_USER = "admin";
@@ -71,7 +64,7 @@ public class IdpRestAPITest {
   @Test
   public void testSetAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
     final String name = "foo";
-    final String value = "bar";
+    final List<String> value = Arrays.asList("bar");
 
     final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
     assertFalse(testHelper.responseHasAttribute(name, value, respBefore));
@@ -87,11 +80,11 @@ public class IdpRestAPITest {
 
   @Test
   public void testRemoveAttribute() throws IOException, ServletException, MessageEncodingException, XMLParserException,
-      UnmarshallingException {
+    UnmarshallingException {
     restApiController.setAuthenticationMethod(new AuthenticationMethod(USER.name()));
-    
+
     final String name = "urn:mace:dir:attribute-def:uid";
-    final String value = "john.doe";
+    final List<String> value = Arrays.asList("john.doe");
 
     final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
     assertTrue(testHelper.responseHasAttribute(name, value, respBefore));
@@ -144,12 +137,12 @@ public class IdpRestAPITest {
 
   @Test
   public void testSetSigningCredential() throws IOException, XMLParserException, ServletException, MessageEncodingException,
-      UnmarshallingException {
+    UnmarshallingException {
     Credential credential = new Credential();
     credential
-        .setCertificate("MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECgwHU3VyZm5ldDEPMA0GA1UECwwGQ29uZXh0MB4XDTEyMDMwODA4NTQyNFoXDTEzMDMwODA4NTQyNFowVDELMAkGA1UEBhMCTkwxEDAOBgNVBAgMB1V0cmVjaHQxEDAOBgNVBAcMB1V0cmVjaHQxEDAOBgNVBAoMB1N1cmZuZXQxDzANBgNVBAsMBkNvbmV4dDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2slVe459WUDL4RXxJf5h5t5oUbPkPlFZ9lQysSoS3fnFTdCgzA6FzQzGRDcfRj0HnWBdA1YH+LxBjNcBIJ/nBc7Ssu4e4rMO3MSAV5Ouo3MaGgHqVq6dCD47f52b98df6QTAA3C+7sHqOdiQ0UDCAK0C+qP5LtTcmB8QrJhKmV8CAwEAATANBgkqhkiG9w0BAQUFAAOBgQCvPhO0aSbqX7g7IkR79IFVdJ/P7uSlYFtJ9cMxec85cYLmWL1aVgF5ZFFJqC25blyPJu2GRcSxoVwB3ae8sPCECWwqRQA4AHKIjiW5NgrAGYR++ssTOQR8mcAucEBfNaNdlJoy8GdZIhHZNkGlyHfY8kWS3OWkGzhWSsuRCLl78A==");
+      .setCertificate("MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJOTDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECgwHU3VyZm5ldDEPMA0GA1UECwwGQ29uZXh0MB4XDTEyMDMwODA4NTQyNFoXDTEzMDMwODA4NTQyNFowVDELMAkGA1UEBhMCTkwxEDAOBgNVBAgMB1V0cmVjaHQxEDAOBgNVBAcMB1V0cmVjaHQxEDAOBgNVBAoMB1N1cmZuZXQxDzANBgNVBAsMBkNvbmV4dDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA2slVe459WUDL4RXxJf5h5t5oUbPkPlFZ9lQysSoS3fnFTdCgzA6FzQzGRDcfRj0HnWBdA1YH+LxBjNcBIJ/nBc7Ssu4e4rMO3MSAV5Ouo3MaGgHqVq6dCD47f52b98df6QTAA3C+7sHqOdiQ0UDCAK0C+qP5LtTcmB8QrJhKmV8CAwEAATANBgkqhkiG9w0BAQUFAAOBgQCvPhO0aSbqX7g7IkR79IFVdJ/P7uSlYFtJ9cMxec85cYLmWL1aVgF5ZFFJqC25blyPJu2GRcSxoVwB3ae8sPCECWwqRQA4AHKIjiW5NgrAGYR++ssTOQR8mcAucEBfNaNdlJoy8GdZIhHZNkGlyHfY8kWS3OWkGzhWSsuRCLl78A==");
     credential
-        .setKey("MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANrJVXuOfVlAy+EV8SX+YebeaFGz5D5RWfZUMrEqEt35xU3QoMwOhc0MxkQ3H0Y9B51gXQNWB/i8QYzXASCf5wXO0rLuHuKzDtzEgFeTrqNzGhoB6launQg+O3+dm/fHX+kEwANwvu7B6jnYkNFAwgCtAvqj+S7U3JgfEKyYSplfAgMBAAECgYBaPvwkyCTKYSD4Co37JxAJJCqRsQtv7SyXoCl8zKcVqwaIz4rUQRVN/Hv3/WjIFzqB3xLe4mjNYBIF31YWt/6ZslaLL5YJIXISrMgDuQzPKL8VqvvsH9XEpi/qSUsVAWa9Vaqqwa8JTPELK8QhHKaXTxGtatEuW1x6kSNXFCoasQJBAPUaYdj9oCDOGTaOaupF0GB6TIgIItpQESY1Dfpn4cvwB0jH8wBJSBVeBqSa6dg4RI5ydD3J82xlF7NrQnvWpYkCQQDkg26KzQckoJ39HX2gYS4olSeQDAyIDzeCMkj7McDhigy0cL6k9nOQrKlq6V3vkBISTRg7JceJ4z3QE00edXWnAkEAoggv2WBJxIYbOurJmVhP2gffoiomyEYYIDcAp6KXLdffKOkuJulLIv0GzTiwEMWZ5MWbPOHN78Gg+naU/AM5aQJBALfbsANpt4eW28ceBUgXKMZqS+ywZRzL8YOF5gaGH4TYSCSeWiXsTUtoQN/OaFAqAQBMm2Rrn0KoXcGe5fvN0h0CQQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ5JCAUQcdrEQJ");
+      .setKey("MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANrJVXuOfVlAy+EV8SX+YebeaFGz5D5RWfZUMrEqEt35xU3QoMwOhc0MxkQ3H0Y9B51gXQNWB/i8QYzXASCf5wXO0rLuHuKzDtzEgFeTrqNzGhoB6launQg+O3+dm/fHX+kEwANwvu7B6jnYkNFAwgCtAvqj+S7U3JgfEKyYSplfAgMBAAECgYBaPvwkyCTKYSD4Co37JxAJJCqRsQtv7SyXoCl8zKcVqwaIz4rUQRVN/Hv3/WjIFzqB3xLe4mjNYBIF31YWt/6ZslaLL5YJIXISrMgDuQzPKL8VqvvsH9XEpi/qSUsVAWa9Vaqqwa8JTPELK8QhHKaXTxGtatEuW1x6kSNXFCoasQJBAPUaYdj9oCDOGTaOaupF0GB6TIgIItpQESY1Dfpn4cvwB0jH8wBJSBVeBqSa6dg4RI5ydD3J82xlF7NrQnvWpYkCQQDkg26KzQckoJ39HX2gYS4olSeQDAyIDzeCMkj7McDhigy0cL6k9nOQrKlq6V3vkBISTRg7JceJ4z3QE00edXWnAkEAoggv2WBJxIYbOurJmVhP2gffoiomyEYYIDcAp6KXLdffKOkuJulLIv0GzTiwEMWZ5MWbPOHN78Gg+naU/AM5aQJBALfbsANpt4eW28ceBUgXKMZqS+ywZRzL8YOF5gaGH4TYSCSeWiXsTUtoQN/OaFAqAQBMm2Rrn0KoXcGe5fvN0h0CQQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ5JCAUQcdrEQJ");
 
     commonAPI.setSigningCredential(credential);
 
@@ -160,8 +153,8 @@ public class IdpRestAPITest {
 
   @Test
   public void testSetAuthentication() throws IOException, XMLParserException, ServletException, MessageEncodingException,
-      UnmarshallingException {
+    UnmarshallingException {
     final Response response = testHelper.doSamlLogin("jaapie", "asdlkfjbdiufv");
-    assertTrue(testHelper.responseHasAttribute("urn:mace:dir:attribute-def:uid", "jaapie", response));
+    assertTrue(testHelper.responseHasAttribute("urn:mace:dir:attribute-def:uid", Arrays.asList("jaapie"), response));
   }
 }

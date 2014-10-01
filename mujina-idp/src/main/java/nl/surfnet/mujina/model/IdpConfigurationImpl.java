@@ -17,11 +17,7 @@
 package nl.surfnet.mujina.model;
 
 import java.security.KeyStore;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
 
@@ -35,7 +31,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
 
   private final static Logger LOGGER = LoggerFactory.getLogger(IdpConfigurationImpl.class);
 
-  private Map<String, String> attributes = new TreeMap<String, String>();
+  private Map<String, List<String>> attributes = new TreeMap<>();
   private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
   private AuthenticationMethod.Method authMethod;
 
@@ -48,15 +44,15 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     authMethod = AuthenticationMethod.Method.ALL;
     entityId = "http://mock-idp";
     attributes.clear();
-    attributes.put("urn:mace:dir:attribute-def:uid", "john.doe");
-    attributes.put("urn:mace:dir:attribute-def:cn", "John Doe");
-    attributes.put("urn:mace:dir:attribute-def:givenName", "John");
-    attributes.put("urn:mace:dir:attribute-def:sn", "Doe");
-    attributes.put("urn:mace:dir:attribute-def:displayName", "John Doe");
-    attributes.put("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-    attributes.put("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-    attributes.put("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
-    attributes.put("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
+    putAttribute("urn:mace:dir:attribute-def:uid", "john.doe");
+    putAttribute("urn:mace:dir:attribute-def:cn", "John Doe");
+    putAttribute("urn:mace:dir:attribute-def:givenName", "John");
+    putAttribute("urn:mace:dir:attribute-def:sn", "Doe");
+    putAttribute("urn:mace:dir:attribute-def:displayName", "John Doe");
+    putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
+    putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
+    putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+    putAttribute("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
     try {
       keyStore = KeyStore.getInstance("JKS");
       keyStore.load(null, keystorePassword.toCharArray());
@@ -78,8 +74,12 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     setSigning(false);
   }
 
+  private void putAttribute(String key, String... values) {
+    this.attributes.put(key, Arrays.asList(values));
+  }
+
   @Override
-  public Map<String, String> getAttributes() {
+  public Map<String, List<String>> getAttributes() {
     return attributes;
   }
 
