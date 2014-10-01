@@ -17,6 +17,7 @@
 package nl.surfnet.mujina.saml.xml;
 
 import java.util.Map;
+import java.util.List;
 
 import org.opensaml.Configuration;
 import org.opensaml.saml2.core.Attribute;
@@ -31,20 +32,22 @@ import org.opensaml.xml.schema.impl.XSStringBuilder;
 public class AttributeStatementGenerator {
   private final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-  public AttributeStatement generateAttributeStatement(final Map<String, String> attributes) {
+  public AttributeStatement generateAttributeStatement(final Map<String, List<String>> attributes) {
     AttributeStatementBuilder attributeStatementBuilder = (AttributeStatementBuilder) builderFactory
-        .getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
+      .getBuilder(AttributeStatement.DEFAULT_ELEMENT_NAME);
     AttributeStatement attributeStatement = attributeStatementBuilder.buildObject();
 
     AttributeBuilder attributeBuilder = (AttributeBuilder) builderFactory.getBuilder(Attribute.DEFAULT_ELEMENT_NAME);
     XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
 
-    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+    for (Map.Entry<String, List<String>> entry : attributes.entrySet()) {
       Attribute attribute = attributeBuilder.buildObject();
       attribute.setName(entry.getKey());
-      XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-      stringValue.setValue(entry.getValue());
-      attribute.getAttributeValues().add(stringValue);
+      for (String value : entry.getValue()) {
+        XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+        stringValue.setValue(value);
+        attribute.getAttributeValues().add(stringValue);
+      }
       attributeStatement.getAttributes().add(attribute);
     }
 

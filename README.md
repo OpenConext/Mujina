@@ -43,7 +43,7 @@ The default Identity Provider configuration is as follows:
 * The Entity ID is "http://mock-idp"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
-* It has the following attributes
+* It has the following attributes. Attributes are always stored as lists. Even when they contain a single value.
     * "urn:mace:dir:attribute-def:uid" is "john.doe"
     * "urn:mace:dir:attribute-def:cn" is "John Doe"
     * "urn:mace:dir:attribute-def:givenName" is "John"
@@ -161,12 +161,12 @@ curl -v -H "Accept: application/json" \
 Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
 -------------------------------------------------------
 
-This API is only available on the IDP.
+This API is only available on the IDP. **Note:** An attribute is always a list.
 
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": "bar"}' \
+        -X PUT -d '{"value": ["bar"]}' \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
 ```
 
