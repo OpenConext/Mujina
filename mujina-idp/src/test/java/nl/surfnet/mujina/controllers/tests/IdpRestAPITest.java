@@ -157,4 +157,20 @@ public class IdpRestAPITest {
     final Response response = testHelper.doSamlLogin("jaapie", "asdlkfjbdiufv");
     assertTrue(testHelper.responseHasAttribute("urn:mace:dir:attribute-def:uid", Arrays.asList("jaapie"), response));
   }
+
+  @Test
+  public void testSetAcsEndpoint() throws IOException, XMLParserException, ServletException, MessageEncodingException,
+    UnmarshallingException {
+    final String url = "https://sp.test.no";
+    final AcsEndpoint acsEndpoint = new AcsEndpoint();
+    acsEndpoint.setUrl(url);
+
+    final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+    assertFalse(url.equals(respBefore.getDestination()));
+
+    restApiController.setAcsEndpoint(acsEndpoint);
+    final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+    assertTrue(url.equals(respAfter.getDestination()));
+  }
+
 }

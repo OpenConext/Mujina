@@ -108,18 +108,23 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
         }
         Validate.notNull(signingCredential);
 
-      AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(),
-        timeService, idService, idpConfiguration);
-      EndpointGenerator endpointGenerator = new EndpointGenerator();
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(),
+          timeService, idService, idpConfiguration);
+        EndpointGenerator endpointGenerator = new EndpointGenerator();
 
-      Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(authnRequestInfo.getAssertionConsumerURL(),
-        authnRequestInfo.getAuthnRequestID(), authenticationException);
-      Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME,
-        authnRequestInfo.getAssertionConsumerURL(), null);
+        String acsEndpointURL = authnRequestInfo.getAssertionConsumerURL();
+        if (idpConfiguration.getAcsEndpoint() != null) {
+            acsEndpointURL = idpConfiguration.getAcsEndpoint().getUrl();
+        }
 
-      request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
+        Response authResponse = authnResponseGenerator.generateAuthnResponseFailure(acsEndpointURL,
+                authnRequestInfo.getAuthnRequestID(), authenticationException);
+        Endpoint endpoint = endpointGenerator.generateEndpoint(AssertionConsumerService.DEFAULT_ELEMENT_NAME,
+                acsEndpointURL, null);
 
-      String relayState = request.getParameter("RelayState");
+        request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
+
+        String relayState = request.getParameter("RelayState");
         try {
             bindingAdapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingCredential);
         } catch (MessageEncodingException mee) {

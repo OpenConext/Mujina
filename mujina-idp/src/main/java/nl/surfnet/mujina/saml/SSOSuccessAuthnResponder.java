@@ -126,16 +126,20 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
             }
           }
         }
-      Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, info.getAssertionConsumerURL(),
-        responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant, attributeJson, info.getEntityId());
-      Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME,
-        info.getAssertionConsumerURL(), null);
+        String acsEndpointURL = info.getAssertionConsumerURL();
+        if (idpConfiguration.getAcsEndpoint() != null) {
+            acsEndpointURL = idpConfiguration.getAcsEndpoint().getUrl();
+        }
+        Response authResponse = authnResponseGenerator.generateAuthnResponse(remoteIP, authToken, acsEndpointURL,
+                responseValidityTimeInSeconds, info.getAuthnRequestID(), authnInstant, attributeJson, info.getEntityId());
+        Endpoint endpoint = endpointGenerator.generateEndpoint(org.opensaml.saml2.metadata.AssertionConsumerService.DEFAULT_ELEMENT_NAME,
+                acsEndpointURL, null);
 
-      request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
+        request.getSession().removeAttribute(AuthnRequestInfo.class.getName());
 
-      String relayState = request.getParameter("RelayState");
+        String relayState = request.getParameter("RelayState");
 
-      //we could use a different adapter to send the response based on request issuer...
+        //we could use a different adapter to send the response based on request issuer...
         try {
             adapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingCredential);
         } catch (MessageEncodingException mee) {

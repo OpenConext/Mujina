@@ -34,6 +34,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   private Map<String, List<String>> attributes = new TreeMap<>();
   private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
   private AuthenticationMethod.Method authMethod;
+  private AcsEndpoint acsEndpoint;
 
   public IdpConfigurationImpl() {
     reset();
@@ -97,5 +98,11 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   public void setAuthentication(final AuthenticationMethod.Method method) {
     this.authMethod = method;
   }
+
+  @Override
+    public AcsEndpoint getAcsEndpoint() { return acsEndpoint; }
+
+  @Override
+    public void setAcsEndpoint(final AcsEndpoint acsEndpoint) { this.acsEndpoint = acsEndpoint; }
 
 }
