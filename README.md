@@ -30,6 +30,7 @@ Features
   * any user attributes
   * signing certificate
   * entityID
+  * ACS endpoint
 
 - A SAML2 complient Service Provider. The SP displays the attributes as these were recieved from an IdP. A REST api allows for the 'just-in-time' manipulation of:
   * entityID
@@ -54,6 +55,8 @@ The default Identity Provider configuration is as follows:
     * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
     * "urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1" is "guest"
 * There is a default certificate and private key available
+* By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
+  If the ACS endpoint is set using the IdP api this is not neccesary. Use of the api overrides values set in AuthnRequests
 
 The default Service Provider configuration is as follows:
 
@@ -204,6 +207,18 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "ALL"}' \
         http://localhost:8080/api/authmethod
+```
+
+Setting the Assertion Consumer Service (ACS) endpoint
+---------------------------------
+
+This API is only available on the IDP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"url": "https://my_sp.no:443/acsendpoint_path"}' \
+        http://localhost:8080/api/acsendpoint
 ```
 
 The authentication method API has two possible values.
