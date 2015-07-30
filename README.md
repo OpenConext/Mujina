@@ -68,6 +68,9 @@ Build Mujina
 
 [Maven 3](http://maven.apache.org) is needed to build and run Mujina.
 
+The build dependencies are hosted on https://build.surfconext.nl/repository/public/
+(and will be fetched automatically by Maven).
+
 Run the IDP using jetty
 -----------------------
 
