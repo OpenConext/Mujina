@@ -73,6 +73,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     final SimpleAuthentication user = new SimpleAuthentication("user", "secret", authorities);
     users.add(user);
     setSigning(false);
+    setAcsEndpoint(null);
   }
 
   private void putAttribute(String key, String... values) {
