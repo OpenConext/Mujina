@@ -27,4 +27,9 @@ public interface IdpConfiguration extends CommonConfiguration {
   AuthenticationMethod.Method getAuthentication();
 
   void setAuthentication(AuthenticationMethod.Method method);
+
+  AcsEndpoint getAcsEndpoint();
+
+  void setAcsEndpoint(AcsEndpoint acsEndpoint);
+
 }

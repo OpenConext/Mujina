@@ -24,6 +24,7 @@ import nl.surfnet.mujina.model.AuthenticationMethod;
 import nl.surfnet.mujina.model.IdpConfiguration;
 import nl.surfnet.mujina.model.SimpleAuthentication;
 import nl.surfnet.mujina.model.User;
+import nl.surfnet.mujina.model.AcsEndpoint;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,4 +90,13 @@ public class IdentityProviderAPI {
     final AuthenticationMethod.Method method = AuthenticationMethod.Method.valueOf(authenticationMethod.getValue());
     configuration.setAuthentication(method);
   }
+
+  @RequestMapping(value = { "/acsendpoint" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setAcsEndpoint(@RequestBody AcsEndpoint acsEndpoint) {
+    log.debug("Request to set Assertion Consumer Service Endpoint to {}", acsEndpoint.getUrl());
+    configuration.setAcsEndpoint(acsEndpoint);
+  }
+
 }
