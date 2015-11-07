@@ -157,7 +157,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>keytool-maven-plugin</artifactId>
-        <version>1.1</version>
+        <version>1.5</version>
         <executions>
           <execution>
             <phase>generate-resources</phase>
@@ -170,7 +170,7 @@
             <phase>generate-resources</phase>
             <id>genkey</id>
             <goals>
-              <goal>genkey</goal>
+              <goal>generateKeyPair</goal>
             </goals>
           </execution>
         </executions>
