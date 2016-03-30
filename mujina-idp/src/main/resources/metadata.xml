@@ -14,10 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<!--Use of this metadata is subject to the Terms of Use at http://www.edugain.org/policy/metadata-tou_1_0.txt-->
 <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" validUntil="2020-01-01T08:25:48Z"
-                     entityID="http://mockidp" ID="testIdP">
+                     entityID="http://mock-idp" ID="testIdP">
   <md:IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
     <md:KeyDescriptor xmlns:ds="http://www.w3.org/2000/09/xmldsig#" use="signing">
       <ds:KeyInfo>
