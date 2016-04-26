@@ -13,8 +13,8 @@
 Mujina
 ======
 
-[![Build Status](https://travis-ci.org/OpenConext/OpenConext-mujina.svg)](https://travis-ci.org/OpenConext/OpenConext-mujina)
-[![codecov.io](https://codecov.io/github/OpenConext/OpenConext-mujina/coverage.svg)](https://codecov.io/github/OpenConext/OpenConext-mujina)
+[![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
+[![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
 
 Mujina mocks a SAML2 Identity and Service Provider (IdP & SP).
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up.
