@@ -18,13 +18,9 @@ package nl.surfnet.mujina.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import nl.surfnet.mujina.model.Attribute;
-import nl.surfnet.mujina.model.AuthenticationMethod;
-import nl.surfnet.mujina.model.IdpConfiguration;
-import nl.surfnet.mujina.model.SimpleAuthentication;
-import nl.surfnet.mujina.model.User;
-import nl.surfnet.mujina.model.AcsEndpoint;
+import nl.surfnet.mujina.model.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +46,18 @@ public class IdentityProviderAPI {
   @Autowired
   public IdentityProviderAPI(final IdpConfiguration configuration) {
     this.configuration = configuration;
+  }
+
+  @RequestMapping(value = { "/attributes" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setAttributes(@RequestBody AttributesMap attribues) {
+    log.debug("Request to replace all attributes");
+    configuration.getAttributes().clear();
+    for(String name : attribues.keySet()) {
+      Attribute attribute = attribues.get(name);
+      configuration.getAttributes().put(name, attribute.getValue());
+    }
   }
 
   @RequestMapping(value = { "/attributes/{name:.+}" }, method = RequestMethod.PUT)

@@ -32,9 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 import static nl.surfnet.mujina.model.AuthenticationMethod.Method.USER;
@@ -59,6 +57,43 @@ public class IdpRestAPITest {
   @Before
   public void reset() {
     commonAPI.reset();
+  }
+
+  @Test
+  public void testSetAttributes() throws IOException, ServletException, MessageEncodingException, XMLParserException, UnmarshallingException {
+    final String fooName = "foo";
+    final List<String> fooValue = Arrays.asList("fooVal");
+
+    final String barName = "bar";
+    final List<String> barValue = Arrays.asList("barVal");
+
+    final String name = "urn:mace:dir:attribute-def:uid";
+    final List<String> value = Arrays.asList("john.doe");
+
+    restApiController.setAuthenticationMethod(new AuthenticationMethod(USER.name()));
+
+    final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+    assertFalse(testHelper.responseHasAttribute(fooName, fooValue, respBefore));
+    assertTrue(testHelper.responseHasAttribute(name, value, respBefore));
+
+    final Attribute fooAttr = new Attribute();
+    fooAttr.setValue(fooValue);
+
+    final Attribute barAttr = new Attribute();
+    barAttr.setValue(barValue);
+
+    AttributesMap attributes = new AttributesMap();
+    attributes.put(fooName, fooAttr);
+    attributes.put(barName, barAttr);
+
+    restApiController.setAttributes(attributes);
+
+    final Response respAfter = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
+    assertTrue(testHelper.responseHasAttribute(fooName, fooValue, respAfter));
+    assertTrue(testHelper.responseHasAttribute(barName, barValue, respAfter));
+
+    // Make sure that the old attributes are removed
+    assertFalse(testHelper.responseHasAttribute(name, value, respAfter));
   }
 
   @Test
