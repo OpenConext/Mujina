@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.surfnet.coin</groupId>
     <artifactId>mujina</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.0</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <properties>
