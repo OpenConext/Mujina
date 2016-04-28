@@ -34,7 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * Rule to check that the message has been signed by an issuer that has
  * credentials in the keystore.
- * <p/>
+ *
  * We could use a SAMLProtocolMessageXMLSignatureSecurityPolicyRule, but, that
  * relies on role info to be set (which we will not be using). Also, we will
  * insist that the message be signed and not rely on an additional rule to check
