@@ -115,6 +115,8 @@
     <property name="configuration" ref="idpConfiguration" />
   </bean>
 
-  <bean id="idpConfiguration" class="nl.surfnet.mujina.model.IdpConfigurationImpl"/>
+  <bean id="idpConfiguration" class="nl.surfnet.mujina.model.IdpConfigurationImpl">
+    <property name="signatureAlgorithm" value="${SIGNATURE_ALGORITHM}"/>
+  </bean>
 
 </beans>

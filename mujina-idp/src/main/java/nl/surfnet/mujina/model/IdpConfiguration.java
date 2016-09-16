@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface IdpConfiguration extends CommonConfiguration {
+
   Map<String, java.util.List<String>> getAttributes();
 
   Collection<SimpleAuthentication> getUsers();
@@ -31,5 +32,9 @@ public interface IdpConfiguration extends CommonConfiguration {
   AcsEndpoint getAcsEndpoint();
 
   void setAcsEndpoint(AcsEndpoint acsEndpoint);
+
+  void setSignatureAlgorithm(String signatureAlgorithm);
+
+  String getSignatureAlgorithm();
 
 }

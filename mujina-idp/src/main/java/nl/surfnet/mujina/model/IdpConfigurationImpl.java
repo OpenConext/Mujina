@@ -35,6 +35,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
   private AuthenticationMethod.Method authMethod;
   private AcsEndpoint acsEndpoint;
+  private String signatureAlgorithm;
 
   public IdpConfigurationImpl() {
     reset();
@@ -106,4 +107,14 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   @Override
     public void setAcsEndpoint(final AcsEndpoint acsEndpoint) { this.acsEndpoint = acsEndpoint; }
 
+
+  @Override
+  public void setSignatureAlgorithm(String signatureAlgorithm) {
+    this.signatureAlgorithm = signatureAlgorithm;
+  }
+
+  @Override
+  public String getSignatureAlgorithm() {
+    return this.signatureAlgorithm;
+  }
 }
