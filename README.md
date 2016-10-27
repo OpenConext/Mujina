@@ -27,7 +27,7 @@ The OAuth playground - part of the REST API component - can be used to test the 
 
 Features
 --------
-- A SAML2 complient Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. A REST api allows for the 'just-in-time' manipulation of:
+- A SAML2-compliant Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. A REST api allows for the 'just-in-time' manipulation of:
   * user credentials (either a specific username & password or allow any username and password)
   * user role
   * any user attributes
@@ -35,7 +35,7 @@ Features
   * entityID
   * ACS endpoint
 
-- A SAML2 complient Service Provider. The SP displays the attributes as these were recieved from an IdP. A REST api allows for the 'just-in-time' manipulation of:
+- A SAML2 complient Service Provider. The SP displays the attributes as these were received from an IdP. A REST api allows for the 'just-in-time' manipulation of:
   * entityID
   * signing certificate  
   * sso Service URL
