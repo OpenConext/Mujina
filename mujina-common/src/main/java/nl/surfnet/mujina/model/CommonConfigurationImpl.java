@@ -33,16 +33,17 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
 
   protected KeyStore keyStore;
   protected String keystorePassword = "secret";
-  private boolean needsSigning;
+  private boolean needsSigning=false;
+  private String signatureAlgorithm;
+  private Endpoint sloEndpoint;
+  protected String entityId;
+
+  protected Map<String, String> privateKeyPasswords = new HashMap<String, String>();
 
   @Override
   public Map<String, String> getPrivateKeyPasswords() {
     return privateKeyPasswords;
   }
-
-  protected String entityId;
-
-  protected Map<String, String> privateKeyPasswords = new HashMap<String, String>();
 
   @Override
   public KeyStore getKeyStore() {
@@ -95,6 +96,23 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
     byte[] key = Base64.decodeBase64(pemKey);
     KeyStoreUtil.appendKeyToKeyStore(keyStore, alias, certificateInputStream, new ByteArrayInputStream(key), keystorePassword.toCharArray());
 
+  }
+
+
+  @Override public void setSignatureAlgorithm(String signatureAlgorithm) {
+    this.signatureAlgorithm = signatureAlgorithm;
+  }
+
+  @Override public String getSignatureAlgorithm() {
+    return this.signatureAlgorithm;
+  }
+
+  @Override public void setSLOEndpoint(Endpoint sloEndpoint) {
+    this.sloEndpoint = sloEndpoint;
+  }
+
+  @Override public Endpoint getSLOEndpoint() {
+    return sloEndpoint;
   }
 
 }

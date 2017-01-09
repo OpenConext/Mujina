@@ -18,7 +18,6 @@ package nl.surfnet.mujina.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import nl.surfnet.mujina.model.*;
 
@@ -27,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,7 +83,7 @@ public class IdentityProviderAPI {
     final List<GrantedAuthority> grants = new ArrayList<GrantedAuthority>();
     final List<String> authorities = user.getAuthorities();
     for (String authority : authorities) {
-      grants.add(new GrantedAuthorityImpl(authority));
+      grants.add(new SimpleGrantedAuthority(authority));
     }
     SimpleAuthentication auth = new SimpleAuthentication(user.getName(), user.getPassword(), grants);
     configuration.getUsers().add(auth);
@@ -102,9 +101,8 @@ public class IdentityProviderAPI {
   @RequestMapping(value = { "/acsendpoint" }, method = RequestMethod.PUT)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public void setAcsEndpoint(@RequestBody AcsEndpoint acsEndpoint) {
+  public void setAcsEndpoint(@RequestBody Endpoint acsEndpoint) {
     log.debug("Request to set Assertion Consumer Service Endpoint to {}", acsEndpoint.getUrl());
     configuration.setAcsEndpoint(acsEndpoint);
   }
-
 }

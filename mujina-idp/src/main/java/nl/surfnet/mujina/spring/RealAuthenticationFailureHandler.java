@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nl.surfnet.mujina.saml.SigningService;
 import org.apache.commons.lang.Validate;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.metadata.AssertionConsumerService;
@@ -55,7 +56,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
     private final TimeService timeService;
     private final IDService idService;
-    private final CredentialResolver credentialResolver;
+    private final SigningService signingService;
     private final SAMLMessageHandler bindingAdapter;
     private final AuthenticationFailureHandler nonSSOAuthnFailureHandler;
 
@@ -65,13 +66,13 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
     public RealAuthenticationFailureHandler(TimeService timeService,
                                             IDService idService,
-                                            CredentialResolver credentialResolver,
+                                            SigningService signingService,
                                             SAMLMessageHandler bindingAdapter,
                                             AuthenticationFailureHandler nonSSOAuthnFailureHandler) {
         super();
         this.timeService = timeService;
         this.idService = idService;
-        this.credentialResolver = credentialResolver;
+        this.signingService = signingService;
         this.bindingAdapter = bindingAdapter;
         this.nonSSOAuthnFailureHandler = nonSSOAuthnFailureHandler;
     }
@@ -95,20 +96,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
         request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, authenticationException);
 
-        CriteriaSet criteriaSet = new CriteriaSet();
-        criteriaSet.add(new EntityIDCriteria(idpConfiguration.getEntityID()));
-        criteriaSet.add(new UsageCriteria(UsageType.SIGNING));
-
-        Credential signingCredential = null;
-        try {
-            signingCredential = credentialResolver.resolveSingle(criteriaSet);
-        } catch (org.opensaml.xml.security.SecurityException e) {
-            logger.warn("Unable to resolve signing credential for entityId", e);
-            return;
-        }
-        Validate.notNull(signingCredential);
-
-        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(),
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingService, idpConfiguration.getEntityID(),
           timeService, idService, idpConfiguration);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
@@ -126,7 +114,7 @@ public class RealAuthenticationFailureHandler implements AuthenticationFailureHa
 
         String relayState = request.getParameter("RelayState");
         try {
-            bindingAdapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingCredential);
+            bindingAdapter.sendSAMLMessage(authResponse, endpoint, response, relayState, signingService.getCredential());
         } catch (MessageEncodingException mee) {
             logger.error("Exception encoding SAML message", mee);
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);

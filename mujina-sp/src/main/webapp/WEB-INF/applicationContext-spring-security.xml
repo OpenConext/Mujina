@@ -22,14 +22,33 @@
   <http entry-point-ref="samlAuthenticationEntryPoint">
     <custom-filter position="PRE_AUTH_FILTER" ref="samlSolicitedFilter" />
     <anonymous />
-    <logout logout-success-url="/index.jsp" />
+    <logout success-handler-ref="sloLogoutSuccessHandler"/>
+    <intercept-url pattern="${SSO_SERVICE_URI}" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
     <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN" />
     <intercept-url pattern="/user.jsp" access="ROLE_USER" />
     <intercept-url pattern="/index.jsp"
       access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER" />
     <intercept-url pattern="${ASSERTION_CONSUMER_URI}"
       access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER" />
+
+    <intercept-url pattern="${LOGOUT_RESPONDER_URI}" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
+
+    <session-management session-authentication-strategy-ref="sas"/>
+    <custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER"/>
   </http>
+
+  <beans:bean id="concurrencyFilter"
+              class="org.springframework.security.web.session.ConcurrentSessionFilter">
+    <beans:property name="sessionRegistry" ref="sessionRegistry" />
+    <beans:property name="expiredUrl" value="/index.jsp" />
+  </beans:bean>
+
+  <beans:bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+    <beans:constructor-arg ref="sessionRegistry"/>
+  </beans:bean>
+
+  <beans:bean id="sessionRegistry"
+              class="org.springframework.security.core.session.SessionRegistryImpl" />
 
   <authentication-manager alias="authenticationManager">
     <authentication-provider ref="samlAuthenticationProvider" />
@@ -51,14 +70,20 @@
 
   </beans:bean>
 
+  <beans:bean id="sloLogoutSuccessHandler" class="nl.surfnet.mujina.spring.SLOLogoutSuccessHandler">
+    <beans:constructor-arg name="sloRequestSender" ref="sloRequestSender"/>
+    <beans:property name="defaultTargetUrl" value="/"/>
+  </beans:bean>
+
   <beans:bean id="samlSolicitedFilter"
     class="nl.surfnet.mujina.spring.SAMLResponseAuthenticationProcessingFilter">
     <beans:constructor-arg value="${ASSERTION_CONSUMER_URI}" />
     <beans:property name="filterProcessesUrl" value="${ASSERTION_CONSUMER_URI}" />
-    <beans:property name="bindingAdapter" ref="bindingAdpater" />
+    <beans:property name="bindingAdapter" ref="bindingAdapter" />
     <beans:property name="authenticationManager" ref="authenticationManager" />
     <beans:property name="authenticationFailureHandler"
       ref="authenticationFailureHandler" />
+    <beans:property name="sessionAuthenticationStrategy" ref="sas"/>
   </beans:bean>
 
   <beans:bean id="samlAuthenticationEntryPoint"
@@ -67,7 +92,7 @@
     <beans:constructor-arg ref="idService" />
     <beans:property name="credentialResolver"
       ref="keyStoreCredentialResolverDelegate" />
-    <beans:property name="bindingAdapter" ref="bindingAdpater" />
+    <beans:property name="bindingAdapter" ref="bindingAdapter" />
     <beans:property name="configuration" ref="spConfiguration" />
   </beans:bean>
 

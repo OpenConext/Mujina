@@ -28,7 +28,7 @@
     <form-login default-target-url="/index.jsp" login-page="/login.jsp"
                 authentication-failure-handler-ref="authnFailureHandler"/>
     <anonymous/>
-    <logout/>
+    <logout success-handler-ref="sloLogoutSuccessHandler"/>
 
     <intercept-url pattern="${SSO_SERVICE_URI}" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
     <intercept-url pattern="/login.jsp" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
@@ -39,10 +39,20 @@
 
     <intercept-url pattern="${AUTHN_RESPONDER_URI}" access="ROLE_USER,ROLE_ADMIN"/>
 
+    <intercept-url pattern="${LOGOUT_RESPONDER_URI}" access="ROLE_USER,ROLE_ADMIN,ROLE_ANONYMOUS"/>
+
     <intercept-url pattern="/admin.jsp" access="ROLE_ADMIN"/>
     <intercept-url pattern="/user.jsp" access="ROLE_USER"/>
 
+    <session-management session-authentication-strategy-ref="sas"/>
+    <custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER"/>
   </http>
+
+  <beans:bean id="concurrencyFilter"
+              class="org.springframework.security.web.session.ConcurrentSessionFilter">
+    <beans:property name="sessionRegistry" ref="sessionRegistry" />
+    <beans:property name="expiredUrl" value="/index.jsp" />
+  </beans:bean>
 
 
   <beans:bean id="simpleUrlAuthenticationFailureHandler"
@@ -53,12 +63,23 @@
   <beans:bean id="authnFailureHandler" class="nl.surfnet.mujina.spring.RealAuthenticationFailureHandler">
     <beans:constructor-arg ref="timeService"/>
     <beans:constructor-arg ref="idService"/>
-    <beans:constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
-    <beans:constructor-arg name="bindingAdapter" ref="bindingAdpater"/>
+    <beans:constructor-arg ref="signingService"/>
+    <beans:constructor-arg name="bindingAdapter" ref="bindingAdapter"/>
     <beans:constructor-arg ref="simpleUrlAuthenticationFailureHandler"/>
+  </beans:bean>
+
+  <beans:bean id="sloLogoutSuccessHandler" class="nl.surfnet.mujina.spring.SLOLogoutSuccessHandler">
+    <beans:property name="defaultTargetUrl" value="/"/>
   </beans:bean>
   
   <beans:bean id="customAuthenticationProvider" class="nl.surfnet.mujina.spring.security.CustomAuthenticationProvider" />
+
+  <beans:bean id="sas" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy">
+    <beans:constructor-arg ref="sessionRegistry"/>
+  </beans:bean>
+
+  <beans:bean id="sessionRegistry"
+              class="org.springframework.security.core.session.SessionRegistryImpl" />
 
   <authentication-manager>
     <authentication-provider ref="customAuthenticationProvider" />

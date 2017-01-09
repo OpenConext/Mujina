@@ -36,4 +36,12 @@ public interface CommonConfiguration {
   boolean needsSigning();
 
   void setSigning(boolean needsSigning);
+
+  void setSignatureAlgorithm(String signatureAlgorithm);
+
+  String getSignatureAlgorithm();
+
+  void setSLOEndpoint(Endpoint sloEndpoint);
+
+  Endpoint getSLOEndpoint();
 }

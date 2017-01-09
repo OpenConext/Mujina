@@ -25,6 +25,29 @@
 
   <bean id="idService" class="nl.surfnet.mujina.util.IDService"/>
 
+  <bean id="signingService" class="nl.surfnet.mujina.saml.SigningService">
+    <constructor-arg name="configuration" ref="spConfiguration"/>
+    <constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
+  </bean>
+
+  <bean id="samlValidatorSuite" class="nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite"/>
+
+  <bean id="logoutRequestHandler" class="nl.surfnet.mujina.saml.SAMLLogoutRequestHandler">
+    <constructor-arg value="${LOGOUT_RESPONDER_URI}"/>
+    <constructor-arg ref="sessionRegistry"/>
+  </bean>
+
+  <bean id="singleSignOnService" class="nl.surfnet.mujina.saml.SingleSignOnService">
+    <constructor-arg ref="bindingAdapter"/>
+    <constructor-arg ref="samlValidatorSuite"/>
+    <constructor-arg>
+      <list>
+        <ref bean="logoutRequestHandler"/>
+      </list>
+    </constructor-arg>
+  </bean>
+
+
   <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
     <property name="preferFileSystemAccess" value="false"/>
     <property name="velocityProperties">
@@ -46,11 +69,26 @@
     <constructor-arg ref="samlParserPool"/>
   </bean>
 
-  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.ConfigurableSAMLMessageHandler">
+  <bean id="bindingAdapter" class="nl.surfnet.mujina.saml.ConfigurableSAMLMessageHandler">
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
     <property name="configuration" ref="spConfiguration" />
+  </bean>
+
+  <bean id="ssoSuccessLogoutResponder" class="nl.surfnet.mujina.saml.SSOSuccessLogoutResponder">
+    <constructor-arg ref="timeService"/>
+    <constructor-arg ref="bindingAdapter"/>
+    <constructor-arg ref="idService"/>
+    <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
+    <constructor-arg ref="spConfiguration"/>
+  </bean>
+
+  <bean id="sloRequestSender" class="nl.surfnet.mujina.saml.SLORequestSender">
+    <constructor-arg name="configuration" ref="spConfiguration"/>
+    <constructor-arg ref="timeService"/>
+    <constructor-arg ref="idService"/>
+    <constructor-arg name="signingService" ref="signingService"/>
   </bean>
 
   <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
@@ -104,6 +142,7 @@
   <bean id="spConfiguration" class="nl.surfnet.mujina.model.SpConfigurationImpl">
     <constructor-arg index="0" value="${IDP_SSO_SERVICE_URL}" />
     <constructor-arg index="1" value="${ASSERTION_CONSUMER_URL}" />
+    <property name="signatureAlgorithm" value="${SIGNATURE_ALGORITHM:http://www.w3.org/2001/04/xmldsig-more#rsa-sha256}"/>
   </bean>
 
 </beans>

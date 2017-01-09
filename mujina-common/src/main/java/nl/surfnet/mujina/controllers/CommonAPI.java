@@ -18,6 +18,7 @@ package nl.surfnet.mujina.controllers;
 
 import nl.surfnet.mujina.model.CommonConfiguration;
 import nl.surfnet.mujina.model.Credential;
+import nl.surfnet.mujina.model.Endpoint;
 import nl.surfnet.mujina.model.EntityID;
 import nl.surfnet.mujina.model.NeedsSigning;
 
@@ -76,4 +77,11 @@ public class CommonAPI {
     configuration.setSigning(needsSigning.getValue());
   }
 
+  @RequestMapping(value = { "/sloendpoint" }, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setSloEndpoint(@RequestBody Endpoint sloEndpoint) {
+    log.debug("Request to set SLO Service Endpoint to {}", sloEndpoint.getUrl());
+    configuration.setSLOEndpoint(sloEndpoint);
+  }
 }

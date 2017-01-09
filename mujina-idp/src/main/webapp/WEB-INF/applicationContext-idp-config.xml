@@ -23,26 +23,57 @@
 	    http://www.springframework.org/schema/context
 	    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-  <context:annotation-config />
+  <context:annotation-config/>
 
   <bean id="samlInitializer" class="org.opensaml.DefaultBootstrap" init-method="bootstrap"/>
 
+  <bean id="signingService" class="nl.surfnet.mujina.saml.SigningService">
+    <constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
+
+  </bean>
   <bean id="timeService" class="nl.surfnet.mujina.util.TimeService"/>
   <bean id="idService" class="nl.surfnet.mujina.util.IDService"/>
-  <bean id="samlValidaotrSuite" class="nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite"/>
+  <bean id="samlValidatorSuite" class="nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite"/>
+
+  <bean id="authnRequestHandler" class="nl.surfnet.mujina.saml.SAMLAuthnRequestHandler">
+    <constructor-arg value="${AUTHN_RESPONDER_URI}"/>
+  </bean>
+
+  <bean id="logoutRequestHandler" class="nl.surfnet.mujina.saml.SAMLLogoutRequestHandler">
+    <constructor-arg value="${LOGOUT_RESPONDER_URI}"/>
+    <constructor-arg ref="sessionRegistry"/>
+  </bean>
 
   <bean id="singleSignOnService" class="nl.surfnet.mujina.saml.SingleSignOnService">
-    <constructor-arg value="${AUTHN_RESPONDER_URI}"/>
-    <constructor-arg ref="bindingAdpater"/>
-    <constructor-arg ref="samlValidaotrSuite"/>
+    <constructor-arg ref="bindingAdapter"/>
+    <constructor-arg ref="samlValidatorSuite"/>
+    <constructor-arg>
+      <list>
+        <ref bean="authnRequestHandler"/>
+        <ref bean="logoutRequestHandler"/>
+      </list>
+    </constructor-arg>
   </bean>
 
   <bean id="authnResponder" class="nl.surfnet.mujina.saml.SSOSuccessAuthnResponder">
     <constructor-arg ref="timeService"/>
-    <constructor-arg ref="bindingAdpater"/>
+    <constructor-arg ref="bindingAdapter"/>
     <constructor-arg ref="idService"/>
     <constructor-arg ref="keyStoreCredentialResolverDelegate"/>
+    <constructor-arg ref="signingService"/>
     <property name="responseValidityTimeInSeconds" value="${ASSERTION_VALIDITY_TIME_INS_SECONDS}"/>
+  </bean>
+
+  <bean id="ssoSuccessLogoutResponder" class="nl.surfnet.mujina.saml.SSOSuccessLogoutResponder">
+    <constructor-arg name="timeService" ref="timeService"/>
+    <constructor-arg name="idService" ref="idService"/>
+    <constructor-arg name="adapter" ref="bindingAdapter"/>
+    <constructor-arg name="credentialResolver" ref="keyStoreCredentialResolverDelegate"/>
+    <constructor-arg name="configuration" ref="idpConfiguration"/>
+  </bean>
+
+  <bean id="sloRequestSender" class="nl.surfnet.mujina.saml.SLORequestSender">
+    <constructor-arg name="signingService" ref="signingService"/>
   </bean>
 
   <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
@@ -66,11 +97,11 @@
     <constructor-arg ref="samlParserPool"/>
   </bean>
 
-  <bean id="bindingAdpater" class="nl.surfnet.mujina.saml.ConfigurableSAMLMessageHandler">
+  <bean id="bindingAdapter" class="nl.surfnet.mujina.saml.ConfigurableSAMLMessageHandler">
     <constructor-arg ref="decoder"/>
     <constructor-arg ref="securityPolicyResolver"/>
     <property name="velocityEngine" ref="velocityEngine"/>
-    <property name="configuration" ref="idpConfiguration" />
+    <property name="configuration" ref="idpConfiguration"/>
   </bean>
 
   <bean id="securityPolicyResolver" class="org.opensaml.ws.security.provider.StaticSecurityPolicyResolver">
@@ -112,7 +143,7 @@
   </bean>
 
   <bean id="keyStoreCredentialResolverDelegate" class="nl.surfnet.mujina.saml.KeyStoreCredentialResolverDelegate">
-    <property name="configuration" ref="idpConfiguration" />
+    <property name="configuration" ref="idpConfiguration"/>
   </bean>
 
   <bean id="idpConfiguration" class="nl.surfnet.mujina.model.IdpConfigurationImpl">

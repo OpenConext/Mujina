@@ -197,7 +197,7 @@ public class IdpRestAPITest {
   public void testSetAcsEndpoint() throws IOException, XMLParserException, ServletException, MessageEncodingException,
     UnmarshallingException {
     final String url = "https://sp.test.no";
-    final AcsEndpoint acsEndpoint = new AcsEndpoint();
+    final Endpoint acsEndpoint = new Endpoint();
     acsEndpoint.setUrl(url);
 
     final Response respBefore = testHelper.doSamlLogin(DEFAULT_USER, DEFAULT_PASSWORD);
