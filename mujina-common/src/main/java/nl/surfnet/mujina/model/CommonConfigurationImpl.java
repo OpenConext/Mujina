@@ -98,7 +98,6 @@ public abstract class CommonConfigurationImpl implements CommonConfiguration {
 
   }
 
-
   @Override
   public void setSignatureAlgorithm(String signatureAlgorithm) {
     this.signatureAlgorithm = signatureAlgorithm;

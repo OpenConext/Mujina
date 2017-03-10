@@ -105,11 +105,6 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   }
 
   @Override
-  public void setSignatureAlgorithm(String signatureAlgorithm) {
-    this.signatureAlgorithm = signatureAlgorithm;
-  }
-
-  @Override
   public Endpoint getAcsEndpoint() {
     return acsEndpoint;
   }
