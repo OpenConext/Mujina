@@ -16,21 +16,22 @@
 
 package nl.surfnet.mujina.model;
 
-import java.util.Collection;
-import java.util.Map;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
-public interface IdpConfiguration extends CommonConfiguration {
+@XmlRootElement
+public class Endpoint implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-  Map<String, java.util.List<String>> getAttributes();
+    private String url;
 
-  Collection<SimpleAuthentication> getUsers();
+    public String getUrl() {
+        return url;
+    }
 
-  AuthenticationMethod.Method getAuthentication();
-
-  void setAuthentication(AuthenticationMethod.Method method);
-
-  Endpoint getAcsEndpoint();
-
-  void setAcsEndpoint(Endpoint acsEndpoint);
-
+    @XmlElement
+    public void setUrl(final String url) {
+        this.url = url;
+    }
 }

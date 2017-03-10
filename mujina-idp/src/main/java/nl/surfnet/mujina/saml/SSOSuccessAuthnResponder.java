@@ -16,13 +16,12 @@
 
 package nl.surfnet.mujina.saml;
 
-import java.io.IOException;
-import java.net.URLDecoder;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URLDecoder;
 
 import nl.surfnet.mujina.model.IdpConfiguration;
 import nl.surfnet.mujina.model.SimpleAuthentication;
@@ -32,7 +31,6 @@ import nl.surfnet.mujina.spring.AuthnRequestInfo;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
 import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
-
 import org.apache.commons.lang.Validate;
 import org.joda.time.DateTime;
 import org.opensaml.saml2.core.Response;
@@ -58,6 +56,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
     private int responseValidityTimeInSeconds;
     private final SAMLMessageHandler adapter;
     private CredentialResolver credentialResolver;
+    private SigningService signingService;
 
     @Autowired
     IdpConfiguration idpConfiguration;
@@ -69,12 +68,13 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
     public SSOSuccessAuthnResponder(TimeService timeService,
                                     IDService idService,
                                     SAMLMessageHandler adapter,
-                                    CredentialResolver credentialResolver) {
+                                    CredentialResolver credentialResolver, SigningService signingService) {
         super();
         this.timeService = timeService;
         this.idService = idService;
         this.adapter = adapter;
         this.credentialResolver = credentialResolver;
+        this.signingService = signingService;
     }
 
 
@@ -112,7 +112,7 @@ public class SSOSuccessAuthnResponder implements HttpRequestHandler {
         }
         Validate.notNull(signingCredential);
 
-        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingCredential, idpConfiguration.getEntityID(), timeService, idService, idpConfiguration);
+        AuthnResponseGenerator authnResponseGenerator = new AuthnResponseGenerator(signingService, idpConfiguration.getEntityID(), timeService, idService, idpConfiguration);
         EndpointGenerator endpointGenerator = new EndpointGenerator();
 
         final String remoteIP = request.getRemoteAddr();

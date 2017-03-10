@@ -16,78 +16,67 @@
 
 package nl.surfnet.mujina.saml;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
+import nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite;
+import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 import org.opensaml.common.binding.SAMLMessageContext;
-import org.opensaml.saml2.core.AuthnRequest;
+import org.opensaml.saml2.core.RequestAbstractType;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.web.HttpRequestHandler;
-
-import nl.surfnet.mujina.saml.xml.SAML2ValidatorSuite;
-import nl.surfnet.mujina.spring.AuthnRequestInfo;
-import nl.surfnet.spring.security.opensaml.SAMLMessageHandler;
 
 public class SingleSignOnService implements HttpRequestHandler {
 
-  private final static Logger logger = LoggerFactory.getLogger(SingleSignOnService.class);
+  private static final Logger logger = LoggerFactory.getLogger(SingleSignOnService.class);
 
   private final SAMLMessageHandler adapter;
-  private final String authnResponderURI;
   private final SAML2ValidatorSuite validatorSuite;
+  private final List<SAMLRequestHandler<RequestAbstractType>> requestHandlerList;
 
-  public SingleSignOnService(SAMLMessageHandler adapter, String authnResponderURI, SAML2ValidatorSuite validatorSuite) {
+  public SingleSignOnService(SAMLMessageHandler adapter, SAML2ValidatorSuite validatorSuite,
+                             List<SAMLRequestHandler<RequestAbstractType>> requestHandlerList) {
     super();
     this.adapter = adapter;
-    this.authnResponderURI = authnResponderURI;
     this.validatorSuite = validatorSuite;
+    this.requestHandlerList = requestHandlerList;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
-  public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void handleRequest(HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException {
     SAMLMessageContext messageContext = null;
     try {
       messageContext = adapter.extractSAMLMessageContext(request);
-    } catch (MessageDecodingException mde) {
+    } catch (MessageDecodingException | SecurityException mde) {
       logger.error("Exception decoding SAML message", mde);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       return;
-    } catch (SecurityException se) {
-      logger.error("Exception decoding SAML message", se);
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      return;
     }
 
-    AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
+    final RequestAbstractType inboundSAMLMessage = (RequestAbstractType) messageContext.getInboundSAMLMessage();
 
     try {
-      validatorSuite.validate(authnRequest);
+      validatorSuite.validate(inboundSAMLMessage);
     } catch (ValidationException ve) {
-      logger.warn("AuthnRequest Message failed Validation", ve);
+      logger.warn("SAML Message failed Validation", ve);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       return;
     }
 
-    AuthnRequestInfo info = new AuthnRequestInfo(authnRequest.getAssertionConsumerServiceURL(), authnRequest.getID(), authnRequest.getIssuer().getValue());
-
-    logger.debug("AuthnRequest {} verified.  Forwarding to SSOSuccessAuthnResponder", info);
-    request.getSession().setAttribute(AuthnRequestInfo.class.getName(), info);
-
-    logger.debug("request.getSession().getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION) is {}",
-        request.getSession().getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION));
-
-    logger.debug("forwarding to authnResponderURI: {}", authnResponderURI);
-
-    request.getRequestDispatcher(authnResponderURI).forward(request, response);
+    for (SAMLRequestHandler<RequestAbstractType> samlRequestHandler : requestHandlerList) {
+      if (samlRequestHandler.getTypeLocalName().equals(inboundSAMLMessage.getElementQName().getLocalPart())) {
+        samlRequestHandler.handleSAMLRequest(request, response, inboundSAMLMessage);
+      }
+    }
 
   }
 }
