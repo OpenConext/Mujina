@@ -67,7 +67,7 @@ var new_cookie_value = {};
 function displayCookie() {
 	 $("#cookie_value").html('');
 	 $.each(new_cookie_value, function(key, value) {
-	      $("#cookie_value").append(key+'='+value+"&nbsp;<a href='#' onclick='removeEntry(\""+key+"\")'>X</a><br>");   
+	      $("#cookie_value").append(key+'='+value+"&nbsp;<a href='#' onclick='removeEntry(\""+key+"\")'>X</a><br>");
 	 });
 };
 
@@ -75,7 +75,12 @@ function addEntry() {
 	  var key = $("select[name='select_attr_key']").val();
 	  var value = $("input[name='new_attr_value']").val();
 	  $("input[name='new_attr_value']").val('');
-	  new_cookie_value[key] = value;
+	  if (new_cookie_value[key]) {
+         new_cookie_value[key].push(value);
+      } else {
+        new_cookie_value[key] = [value];
+      }
+
 	  displayCookie();
 };
 
@@ -111,7 +116,7 @@ $(document).ready(function() {
 	 new_cookie_value = JSON.parse(cookie);
 	 displayCookie();
 	}
-	
+
 	//build up the select of known attributes
 	$.each(available_attributes, function(key, value) {
 		$("select[name='select_attr_key']").append("<option value='"+key+"'>"+value.desc+" -- "+key+"</option>");

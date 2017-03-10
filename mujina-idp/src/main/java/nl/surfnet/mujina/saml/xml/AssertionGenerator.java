@@ -103,6 +103,7 @@ public class AssertionGenerator {
     assertion.setSubject(subject);
 
     final Map<String, List<String>> attributes = new HashMap<>();
+
     if (null != attributeJson) {
       attributes.putAll(getAttributesFromCookie(attributeJson));
     } else {
@@ -133,10 +134,13 @@ public class AssertionGenerator {
       result = mapper.readValue(attributeJson, typeReference);
     } catch (JsonParseException e) {
       logger.warn("could not parse json file for IDP attributes", e);
+      throw new RuntimeException(e);
     } catch (JsonMappingException e) {
       logger.warn("could not parse json file for IDP attributes", e);
+      throw new RuntimeException(e);
     } catch (IOException e) {
       logger.warn("could not parse json file for IDP attributes", e);
+      throw new RuntimeException(e);
     }
     return result;
   }
