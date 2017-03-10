@@ -18,6 +18,7 @@ package nl.surfnet.mujina.controllers;
 
 import nl.surfnet.mujina.model.CommonConfiguration;
 import nl.surfnet.mujina.model.Credential;
+import nl.surfnet.mujina.model.Endpoint;
 import nl.surfnet.mujina.model.EntityID;
 import nl.surfnet.mujina.model.NeedsSigning;
 
@@ -44,7 +45,7 @@ public class CommonAPI {
     this.configuration = configuration;
   }
 
-  @RequestMapping(value = { "/reset" }, method = RequestMethod.POST)
+  @RequestMapping(value = {"/reset"}, method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void reset() {
@@ -52,7 +53,7 @@ public class CommonAPI {
     configuration.reset();
   }
 
-  @RequestMapping(value = { "/entityid" }, method = RequestMethod.PUT)
+  @RequestMapping(value = {"/entityid"}, method = RequestMethod.PUT)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void setEntityID(@RequestBody EntityID entityID) {
@@ -60,7 +61,7 @@ public class CommonAPI {
     configuration.setEntityID(entityID.getValue());
   }
 
-  @RequestMapping(value = { "/signing-credential" }, method = RequestMethod.POST)
+  @RequestMapping(value = {"/signing-credential"}, method = RequestMethod.POST)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void setSigningCredential(@RequestBody Credential credential) {
@@ -68,7 +69,7 @@ public class CommonAPI {
     configuration.injectCredential(credential.getCertificate(), credential.getKey());
   }
 
-  @RequestMapping(value = { "/needs-signing" }, method = RequestMethod.PUT)
+  @RequestMapping(value = {"/needs-signing"}, method = RequestMethod.PUT)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
   public void setSigningNeeded(@RequestBody NeedsSigning needsSigning) {
@@ -76,4 +77,11 @@ public class CommonAPI {
     configuration.setSigning(needsSigning.getValue());
   }
 
+  @RequestMapping(value = {"/sloendpoint"}, method = RequestMethod.PUT)
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public void setSloEndpoint(@RequestBody Endpoint sloEndpoint) {
+    log.debug("Request to set SLO Service Endpoint to {}", sloEndpoint.getUrl());
+    configuration.setSLOEndpoint(sloEndpoint);
+  }
 }

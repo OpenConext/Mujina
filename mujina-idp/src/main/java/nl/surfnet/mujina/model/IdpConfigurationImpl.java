@@ -17,10 +17,14 @@
 package nl.surfnet.mujina.model;
 
 import java.security.KeyStore;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import nl.surfnet.spring.security.opensaml.util.KeyStoreUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -34,8 +38,7 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   private Map<String, List<String>> attributes = new TreeMap<>();
   private Collection<SimpleAuthentication> users = new ArrayList<SimpleAuthentication>();
   private AuthenticationMethod.Method authMethod;
-  private AcsEndpoint acsEndpoint;
-  private String signatureAlgorithm;
+  private Endpoint acsEndpoint;
 
   public IdpConfigurationImpl() {
     reset();
@@ -58,7 +61,8 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     try {
       keyStore = KeyStore.getInstance("JKS");
       keyStore.load(null, keystorePassword.toCharArray());
-      KeyStoreUtil.appendKeyToKeyStore(keyStore, "http://mock-idp", new ClassPathResource("idp-crt.pem").getInputStream(), new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
+      KeyStoreUtil.appendKeyToKeyStore(keyStore, "http://mock-idp", new ClassPathResource("idp-crt.pem").getInputStream(),
+        new ClassPathResource("idp-key.pkcs8.der").getInputStream(), keystorePassword.toCharArray());
       privateKeyPasswords.put("http://mock-idp", keystorePassword);
     } catch (Exception e) {
       LOGGER.error("Unable to create default keystore", e);
@@ -73,7 +77,6 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
     authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
     final SimpleAuthentication user = new SimpleAuthentication("user", "secret", authorities);
     users.add(user);
-    setSigning(false);
     setAcsEndpoint(null);
   }
 
@@ -102,23 +105,17 @@ public class IdpConfigurationImpl extends CommonConfigurationImpl implements Idp
   }
 
   @Override
-  public AcsEndpoint getAcsEndpoint() {
-    return acsEndpoint;
-  }
-
-  @Override
-  public void setAcsEndpoint(final AcsEndpoint acsEndpoint) {
-    this.acsEndpoint = acsEndpoint;
-  }
-
-
-  @Override
   public void setSignatureAlgorithm(String signatureAlgorithm) {
     this.signatureAlgorithm = signatureAlgorithm;
   }
 
   @Override
-  public String getSignatureAlgorithm() {
-    return this.signatureAlgorithm;
+  public Endpoint getAcsEndpoint() {
+    return acsEndpoint;
+  }
+
+  @Override
+  public void setAcsEndpoint(final Endpoint acsEndpoint) {
+    this.acsEndpoint = acsEndpoint;
   }
 }

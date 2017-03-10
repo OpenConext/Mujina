@@ -34,11 +34,13 @@ Features
   * signing certificate
   * entityID
   * ACS endpoint
+  * SLO Endpoint of the SP (HTTP Post Binding)
 
 - A SAML2 complient Service Provider. The SP displays the attributes as these were received from an IdP. A REST api allows for the 'just-in-time' manipulation of:
   * entityID
   * signing certificate  
   * sso Service URL
+  * SLO Endpoint of the IDP (HTTP Post Binding)
 
 Defaults
 --------
@@ -60,11 +62,13 @@ The default Identity Provider configuration is as follows:
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
   If the ACS endpoint is set using the IdP api this is not neccesary. Use of the api overrides values set in AuthnRequests
+* By default the peers SLO endpoint is not configured and no SLO Requests are sent
 
 The default Service Provider configuration is as follows:
 
 * The Entity ID is "http://mock-sp"
 * There is a default certificate and private key available
+* By default the peers SLO endpoint is not configured and no SLO Requests are sent
 
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
@@ -248,4 +252,16 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '{"value": "http://localhost:8080/SingleSignOnService/vo:test"}' \
         http://localhost:9090/api/ssoServiceURL
+```
+
+Changing the peers SLO Service URL
+---------------------
+
+This API is available on both the IDP and the SP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"value": "http://my_sp/SingleLogoutService"}' \
+        http://localhost:8080/api/sloendpoint
 ```

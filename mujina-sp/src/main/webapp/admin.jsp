@@ -43,8 +43,7 @@ ___  ___        _  _
 
 <a href="index.jsp">unprotected SP home page</a> <br/>
 <a href="user.jsp">protected SP user page</a> <br/>
-<a href="j_spring_security_logout">End your session with the Service Provider</a> <i>Does not end your session with the
-  IDP</i> <br/>
+<a href="j_spring_security_logout">End your session with the Service Provider</a> <br/>
 
 <h3>Your current Spring Security Credentials are:</h3>
 

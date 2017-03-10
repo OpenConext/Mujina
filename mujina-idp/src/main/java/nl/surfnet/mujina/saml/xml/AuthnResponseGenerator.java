@@ -18,6 +18,7 @@ package nl.surfnet.mujina.saml.xml;
 
 import nl.surfnet.mujina.model.IdpConfiguration;
 import nl.surfnet.mujina.model.SimpleAuthentication;
+import nl.surfnet.mujina.saml.SigningService;
 import nl.surfnet.mujina.util.IDService;
 import nl.surfnet.mujina.util.TimeService;
 
@@ -42,13 +43,13 @@ public class AuthnResponseGenerator {
 
   StatusGenerator statusGenerator;
 
-  public AuthnResponseGenerator(final Credential signingCredential, String issuingEntityName, TimeService timeService, IDService idService,
+  public AuthnResponseGenerator(SigningService signingService, String issuingEntityName, TimeService timeService, IDService idService,
       IdpConfiguration idpConfiguration) {
     super();
     this.idService = idService;
     this.timeService = timeService;
     issuerGenerator = new IssuerGenerator(issuingEntityName);
-    assertionGenerator = new AssertionGenerator(signingCredential, issuingEntityName, timeService, idService, idpConfiguration);
+    assertionGenerator = new AssertionGenerator(signingService, issuingEntityName, timeService, idService, idpConfiguration);
     statusGenerator = new StatusGenerator();
   }
 

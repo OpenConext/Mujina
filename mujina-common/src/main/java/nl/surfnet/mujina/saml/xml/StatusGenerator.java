@@ -33,11 +33,11 @@ public class StatusGenerator {
 
     StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
 
-    Status status = (Status) builder.buildObject();
+    Status status = builder.buildObject();
 
     StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
 
-    StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
+    StatusCode statusCode = codeBuilder.buildObject();
     statusCode.setValue(value);
     status.setStatusCode(statusCode);
 
@@ -48,13 +48,13 @@ public class StatusGenerator {
 
     StatusBuilder builder = (StatusBuilder) builderFactory.getBuilder(Status.DEFAULT_ELEMENT_NAME);
 
-    Status status = (Status) builder.buildObject();
+    Status status = builder.buildObject();
 
     StatusCodeBuilder codeBuilder = (StatusCodeBuilder) builderFactory.getBuilder(StatusCode.DEFAULT_ELEMENT_NAME);
-    StatusCode statusCode = (StatusCode) codeBuilder.buildObject();
+    StatusCode statusCode = codeBuilder.buildObject();
     statusCode.setValue(value);
 
-    StatusCode subStatusCode = (StatusCode) codeBuilder.buildObject();
+    StatusCode subStatusCode = codeBuilder.buildObject();
     subStatusCode.setValue(subStatus);
     statusCode.setStatusCode(subStatusCode);
 

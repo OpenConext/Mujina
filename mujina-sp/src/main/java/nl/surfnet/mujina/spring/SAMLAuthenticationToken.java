@@ -56,7 +56,7 @@ public class SAMLAuthenticationToken extends AbstractAuthenticationToken {
    */
   public SAMLAuthenticationToken(User user, String credentials, Collection<? extends GrantedAuthority> authorities) {
     super(authorities);
-    this.principal = user;
+    this.principal = user.getName();
     this.credentials = credentials;
     super.setAuthenticated(true); // must use super, as we override
   }
