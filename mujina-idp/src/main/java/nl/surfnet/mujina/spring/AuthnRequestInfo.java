@@ -47,7 +47,7 @@ public class AuthnRequestInfo implements Serializable {
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this).append("assertionConumerURL", assertionConsumerURL).append("authnRequestID", authnRequestID).append("entityId", entityId).toString();
+    return new ToStringBuilder(this).append("assertionConsumerURL", assertionConsumerURL).append("authnRequestID", authnRequestID).append("entityId", entityId).toString();
 
   }
 
