@@ -1,4 +1,4 @@
-package mujina.api.idp;
+package mujina.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

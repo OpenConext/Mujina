@@ -1,4 +1,4 @@
-package mujina.api.idp;
+package mujina.api;
 
 import mujina.api.SharedController;
 import org.springframework.beans.factory.annotation.Autowired;

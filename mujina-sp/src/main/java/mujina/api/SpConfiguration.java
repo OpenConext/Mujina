@@ -1,8 +1,7 @@
-package mujina.api.sp;
+package mujina.api;
 
 import lombok.Getter;
 import lombok.Setter;
-import mujina.api.SharedConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

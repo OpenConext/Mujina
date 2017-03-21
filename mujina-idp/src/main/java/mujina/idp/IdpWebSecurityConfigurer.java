@@ -1,6 +1,6 @@
 package mujina.idp;
 
-import mujina.api.idp.IdpConfiguration;
+import mujina.api.IdpConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;

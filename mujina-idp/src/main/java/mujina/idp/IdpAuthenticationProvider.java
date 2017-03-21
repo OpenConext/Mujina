@@ -1,7 +1,7 @@
 package mujina.idp;
 
-import mujina.api.idp.AuthenticationMethod;
-import mujina.api.idp.IdpConfiguration;
+import mujina.api.AuthenticationMethod;
+import mujina.api.IdpConfiguration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

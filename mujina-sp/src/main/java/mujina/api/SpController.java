@@ -1,6 +1,5 @@
-package mujina.api.sp;
+package mujina.api;
 
-import mujina.api.SharedController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.bind.annotation.PutMapping;

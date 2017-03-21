@@ -1,4 +1,4 @@
-package mujina.api.idp;
+package mujina.api;
 
 import lombok.Getter;
 import lombok.Setter;
