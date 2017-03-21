@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>test page</title>
+</head>
+<section class="attributes">
+    <ul>
+        <li>Attribute name</li>
+        <li>Value</li>
+    </ul>
+    <ul>
+        <li th:text="${user.nameIDType}"></li>
+        <li th:text="${user.nameID}"></li>
+    </ul>
+    <ul th:each="attr : ${user.attributes}">
+        <li th:text="${attr.name}"></li>
+        <li th:text="${attr.value}"></li>
+    </ul>
+</section>
+</html>

@@ -109,6 +109,49 @@ Changing port numbers
 Both the SP and IDP can be made to bind to a different tcp/ip port: 
 `mvn jetty:run -DhttpPort=8082 -DhttpsPort=8444`
 
+## [Private signing key and public certificate](#signing-keys)
+
+The SAML Spring Security library needs a private DSA key / public certificate pair for the IdP / SP which can be re-generated
+if you want to use new key pairs.
+
+```bash
+openssl req -subj '/O=Organization, CN=Mujina/' -newkey rsa:2048 -new -x509 -days 3652 -nodes -out mujina.crt -keyout mujina.pem
+```
+
+The Java KeyStore expects a pkcs8 DER format for RSA private keys so we have to re-format that key:
+
+```bash
+openssl pkcs8 -nocrypt  -in mujina.pem -topk8 -out mujina.der
+```
+ 
+Remove the whitespace, heading and footer from the mujina.crt and mujina.der:
+
+```bash
+cat mujina.der |head -n -1 |tail -n +2 | tr -d '\n'; echo
+cat mujina.crt |head -n -1 |tail -n +2 | tr -d '\n'; echo
+```
+
+Above commands work on linux distributions. On mac you can issue the same command with `ghead` after you install `coreutils`:
+
+```bash
+brew install coreutils
+
+cat mujina.der |ghead -n -1 |tail -n +2 | tr -d '\n'; echo
+cat mujina.crt |ghead -n -1 |tail -n +2 | tr -d '\n'; echo
+```
+
+Add the mujina key pair to the application.yml file:
+
+```yml
+idp:
+  private_key: ${output from cleaning the der file}
+  certificate: ${output from cleaning the crt file}
+
+sp:
+  private_key: ${output from cleaning the der file}
+  certificate: ${output from cleaning the crt file}
+```
+
 Resetting the IDP
 -----------------
 

@@ -13,5 +13,4 @@ redistribution or general licensing terms than those stated in the Apache
 License. Users and redistributors are hereby requested to verify these
 conditions and agree upon them.
 
-This project is based on spring saml recipe from Jim Cox. You can find his
-excellent project here: http://sourceforge.net/projects/spring-saml/
+This project is based on spring saml.
