@@ -78,9 +78,6 @@ import java.util.List;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-  @Autowired
-  private Environment environment;
-
   @Value("${sp.idp_metadata_url}")
   private String identityProviderMetadataUrl;
 
@@ -99,9 +96,6 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Value("${sp.passphrase}")
   private String spPassphrase;
 
-  @Value("${sp.acs_location}")
-  private String spACSLocation;
-
   private DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
 
   @Bean
@@ -119,7 +113,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     webSSOProfileOptions.setIncludeScoping(false);
 
     SAMLEntryPoint samlEntryPoint = new SAMLEntryPoint();
-    samlEntryPoint.setFilterProcessesUrl("sp/login");
+    samlEntryPoint.setFilterProcessesUrl("login");
     samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);
     return samlEntryPoint;
   }
@@ -132,14 +126,13 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
-      .antMatcher("/sp/**")
       .httpBasic().authenticationEntryPoint(samlEntryPoint())
       .and()
       .csrf().disable()
       .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
       .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class)
       .authorizeRequests()
-      .antMatchers("/sp/metadata", "/sp/api/**", "/sp/SSO/**").permitAll()
+      .antMatchers("/metadata", "/api/**", "/saml/SSO/**").permitAll()
       .anyRequest().hasRole("USER");
   }
 
@@ -148,7 +141,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
     SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler =
       new SavedRequestAwareAuthenticationSuccessHandler();
-    successRedirectHandler.setDefaultTargetUrl("/sp/user");
+    successRedirectHandler.setDefaultTargetUrl("/user");
     return successRedirectHandler;
   }
 
@@ -160,7 +153,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Bean
   public MetadataDisplayFilter metadataDisplayFilter() {
     DefaultMetadataDisplayFilter displayFilter = new DefaultMetadataDisplayFilter();
-    displayFilter.setFilterProcessesUrl("sp/metadata");
+    displayFilter.setFilterProcessesUrl("metadata");
     return displayFilter;
   }
 
@@ -175,7 +168,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Bean
   public SAMLProcessingFilter samlWebSSOProcessingFilter() throws Exception {
     SAMLProcessingFilter samlWebSSOProcessingFilter = new SAMLProcessingFilter();
-    samlWebSSOProcessingFilter.setFilterProcessesUrl("sp/SSO");
+    samlWebSSOProcessingFilter.setFilterProcessesUrl("saml/SSO");
     samlWebSSOProcessingFilter.setAuthenticationManager(authenticationManager());
     samlWebSSOProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());
     samlWebSSOProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
@@ -190,9 +183,9 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Bean
   public FilterChainProxy samlFilter() throws Exception {
     List<SecurityFilterChain> chains = new ArrayList<>();
-    chains.add(chain("/sp/login/**", samlEntryPoint()));
-    chains.add(chain("/sp/metadata/**", metadataDisplayFilter()));
-    chains.add(chain("/sp/SSO/**", samlWebSSOProcessingFilter()));
+    chains.add(chain("/login/**", samlEntryPoint()));
+    chains.add(chain("/metadata/**", metadataDisplayFilter()));
+    chains.add(chain("/saml/SSO/**", samlWebSSOProcessingFilter()));
     return new FilterChainProxy(chains);
   }
 
@@ -256,9 +249,6 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     metadataGenerator.setExtendedMetadata(extendedMetadata());
     metadataGenerator.setIncludeDiscoveryExtension(false);
     metadataGenerator.setKeyManager(keyManager());
-    if (environment.acceptsProfiles("dev")) {
-      metadataGenerator.setWantAssertionSigned(false);
-    }
     return metadataGenerator;
   }
 

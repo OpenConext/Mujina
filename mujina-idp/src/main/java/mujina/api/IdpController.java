@@ -21,8 +21,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequestMapping(path = "/idp/api" ,consumes = "application/json")
-@ConditionalOnProperty(prefix = "idp.api", name = "enabled")
+@RequestMapping(path = "api" ,consumes = "application/json")
 public class IdpController extends SharedController {
 
   @Autowired

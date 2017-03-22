@@ -34,11 +34,11 @@ public abstract class SharedConfiguration {
 
   public abstract void reset();
 
-  public void setEntityId(String newEntityId, boolean addTokeyStore) {
-    if (addTokeyStore) {
+  public void setEntityId(String newEntityId, boolean addTokenToStore) {
+    if (addTokenToStore) {
       try {
-        final KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
-        final KeyStore.Entry keyStoreEntry = keyStore.getEntry(this.entityId, passwordProtection);
+         KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+         KeyStore.Entry keyStoreEntry = keyStore.getEntry(this.entityId, passwordProtection);
         keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
         privateKeyPasswords.put(newEntityId, keystorePassword);
       } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {

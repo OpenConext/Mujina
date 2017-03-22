@@ -17,7 +17,7 @@ public class IdpWebSecurityConfigurer extends WebMvcConfigurerAdapter {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/idp/login").setViewName("login");
+    registry.addViewController("/login").setViewName("login");
   }
 
   @Configuration
@@ -30,26 +30,24 @@ public class IdpWebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
-        .antMatcher("/idp/**")
         .authorizeRequests()
         .antMatchers("/idp/SingleSignOnService", "/idp/metadata", "idp/api/**", "/resources/**").permitAll()
         .antMatchers("/idp/admin/**").hasRole("ADMIN")
         .anyRequest().hasRole("USER")
         .and()
         .formLogin()
-        .loginPage("/idp/login")
+        .loginPage("/login")
         .permitAll()
-        .failureUrl("/idp/error")
+        .failureUrl("/login?error=true")
         .permitAll()
         .and()
         .logout()
-        .logoutSuccessUrl("/idp/index");
+        .logoutSuccessUrl("/index");
     }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
       auth.authenticationProvider(new IdpAuthenticationProvider(idpConfiguration));
-      //auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
     }
 
   }

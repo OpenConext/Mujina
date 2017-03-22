@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/sp/ api", consumes = "application/json")
-@ConditionalOnProperty(prefix = "sp.api", name = "enabled")
+@RequestMapping(path = "/api", consumes = "application/json")
 public class SpController extends SharedController {
 
   @Autowired

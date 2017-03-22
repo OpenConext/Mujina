@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
   TraceWebFilterAutoConfiguration.class,
   MetricFilterAutoConfiguration.class
 })
-public class MujinaIdPApplication {
+public class MujinaIdpApplication {
 
   public static void main(String[] args) {
-    SpringApplication.run(MujinaIdPApplication.class, args);
+    SpringApplication.run(MujinaIdpApplication.class, args);
   }
 
 }

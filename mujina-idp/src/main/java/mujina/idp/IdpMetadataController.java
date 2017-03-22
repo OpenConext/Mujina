@@ -50,7 +50,7 @@ public class IdpMetadataController {
   @Value("${idp.validity_duration_metadata_ms}")
   private int validityDurationMetadataMilliseconds;
 
-  @RequestMapping(method = RequestMethod.GET, value = "/idp/metadata", produces = "application/xml")
+  @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
   public String metadata() throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
     if (metadata == null || this.validUntil.isBeforeNow()) {
       this.metadata = generateMetadata();

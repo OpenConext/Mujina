@@ -36,7 +36,7 @@ Features
   * ACS endpoint
   * SLO Endpoint of the SP (HTTP Post Binding)
 
-- A SAML2 complient Service Provider. The SP displays the attributes as these were received from an IdP. A REST api allows for the 'just-in-time' manipulation of:
+- A SAML2-compliant Service Provider. The SP displays the attributes as these were received from an IdP. A REST api allows for the 'just-in-time' manipulation of:
   * entityID
   * signing certificate  
   * sso Service URL
