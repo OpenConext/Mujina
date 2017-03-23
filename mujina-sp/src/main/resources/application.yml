@@ -23,7 +23,7 @@ sp:
   # Passphrase of the keystore
   passphrase: secret
   # Resource URL for the idp metadata
-  idp_metadata_url: classpath:saml/eb.idp.metadata.xml
+  idp_metadata_url: classpath:metadata/eb.idp.metadata.xml
 #  idp_metadata_url: https://engine.test2.surfconext.nl/authentication/idp/metadata
   # SingleSignOnServiceLocation
   single_sign_on_service_location: http://localhost:8080/idp/SingleSignOnService

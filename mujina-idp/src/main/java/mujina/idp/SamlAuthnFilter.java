@@ -2,9 +2,7 @@ package mujina.idp;
 
 import mujina.saml.ParameterDecodingHttpServletRequestWrapper;
 import mujina.saml.SAMLAuthentication;
-import mujina.saml.SAMLMessageHandler;
 import mujina.saml.SAMLPrincipal;
-import org.omg.SendingContext.RunTime;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
@@ -27,11 +25,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
-public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements AuthenticationEntryPoint {
+public class SamlAuthnFilter extends OncePerRequestFilter implements AuthenticationEntryPoint {
 
   private final SAMLMessageHandler samlMessageHandler;
 
-  public IdentityProviderAuthnFilter(SAMLMessageHandler samlMessageHandler) {
+  public SamlAuthnFilter(SAMLMessageHandler samlMessageHandler) {
     this.samlMessageHandler = samlMessageHandler;
   }
 
@@ -68,7 +66,7 @@ public class IdentityProviderAuthnFilter extends OncePerRequestFilter implements
     SecurityContextHolder.getContext().setAuthentication(new SAMLAuthentication(principal));
 
     //forward to login page will trigger the sending of AuthRequest to the IdP
-    request.getRequestDispatcher("/saml/login").forward(request, response);
+    request.getRequestDispatcher("/login").forward(request, response);
   }
 
   @Override

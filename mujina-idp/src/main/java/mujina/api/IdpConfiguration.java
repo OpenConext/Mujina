@@ -28,8 +28,8 @@ public class IdpConfiguration extends SharedConfiguration {
   private final String idpPrivateKey;
   private final String idpCertificate;
 
-  public IdpConfiguration(@Value("${sp.private_key}") String idpPrivateKey,
-                          @Value("${sp.certificate}") String idpCertificate) {
+  public IdpConfiguration(@Value("${idp.private_key}") String idpPrivateKey,
+                          @Value("${idp.certificate}") String idpCertificate) {
     this.idpPrivateKey = idpPrivateKey;
     this.idpCertificate = idpCertificate;
     reset();

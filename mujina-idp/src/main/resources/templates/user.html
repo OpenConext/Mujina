@@ -9,12 +9,12 @@
         <li>Value</li>
     </ul>
     <ul>
-        <li th:text="${user.nameIDType}"></li>
-        <li th:text="${user.nameID}"></li>
+        <li>Name</li>
+        <li th:text="${user.principal}"></li>
     </ul>
-    <ul th:each="attr : ${user.attributes}">
-        <li th:text="${attr.name}"></li>
-        <li th:text="${attr.value}"></li>
+    <ul th:each="authority : ${user.authorities}">
+        <li>Authority</li>
+        <li th:text="${authority.authority}"></li>
     </ul>
 </section>
 </html>

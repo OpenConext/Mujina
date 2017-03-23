@@ -1,6 +1,5 @@
 package mujina.idp;
 
-import mujina.saml.SAMLMessageHandler;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.xml.io.MarshallingException;

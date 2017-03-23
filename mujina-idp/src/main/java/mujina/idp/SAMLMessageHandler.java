@@ -1,5 +1,6 @@
-package mujina.saml;
+package mujina.idp;
 
+import mujina.saml.SAMLPrincipal;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.BasicSAMLMessageContext;

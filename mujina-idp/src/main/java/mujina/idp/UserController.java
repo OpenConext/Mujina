@@ -6,11 +6,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class IdpUserController {
+public class UserController {
 
   @RequestMapping("/user.html")
-  public String test(Authentication authentication, ModelMap modelMap) {
-    modelMap.addAttribute("user", authentication.getPrincipal());
+  public String user(Authentication authentication, ModelMap modelMap) {
+    modelMap.addAttribute("user", authentication);
     return "user";
   }
 

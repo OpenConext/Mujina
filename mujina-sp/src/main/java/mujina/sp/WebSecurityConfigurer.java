@@ -5,12 +5,9 @@ import mujina.saml.KeyStoreLocator;
 import mujina.saml.ProxiedSAMLContextProviderLB;
 import mujina.saml.ResourceMetadataProvider;
 import mujina.saml.RoleSAMLAuthenticationProvider;
-import mujina.saml.SAMLMessageHandler;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
-import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
-import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.util.storage.MapBasedStorageService;
@@ -20,12 +17,11 @@ import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
 import org.opensaml.xml.parse.ParserPool;
 import org.opensaml.xml.parse.StaticBasicParserPool;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.opensaml.xml.parse.XMLParserException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -76,7 +72,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
   @Value("${sp.idp_metadata_url}")
   private String identityProviderMetadataUrl;
@@ -202,7 +198,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public MetadataProvider identityProvider() throws MetadataProviderException {
+  public MetadataProvider identityProvider() throws MetadataProviderException, XMLParserException {
     Resource resource = defaultResourceLoader.getResource(identityProviderMetadataUrl);
     ResourceMetadataProvider resourceMetadataProvider = new ResourceMetadataProvider(resource);
     resourceMetadataProvider.setParserPool(parserPool());
@@ -214,7 +210,7 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
   @Bean
   @Qualifier("metadata")
-  public CachingMetadataManager metadata() throws MetadataProviderException {
+  public CachingMetadataManager metadata() throws MetadataProviderException, XMLParserException {
     List<MetadataProvider> providers = new ArrayList<>();
     providers.add(identityProvider());
 
@@ -258,26 +254,5 @@ public class SpWebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     KeyStoreLocator.addPrivateKey(keyStore, spEntityId, spPrivateKey, spCertificate, spPassphrase);
     return new JKSKeyManager(keyStore, Collections.singletonMap(spEntityId, spPassphrase), spEntityId);
   }
-
-  @Bean
-  public SAMLMessageHandler samlMessageHandler() throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException {
-    return new SAMLMessageHandler(
-      keyManager(),
-      new HTTPRedirectDeflateDecoder(parserPool()),
-      new HTTPPostSimpleSignEncoder(velocityEngine(), "/templates/saml2-post-simplesign-binding.vm", true),
-      securityPolicyResolver(),
-      spEntityId);
-  }
-
-  private SecurityPolicyResolver securityPolicyResolver() {
-    IssueInstantRule instantRule = new IssueInstantRule(90, 300);
-    MessageReplayRule replayRule = new MessageReplayRule(new ReplayCache(new MapBasedStorageService(), 14400000));
-
-    BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
-    securityPolicy.getPolicyRules().addAll(Arrays.asList(instantRule, replayRule));
-
-    return new StaticSecurityPolicyResolver(securityPolicy);
-  }
-
 
 }

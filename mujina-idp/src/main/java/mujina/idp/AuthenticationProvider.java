@@ -2,7 +2,6 @@ package mujina.idp;
 
 import mujina.api.AuthenticationMethod;
 import mujina.api.IdpConfiguration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -10,11 +9,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Arrays;
 
-public class IdpAuthenticationProvider implements AuthenticationProvider {
+public class AuthenticationProvider implements org.springframework.security.authentication.AuthenticationProvider {
 
   private final IdpConfiguration idpConfiguration;
 
-  public IdpAuthenticationProvider(IdpConfiguration idpConfiguration) {
+  public AuthenticationProvider(IdpConfiguration idpConfiguration) {
     this.idpConfiguration = idpConfiguration;
   }
 

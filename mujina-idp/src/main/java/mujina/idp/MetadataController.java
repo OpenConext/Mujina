@@ -36,7 +36,7 @@ import java.util.UUID;
 import static mujina.saml.SAMLBuilder.buildSAMLObject;
 
 @RestController
-public class IdpMetadataController {
+public class MetadataController {
 
   private String metadata;
   private DateTime validUntil;

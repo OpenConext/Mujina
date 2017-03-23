@@ -6,7 +6,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class SpUserController {
+public class UserController {
 
   @RequestMapping("/user.html")
   public String user(Authentication authentication, ModelMap modelMap) {
