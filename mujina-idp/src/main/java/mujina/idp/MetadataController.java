@@ -39,33 +39,18 @@ import static mujina.saml.SAMLBuilder.buildSAMLObject;
 @RestController
 public class MetadataController {
 
-  private String metadata;
-  private DateTime validUntil;
-
   @Autowired
   private KeyManager keyManager;
 
   @Value("${idp.entity_id}")
   private String entityId;
 
-  @Value("${idp.validity_duration_metadata_ms}")
-  private int validityDurationMetadataMilliseconds;
-
   @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
   public String metadata() throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
-    if (metadata == null || this.validUntil.isBeforeNow()) {
-      this.metadata = generateMetadata();
-    }
-    return this.metadata;
-  }
-
-  private String generateMetadata() throws SecurityException, SignatureException, MarshallingException, ParserConfigurationException, TransformerException {
-    this.validUntil = new DateTime().plusMillis(validityDurationMetadataMilliseconds);
-
     EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
     entityDescriptor.setEntityID(entityId);
     entityDescriptor.setID(UUID.randomUUID().toString());
-    entityDescriptor.setValidUntil(this.validUntil);
+    entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
 
     Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 

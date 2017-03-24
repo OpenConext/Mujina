@@ -25,13 +25,11 @@ import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
-import org.opensaml.xml.security.SigningUtil;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.criteria.EntityIDCriteria;
 import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.SignatureValidator;
-import org.opensaml.xml.util.Base64;
 import org.opensaml.xml.validation.ValidationException;
 import org.opensaml.xml.validation.ValidatorSuite;
 import org.springframework.security.saml.key.KeyManager;
@@ -72,34 +70,25 @@ public class SAMLMessageHandler {
       getValidatorSuite("saml2-core-spec-validator"));
   }
 
-  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws ValidationException, SecurityException {
+  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws ValidationException, SecurityException, MessageDecodingException {
     BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
 
     messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
     messageContext.setSecurityPolicyResolver(resolver);
 
-    try {
-      decoder.decode(messageContext);
-    } catch (SecurityException | MessageDecodingException e) {
-      throw new RuntimeException(e);
-    }
-
+    decoder.decode(messageContext);
     SAMLObject inboundSAMLMessage = messageContext.getInboundSAMLMessage();
-    if (!(inboundSAMLMessage instanceof AuthnRequest)) {
-      throw new RuntimeException("Expected inboundSAMLMessage to be AuthnRequest, but actual " + inboundSAMLMessage.getClass());
-    }
 
     AuthnRequest authnRequest = (AuthnRequest) inboundSAMLMessage;
-    validate(request, authnRequest);
+    //lambda is poor with Exceptions
+    for (ValidatorSuite validatorSuite : validatorSuites) {
+      validatorSuite.validate(authnRequest);
+    }
     return messageContext;
   }
 
   public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
     doSendAuthnResponse(principal, response, buildStatus(StatusCode.SUCCESS_URI));
-  }
-
-  public void sendFailedAuthnResponse(SAMLPrincipal samlPrincipal, HttpServletResponse response, String message) throws MarshallingException, SignatureException, MessageEncodingException {
-    doSendAuthnResponse(samlPrincipal, response, buildStatus(StatusCode.RESPONDER_URI, StatusCode.AUTHN_FAILED_URI, message));
   }
 
   @SuppressWarnings("unchecked")
@@ -138,43 +127,6 @@ public class SAMLMessageHandler {
     messageContext.setRelayState(principal.getRelayState());
 
     encoder.encode(messageContext);
-  }
-
-  private void validate(HttpServletRequest request, AuthnRequest authnRequest) throws ValidationException, SecurityException {
-    validateXMLObject(authnRequest);
-    validateSignature(authnRequest);
-  //  validateRawSignature(request, authnRequest.getIssuer().getValue());
-  }
-
-  private void validateXMLObject(XMLObject xmlObject) throws ValidationException {
-    //lambda is poor with Exceptions
-    for (ValidatorSuite validatorSuite : validatorSuites) {
-      validatorSuite.validate(xmlObject);
-    }
-  }
-
-//  private void validateRawSignature(HttpServletRequest request, String issuer) throws SecurityException {
-//    String base64signature = request.getParameter("Signature");
-//    String sigAlg = request.getParameter("SigAlg");
-//    if (base64signature == null || sigAlg == null) {
-//      return;
-//    }
-//    byte[] input = request.getQueryString().replaceFirst("&Signature[^&]+", "").getBytes();
-//    byte[] signature = Base64.decode(base64signature);
-//
-//    Credential credential = resolveCredential(issuer);
-//    SigningUtil.verifyWithURI(credential, sigAlg, signature, input);
-//  }
-
-  private void validateSignature(AuthnRequest authnRequest) throws ValidationException {
-    Signature signature = authnRequest.getSignature();
-    if (signature == null) {
-      return;
-    }
-    new SAMLSignatureProfileValidator().validate(signature);
-    String issuer = authnRequest.getIssuer().getValue();
-    Credential credential = resolveCredential(issuer);
-    new SignatureValidator(credential).validate(signature);
   }
 
   private Credential resolveCredential(String entityId) {

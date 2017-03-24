@@ -21,7 +21,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     if (idpConfiguration.getAuthenticationMethod().equals(AuthenticationMethod.ALL)) {
       return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), Arrays.asList(
-        new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("USER")
+        new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER")
       ));
     } else {
       return idpConfiguration.getUsers().stream()

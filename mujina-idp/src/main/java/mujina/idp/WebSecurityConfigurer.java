@@ -2,8 +2,16 @@ package mujina.idp;
 
 import mujina.api.IdpConfiguration;
 import mujina.saml.KeyStoreLocator;
+import org.opensaml.common.binding.decoding.URIComparator;
+import org.opensaml.common.binding.security.IssueInstantRule;
+import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
+import org.opensaml.util.storage.MapBasedStorageService;
+import org.opensaml.util.storage.ReplayCache;
+import org.opensaml.ws.security.SecurityPolicyResolver;
+import org.opensaml.ws.security.provider.BasicSecurityPolicy;
+import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
 import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.opensaml.xml.parse.XMLParserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +21,7 @@ import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,11 +40,15 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
+
+  @Autowired
+  private Environment environment;
 
   @Value("${idp.entity_id}")
   private String idpEntityId;
@@ -55,14 +68,28 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   }
 
   @Bean
-  public SAMLMessageHandler samlMessageHandler() throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException {
+  @Autowired
+  public SAMLMessageHandler samlMessageHandler(@Value("${idp.clock_skew}") int clockSkew,
+                                               @Value("${idp.expires}") int expires)
+    throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException {
     StaticBasicParserPool parserPool = new StaticBasicParserPool();
+    BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
+    securityPolicy.getPolicyRules().addAll(Arrays.asList(new IssueInstantRule(clockSkew, expires),
+      new MessageReplayRule(new ReplayCache(new MapBasedStorageService(), 14400000))));
+
+    HTTPRedirectDeflateDecoder httpRedirectDeflateDecoder = new HTTPRedirectDeflateDecoder(parserPool);
+
+    if (environment.acceptsProfiles("test")) {
+      //Lenient URI comparision
+      httpRedirectDeflateDecoder.setURIComparator((uri1, uri2) -> true);
+    }
+
     parserPool.initialize();
     return new SAMLMessageHandler(
       keyManager(),
-      new HTTPRedirectDeflateDecoder(parserPool),
+      httpRedirectDeflateDecoder,
       new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true),
-      new DefaultSecurityPolicyResolver(),
+      new StaticSecurityPolicyResolver(securityPolicy),
       idpEntityId);
   }
 
@@ -94,6 +121,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
+        .csrf().disable()
         .authorizeRequests()
         .antMatchers("/metadata", "/favicon.ico", "/api/**", "/resources/**").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")

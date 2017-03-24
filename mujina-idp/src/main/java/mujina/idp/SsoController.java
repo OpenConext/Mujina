@@ -6,6 +6,7 @@ import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.NameIDType;
+import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.SecurityException;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,18 +32,12 @@ public class SsoController {
   @Autowired
   private IdpConfiguration idpConfiguration;
 
-  //@PostMapping("/SingleSignOnService")
   @GetMapping("/SingleSignOnService")
-  public void singleSignOnService(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
+  public void singleSignOnService(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
 
     //The SAMLRequest parameters are urlEncoded and the extraction expects unencoded parameters
-    SAMLMessageContext messageContext = null;
-    try {
-      messageContext = samlMessageHandler.extractSAMLMessageContext(request);
-      //messageContext = samlMessageHandler.extractSAMLMessageContext(new ParameterDecodingHttpServletRequestWrapper(request));
-    } catch (ValidationException | SecurityException e) {
-      throw new RuntimeException(e);
-    }
+    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request);
 
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
@@ -56,11 +50,7 @@ public class SsoController {
       authnRequest.getAssertionConsumerServiceURL(),
       messageContext.getRelayState());
 
-    try {
-      samlMessageHandler.sendAuthnResponse(principal, response);
-    } catch (MarshallingException | SignatureException | MessageEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    samlMessageHandler.sendAuthnResponse(principal, response);
 
   }
 

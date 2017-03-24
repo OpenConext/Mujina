@@ -208,11 +208,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public SAMLMessageStorageFactory samlMessageStorageFactory() {
-    return new InMemorySAMLMessageStorageFactory();
-  }
-
-  @Bean
   @Qualifier("metadata")
   public CachingMetadataManager metadata() throws MetadataProviderException, XMLParserException {
     List<MetadataProvider> providers = new ArrayList<>();

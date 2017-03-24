@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequestMapping(path = "api" ,consumes = "application/json")
+@RequestMapping(path = "/api" ,consumes = "application/json")
 public class IdpController extends SharedController {
 
   @Autowired
@@ -41,17 +44,13 @@ public class IdpController extends SharedController {
     configuration().getAttributes().put(name, values);
   }
 
-  @RequestMapping(value = { "/attributes/{name:.+}" }, method = RequestMethod.DELETE)
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
+  @DeleteMapping("/attributes/{name:.+}")
   public void removeAttribute(@PathVariable String name) {
     LOG.debug("Request to remove attribute {}", name);
     configuration().getAttributes().remove(name);
   }
 
-  @RequestMapping(value = { "/users" }, method = RequestMethod.PUT)
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @ResponseBody
+  @PutMapping("/users")
   public void addUser(@RequestBody User user) {
     LOG.debug("Request to add user {}", user);
     configuration().getUsers().add(new UsernamePasswordAuthenticationToken(
@@ -60,7 +59,7 @@ public class IdpController extends SharedController {
       user.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(toList())));
   }
 
-  @PutMapping
+  @PutMapping("authmethod")
   public void setAuthenticationMethod(@RequestBody String authenticationMethod) {
     LOG.debug("Request to set auth method to {}", authenticationMethod);
     configuration().setAuthenticationMethod(AuthenticationMethod.valueOf(authenticationMethod));

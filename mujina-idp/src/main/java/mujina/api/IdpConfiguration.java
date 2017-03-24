@@ -19,7 +19,7 @@ import java.util.TreeMap;
 @Component
 public class IdpConfiguration extends SharedConfiguration {
 
-  private String HTTP_MOCK_IDP = "http://mock-idp";
+  private static final String HTTP_MOCK_IDP = "http://mock-idp";
 
   private Map<String, List<String>> attributes = new TreeMap<>();
   private List<UsernamePasswordAuthenticationToken> users = new ArrayList<>();
