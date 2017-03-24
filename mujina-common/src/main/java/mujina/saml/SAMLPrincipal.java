@@ -29,7 +29,8 @@ public class SAMLPrincipal implements Principal {
     this.attributes.addAll(attributes);
   }
 
-  public SAMLPrincipal(String serviceProviderEntityID, String requestID, String assertionConsumerServiceURL, String relayState) {
+  public SAMLPrincipal(String nameID, String nameIDType, List<SAMLAttribute> attributes, String serviceProviderEntityID, String requestID, String assertionConsumerServiceURL, String relayState) {
+    this(nameID, nameIDType, attributes);
     this.serviceProviderEntityID = serviceProviderEntityID;
     this.requestID = requestID;
     this.assertionConsumerServiceURL = assertionConsumerServiceURL;

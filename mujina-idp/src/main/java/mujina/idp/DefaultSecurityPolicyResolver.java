@@ -1,4 +1,4 @@
-package mujina.saml;
+package mujina.idp;
 
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;

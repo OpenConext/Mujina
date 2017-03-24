@@ -143,7 +143,7 @@ public class SAMLMessageHandler {
   private void validate(HttpServletRequest request, AuthnRequest authnRequest) throws ValidationException, SecurityException {
     validateXMLObject(authnRequest);
     validateSignature(authnRequest);
-    validateRawSignature(request, authnRequest.getIssuer().getValue());
+  //  validateRawSignature(request, authnRequest.getIssuer().getValue());
   }
 
   private void validateXMLObject(XMLObject xmlObject) throws ValidationException {
@@ -153,18 +153,18 @@ public class SAMLMessageHandler {
     }
   }
 
-  private void validateRawSignature(HttpServletRequest request, String issuer) throws SecurityException {
-    String base64signature = request.getParameter("Signature");
-    String sigAlg = request.getParameter("SigAlg");
-    if (base64signature == null || sigAlg == null) {
-      return;
-    }
-    byte[] input = request.getQueryString().replaceFirst("&Signature[^&]+", "").getBytes();
-    byte[] signature = Base64.decode(base64signature);
-
-    Credential credential = resolveCredential(issuer);
-    SigningUtil.verifyWithURI(credential, sigAlg, signature, input);
-  }
+//  private void validateRawSignature(HttpServletRequest request, String issuer) throws SecurityException {
+//    String base64signature = request.getParameter("Signature");
+//    String sigAlg = request.getParameter("SigAlg");
+//    if (base64signature == null || sigAlg == null) {
+//      return;
+//    }
+//    byte[] input = request.getQueryString().replaceFirst("&Signature[^&]+", "").getBytes();
+//    byte[] signature = Base64.decode(base64signature);
+//
+//    Credential credential = resolveCredential(issuer);
+//    SigningUtil.verifyWithURI(credential, sigAlg, signature, input);
+//  }
 
   private void validateSignature(AuthnRequest authnRequest) throws ValidationException {
     Signature signature = authnRequest.getSignature();

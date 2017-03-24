@@ -1,7 +1,6 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
-import mujina.saml.DefaultSecurityPolicyResolver;
 import mujina.saml.KeyStoreLocator;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
@@ -10,6 +9,7 @@ import org.opensaml.xml.parse.XMLParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.key.KeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
@@ -66,10 +67,21 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   }
 
   @Bean
+  public static SAMLBootstrap sAMLBootstrap() {
+    return new SAMLBootstrap();
+  }
+
+  @Bean
   public KeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStore keyStore = KeyStoreLocator.createKeyStore(idpPassphrase);
     KeyStoreLocator.addPrivateKey(keyStore, idpEntityId, idpPrivateKey, idpCertificate, idpPassphrase);
     return new JKSKeyManager(keyStore, Collections.singletonMap(idpEntityId, idpPassphrase), idpEntityId);
+  }
+
+  @Bean
+  public ServletContextInitializer servletContextInitializer() {
+    //otherwise the two localhost instances override each other session
+    return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
   }
 
   @Configuration
@@ -83,7 +95,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
       http
         .authorizeRequests()
-        .antMatchers("/metadata", "/api/**", "/resources/**").permitAll()
+        .antMatchers("/metadata", "/favicon.ico", "/api/**", "/resources/**").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().hasRole("USER")
         .and()

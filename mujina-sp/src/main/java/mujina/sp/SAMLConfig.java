@@ -109,7 +109,9 @@ public class SAMLConfig {
 
   @Bean
   public WebSSOProfileConsumer webSSOprofileConsumer() {
-    return new WebSSOProfileConsumerImpl();
+    WebSSOProfileConsumerImpl webSSOProfileConsumer = new WebSSOProfileConsumerImpl();
+    webSSOProfileConsumer.setResponseSkew(15 * 60);
+    return webSSOProfileConsumer;
   }
 
   @Bean

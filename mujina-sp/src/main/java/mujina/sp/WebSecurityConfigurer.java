@@ -1,25 +1,15 @@
 package mujina.sp;
 
-import mujina.saml.DefaultSAMLUserDetailsService;
 import mujina.saml.KeyStoreLocator;
-import mujina.saml.ProxiedSAMLContextProviderLB;
-import mujina.saml.ResourceMetadataProvider;
-import mujina.saml.RoleSAMLAuthenticationProvider;
 import org.apache.velocity.app.VelocityEngine;
-import org.opensaml.common.binding.security.IssueInstantRule;
-import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.saml2.metadata.provider.MetadataProvider;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.util.storage.MapBasedStorageService;
-import org.opensaml.util.storage.ReplayCache;
-import org.opensaml.ws.security.SecurityPolicyResolver;
-import org.opensaml.ws.security.provider.BasicSecurityPolicy;
-import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
 import org.opensaml.xml.parse.ParserPool;
 import org.opensaml.xml.parse.StaticBasicParserPool;
 import org.opensaml.xml.parse.XMLParserException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -43,6 +33,7 @@ import org.springframework.security.saml.metadata.MetadataDisplayFilter;
 import org.springframework.security.saml.metadata.MetadataGenerator;
 import org.springframework.security.saml.metadata.MetadataGeneratorFilter;
 import org.springframework.security.saml.parser.ParserPoolHolder;
+import org.springframework.security.saml.storage.SAMLMessageStorageFactory;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.security.saml.websso.WebSSOProfileOptions;
 import org.springframework.security.web.DefaultSecurityFilterChain;
@@ -55,6 +46,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.net.URI;
@@ -65,7 +58,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -114,6 +106,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     return samlEntryPoint;
   }
 
+  @Bean
+  public ServletContextInitializer servletContextInitializer() {
+    //otherwise the two localhost instances override each other session
+    return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaSpSessionId");
+  }
+
   @Override
   public void configure(WebSecurity web) throws Exception {
     web.ignoring().antMatchers("/health", "/info");
@@ -122,14 +120,15 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
+      .authorizeRequests()
+      .antMatchers("/","/metadata", "/favicon.ico","/api/**", "/saml/SSO/**").permitAll()
+      .anyRequest().hasRole("USER")
+      .and()
       .httpBasic().authenticationEntryPoint(samlEntryPoint())
       .and()
       .csrf().disable()
       .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
-      .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class)
-      .authorizeRequests()
-      .antMatchers("/metadata", "/api/**", "/saml/SSO/**").permitAll()
-      .anyRequest().hasRole("USER");
+      .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class);
   }
 
   // Handler deciding where to redirect user after successful login
@@ -206,6 +205,11 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     extendedMetadataDelegate.setMetadataTrustCheck(true);
     extendedMetadataDelegate.setMetadataRequireSignature(true);
     return extendedMetadataDelegate;
+  }
+
+  @Bean
+  public SAMLMessageStorageFactory samlMessageStorageFactory() {
+    return new InMemorySAMLMessageStorageFactory();
   }
 
   @Bean

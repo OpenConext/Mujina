@@ -1,4 +1,4 @@
-package mujina.saml;
+package mujina.sp;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -11,6 +11,7 @@ public class RoleSAMLAuthenticationProvider extends SAMLAuthenticationProvider {
 
   @Override
   protected Collection<? extends GrantedAuthority> getEntitlements(SAMLCredential credential, Object userDetail) {
+    //TODO based on ??
     return AuthorityUtils.createAuthorityList("ROLE_USER");
   }
 }

@@ -28,7 +28,11 @@ public class AuthenticationProvider implements org.springframework.security.auth
         .filter(token ->
           token.getPrincipal().equals(authentication.getPrincipal()) &&
             token.getCredentials().equals(authentication.getCredentials()))
-        .findFirst()
+        .findFirst().map(usernamePasswordAuthenticationToken -> new UsernamePasswordAuthenticationToken(
+          usernamePasswordAuthenticationToken.getPrincipal(),
+          usernamePasswordAuthenticationToken.getCredentials(),
+          usernamePasswordAuthenticationToken.getAuthorities()
+        ))
         .orElseThrow(() -> new AuthenticationException("User not found or bad credentials") {
         });
     }

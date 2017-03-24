@@ -8,6 +8,7 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.schema.XSAny;
 import org.opensaml.xml.schema.XSString;
+import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.signature.SignableXMLObject;
 import org.opensaml.xml.signature.Signature;
@@ -40,7 +41,7 @@ public class SAMLBuilder {
     return issuer;
   }
 
-  public static Subject buildSubject(String subjectNameId, String subjectNameIdType, String recipient, String inResponseTo) {
+  private static Subject buildSubject(String subjectNameId, String subjectNameIdType, String recipient, String inResponseTo) {
     NameID nameID = buildSAMLObject(NameID.class, NameID.DEFAULT_ELEMENT_NAME);
     nameID.setValue(subjectNameId);
     nameID.setFormat(subjectNameIdType);
@@ -91,7 +92,7 @@ public class SAMLBuilder {
     Assertion assertion = buildSAMLObject(Assertion.class, Assertion.DEFAULT_ELEMENT_NAME);
 
     if (status.getStatusCode().getValue().equals(StatusCode.SUCCESS_URI)) {
-      Subject subject = buildSubject(principal.getNameID(), principal.getNameIDType(),principal.getAssertionConsumerServiceURL(), principal.getRequestID());
+      Subject subject = buildSubject(principal.getNameID(), principal.getNameIDType(), principal.getAssertionConsumerServiceURL(), principal.getRequestID());
       assertion.setSubject(subject);
     }
 
@@ -178,24 +179,29 @@ public class SAMLBuilder {
     AttributeStatement attributeStatement = buildSAMLObject(AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
 
     attributes.forEach(entry ->
-        attributeStatement.getAttributes().add(
-            buildAttribute(
-                entry.getName(),
-                entry.getValues().stream().map(SAMLBuilder::buildXSString).collect(toList()))));
+      attributeStatement.getAttributes().add(
+        buildAttribute(
+          entry.getName(),
+          entry.getValues())));
 
     return attributeStatement;
   }
 
-  private static Attribute buildAttribute(String name, List<XSString> values) {
+  private static Attribute buildAttribute(String name, List<String> values) {
+    XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+
     Attribute attribute = buildSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
     attribute.setName(name);
-    attribute.getAttributeValues().addAll(values);
+    attribute.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+    List<XSString> xsStringList = values.stream().map(value -> {
+      XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+      stringValue.setValue(value);
+      return stringValue;
+    }).collect(toList());
+
+    attribute.getAttributeValues().addAll(xsStringList);
     return attribute;
   }
 
-  private static XSString buildXSString(String value) {
-    XSString stringValue = buildSAMLObject(XSString.class, XSString.TYPE_NAME);
-    stringValue.setValue(value);
-    return stringValue;
-  }
+
 }
