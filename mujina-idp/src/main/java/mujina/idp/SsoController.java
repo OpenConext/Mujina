@@ -36,9 +36,7 @@ public class SsoController {
   public void singleSignOnService(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
     throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
 
-    //The SAMLRequest parameters are urlEncoded and the extraction expects unencoded parameters
     SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request);
-
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
     SAMLPrincipal principal = new SAMLPrincipal(

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class SpConfiguration extends SharedConfiguration {
 
-  private String HTTP_MOCK_SP = "http://mock-sp";
+  private static final String HTTP_MOCK_SP = "http://mock-sp";
 
   private String defaultIdpSSOServiceURL;
   private String idpSSOServiceURL;

@@ -1,14 +1,7 @@
 package mujina.api;
 
-import io.restassured.RestAssured;
 import mujina.AbstractIntegrationTest;
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +24,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
     List<String> values = Arrays.asList("value1", "value2");
     Map<String, List<String>> attributes = Collections.singletonMap(NEW_ATTRIBUTE, values);
 
-    start(attributes, "/api/attributes/");
+    api(attributes, "/api/attributes/");
 
     assertEquals(values, idpConfiguration.getAttributes().get(NEW_ATTRIBUTE));
   }
@@ -40,7 +33,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   public void setAttribute() throws Exception {
     List<String> values = Arrays.asList("value1", "value2");
 
-    start(values, "/api/attributes/" + NEW_ATTRIBUTE);
+    api(values, "/api/attributes/" + NEW_ATTRIBUTE);
 
     assertEquals(values, idpConfiguration.getAttributes().get(NEW_ATTRIBUTE));
   }
@@ -61,7 +54,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   @Test
   public void addUser() throws Exception {
     User user = new User("Bob", "secret", Arrays.asList("USER", "ADMIN"));
-    start(user, "/api/users");
+    api(user, "/api/users");
 
     assertTrue(idpConfiguration.getUsers().stream()
       .filter(token -> token.getName().equals(user.getName())).findAny().isPresent());
@@ -72,7 +65,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   public void setAuthenticationMethod() throws Exception {
     assertEquals(USER, idpConfiguration.getAuthenticationMethod());
 
-    start(ALL.name(), "/api/authmethod");
+    api(ALL.name(), "/api/authmethod");
 
     assertEquals(ALL, idpConfiguration.getAuthenticationMethod());
   }
@@ -82,12 +75,12 @@ public class IdpControllerTest extends AbstractIntegrationTest {
     assertNull(idpConfiguration.getAcsEndpoint());
 
     String acs = "https://localhost:8080/acs";
-    start(acs, "/api/acsendpoint");
+    api(acs, "/api/acsendpoint");
 
     assertEquals(acs, idpConfiguration.getAcsEndpoint());
   }
 
-  private void start(Object body, String path) {
+  private void api(Object body, String path) {
     given()
       .body(body)
       .header("Content-Type", "application/json")
