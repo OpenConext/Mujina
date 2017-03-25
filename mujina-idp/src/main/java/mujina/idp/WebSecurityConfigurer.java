@@ -99,7 +99,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   }
 
   @Bean
-  public KeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
+  public JKSKeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStore keyStore = KeyStoreLocator.createKeyStore(idpPassphrase);
     KeyStoreLocator.addPrivateKey(keyStore, idpEntityId, idpPrivateKey, idpCertificate, idpPassphrase);
     return new JKSKeyManager(keyStore, Collections.singletonMap(idpEntityId, idpPassphrase), idpEntityId);
@@ -123,7 +123,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
       http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/metadata", "/favicon.ico", "/api/**", "/resources/**").permitAll()
+        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/resources/**").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().hasRole("USER")
         .and()
@@ -134,7 +134,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
         .permitAll()
         .and()
         .logout()
-        .logoutSuccessUrl("/login");
+        .logoutSuccessUrl("/");
     }
 
     @Override

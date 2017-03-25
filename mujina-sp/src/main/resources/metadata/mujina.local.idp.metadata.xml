@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <md:EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" ID="6ceb7b22-a038-4d51-a1b0-a4f087814e79"
-                     entityID="https://mujina.idp.localhost.surfconext.nl" validUntil="2017-03-25T07:54:50.256Z">
+                     entityID="http://mock-idp" validUntil="2017-03-25T07:54:50.256Z">
   <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
     <ds:SignedInfo>
       <ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>

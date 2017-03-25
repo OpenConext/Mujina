@@ -2,7 +2,9 @@ package mujina.api;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class SpConfiguration extends SharedConfiguration {
 
-  private static final String HTTP_MOCK_SP = "http://mock-sp";
+  private String defaultEntityId;
 
   private String defaultIdpSSOServiceURL;
   private String idpSSOServiceURL;
@@ -21,11 +23,15 @@ public class SpConfiguration extends SharedConfiguration {
   private final String spPrivateKey;
   private final String spCertificate;
 
-
-  public SpConfiguration(@Value("${sp.single_sign_on_service_location}") String defaultIdpSSOServiceURL,
+  @Autowired
+  public SpConfiguration(JKSKeyManager keyManager,
+                         @Value("${sp.entity_id}") String defaultEntityId,
+                         @Value("${sp.single_sign_on_service_location}") String defaultIdpSSOServiceURL,
                          @Value("${sp.acs_location}") String defaultAssertionConsumerServiceURL,
                          @Value("${sp.private_key}") String spPrivateKey,
                          @Value("${sp.certificate}") String spCertificate) {
+    super(keyManager);
+    this.defaultEntityId = defaultEntityId;
     this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
     this.defaultAssertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
     this.protocolBinding = defaultProtocolBinding;
@@ -36,9 +42,9 @@ public class SpConfiguration extends SharedConfiguration {
 
   @Override
   public void reset() {
-    setEntityId(HTTP_MOCK_SP, false);
+    setEntityId(defaultEntityId, false);
     setNeedsSigning(false);
-    resetKeyStore(HTTP_MOCK_SP, spPrivateKey, spCertificate);
+    resetKeyStore(defaultEntityId, spPrivateKey, spCertificate);
     idpSSOServiceURL = defaultIdpSSOServiceURL;
     protocolBinding = defaultProtocolBinding;
     assertionConsumerServiceURL = defaultAssertionConsumerServiceURL;

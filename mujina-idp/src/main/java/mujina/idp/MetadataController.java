@@ -1,5 +1,6 @@
 package mujina.idp;
 
+import mujina.api.IdpConfiguration;
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
 import org.opensaml.common.xml.SAMLConstants;
@@ -42,21 +43,21 @@ public class MetadataController {
   @Autowired
   private KeyManager keyManager;
 
-  @Value("${idp.entity_id}")
-  private String entityId;
+  @Autowired
+  private IdpConfiguration idpConfiguration;
 
   @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
   public String metadata() throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
     EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
-    entityDescriptor.setEntityID(entityId);
+    entityDescriptor.setEntityID(idpConfiguration.getEntityId());
     entityDescriptor.setID(UUID.randomUUID().toString());
     entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
 
     Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 
-    Credential credential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(entityId)));
+    Credential credential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(idpConfiguration.getEntityId())));
     signature.setSigningCredential(credential);
-    signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
+    signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
     entityDescriptor.setSignature(signature);

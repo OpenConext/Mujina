@@ -12,6 +12,7 @@ import static io.restassured.RestAssured.given;
 import static mujina.api.AuthenticationMethod.ALL;
 import static mujina.api.AuthenticationMethod.USER;
 import static org.apache.http.HttpStatus.SC_OK;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.*;
 
 public class IdpControllerTest extends AbstractIntegrationTest {
@@ -78,6 +79,19 @@ public class IdpControllerTest extends AbstractIntegrationTest {
     api(acs, "/api/acsendpoint");
 
     assertEquals(acs, idpConfiguration.getAcsEndpoint());
+  }
+
+  @Test
+  public void configuration() throws Exception {
+    given()
+      .header("Content-Type", "application/json")
+      .get("/api/configuration")
+      .then()
+      .statusCode(SC_OK)
+      .body("needsSigning", equalTo(idpConfiguration.isNeedsSigning()))
+      .body("signatureAlgorithm", equalTo(idpConfiguration.getSignatureAlgorithm()))
+      .body("entityId", equalTo(idpConfiguration.getEntityId()))
+      .body("authenticationMethod", equalTo(idpConfiguration.getAuthenticationMethod().name()));
   }
 
   private void api(Object body, String path) {

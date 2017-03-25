@@ -128,7 +128,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
       .and()
       .csrf().disable()
       .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
-      .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class);
+      .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class)
+      .logout()
+      .logoutSuccessUrl("/");
   }
 
   // Handler deciding where to redirect user after successful login
@@ -248,7 +250,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public KeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
+  public JKSKeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStore keyStore = KeyStoreLocator.createKeyStore(spPassphrase);
     KeyStoreLocator.addPrivateKey(keyStore, spEntityId, spPrivateKey, spCertificate, spPassphrase);
     return new JKSKeyManager(keyStore, Collections.singletonMap(spEntityId, spPassphrase), spEntityId);

@@ -2,6 +2,7 @@ package mujina.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,15 +37,21 @@ public class SharedController {
     configuration.injectCredential(credential.getCertificate(), credential.getKey());
   }
 
-  @RequestMapping(value = {"/needs-signing"}, method = RequestMethod.PUT)
+  @PutMapping("/needs-signing")
   public void setSigningNeeded(@RequestBody boolean needsSigning) {
     LOG.debug("Request to set signing needed {}", needsSigning);
     configuration.setNeedsSigning(needsSigning);
   }
 
-  @RequestMapping(value = {"/sloendpoint"}, method = RequestMethod.PUT)
+  @PutMapping("/sloendpoint")
   public void setSloEndpoint(@RequestBody String sloEndpoint) {
     LOG.debug("Request to set SLO Service Endpoint to {}", sloEndpoint);
     configuration.setSloEndpoint(sloEndpoint);
+  }
+
+  @GetMapping("/configuration")
+  public SharedConfiguration conf() {
+    LOG.debug("Request to receive configuration");
+    return configuration;
   }
 }

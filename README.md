@@ -7,7 +7,7 @@
               _/ |
              |__/
 
-  Mock Identity and Service Provider using OpenSAML
+  Mock Identity and Service Provider using OpenSAML & Spring Boot
 </pre>
 
 Mujina
@@ -23,7 +23,7 @@ Thus, Mujina makes testing your stack a breeze! Mujina can be used in combinatio
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.
 SURFconext also exposes a REST API for  Service Providers to offer the end-user context about the groups and memberships of the user (typically students, researchers and educational advisors).
 Mujina SP and IdP can be used to test the SURFconext cloud broker capabilities.
-The OAuth playground - part of the REST API component - can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Foursquare).
+The OAuth playground can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Foursquare).
 
 Features
 --------
@@ -81,33 +81,29 @@ Build Mujina
 The build dependencies are hosted on https://build.openconext.org/repository/public/
 (and will be fetched automatically by Maven).
 
-Run the IDP using jetty
+Run the IDP 
 -----------------------
 
 ```bash
 mvn clean install
 cd mujina-idp
-mvn jetty:run
+mvn spring-boot:run
 ```
 
-Then, go to https://localhost:8443/ or http://localhost:8080/
+Then, go to http://localhost:8080/. If you want the application to run over https, please refer
+to the [spring boots docs](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-embedded-servlet-containers.html#howto-configure-ssl).
 
-Run the SP using jetty
+Run the SP
 ----------------------
 
 ```bash
 mvn clean install
 cd mujina-sp
-mvn jetty:run
+mvn spring-boot:run
 ```
 
-Then, go to http://localhost:9090/. You will be redirected to the IdP, where you can
+Then, go to http://localhost:9090/. You can access the secure page and will be redirected to the IdP, where you can
 login with username admin and password secret.
-
-Changing port numbers
-----------------------
-Both the SP and IDP can be made to bind to a different tcp/ip port: 
-`mvn jetty:run -DhttpPort=8082 -DhttpsPort=8444`
 
 ## [Private signing key and public certificate](#signing-keys)
 
@@ -172,7 +168,7 @@ This API is available on both the IDP and the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": "myEntityId"}' \
+        -X PUT -d '"myEntityId"' \
         http://localhost:8080/api/entityid
 ```
 
@@ -222,7 +218,7 @@ This API is only available on the IDP. **Note:** An attribute is always a list.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": ["bar"]}' \
+        -X PUT -d '["bar"]' \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
 ```
 
@@ -258,7 +254,7 @@ This API is only available on the IDP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": "ALL"}' \
+        -X PUT -d '"ALL"' \
         http://localhost:8080/api/authmethod
 ```
 
@@ -270,7 +266,7 @@ This API is only available on the IDP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"url": "https://my_sp.no:443/acsendpoint_path"}' \
+        -X PUT -d '"https://my_sp.no:443/acsendpoint_path"' \
         http://localhost:8080/api/acsendpoint
 ```
 
@@ -293,7 +289,7 @@ This API is only available on the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": "http://localhost:8080/SingleSignOnService/vo:test"}' \
+        -X PUT -d '"http://localhost:8080/SingleSignOnService/vo:test"' \
         http://localhost:9090/api/ssoServiceURL
 ```
 
@@ -305,6 +301,6 @@ This API is available on both the IDP and the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"value": "http://my_sp/SingleLogoutService"}' \
+        -X PUT -d '"http://my_sp/SingleLogoutService"' \
         http://localhost:8080/api/sloendpoint
 ```
