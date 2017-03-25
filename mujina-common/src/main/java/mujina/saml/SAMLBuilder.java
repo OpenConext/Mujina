@@ -124,7 +124,7 @@ public class SAMLBuilder {
     Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 
     signature.setSigningCredential(signingCredential);
-    signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA1);
+    signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
     signableXMLObject.setSignature(signature);

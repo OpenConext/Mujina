@@ -55,8 +55,7 @@ public abstract class SharedConfiguration {
       if (keyStore.containsAlias(entityId)) {
         keyStore.deleteEntry(entityId);
       }
-      String key = new String(Base64.decodeBase64(pemKey));
-      KeyStoreLocator.addPrivateKey(keyStore, entityId, key, certificate, keystorePassword);
+      KeyStoreLocator.addPrivateKey(keyStore, entityId, pemKey, certificate, keystorePassword);
     } catch (Exception e) {
       throw new RuntimeException("Unable to append signing credential", e);
     }
