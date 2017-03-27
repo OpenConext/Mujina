@@ -128,7 +128,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
       http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/resources/**").permitAll()
+        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().hasRole("USER")
         .and()

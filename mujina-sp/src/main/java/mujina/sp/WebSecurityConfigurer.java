@@ -124,7 +124,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
       .authorizeRequests()
-      .antMatchers("/","/metadata", "/favicon.ico","/api/**", assertionConsumerServiceURLPath + "/**").permitAll()
+      .antMatchers("/","/metadata", "/favicon.ico","/css.*","/api/**", assertionConsumerServiceURLPath + "/**").permitAll()
       .anyRequest().hasRole("USER")
       .and()
       .httpBasic().authenticationEntryPoint(samlEntryPoint())

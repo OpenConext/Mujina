@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home</title>
+    <title>Mujina Service Provider</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../public/main.css" th:href="@{/main.css}" />
 </head>
+<h1>Mujina Service Provider</h1>
 <section class="attributes">
-    <a th:href="@{/logout}">Logout</a>
-    <ul>
-        <li>Attribute name</li>
-        <li>Value</li>
-    </ul>
+    <a th:href="@{/logout}">Logout - this only ends your session with the Service Provider</a>
+    <p>The following attributes were provided by your identity provider</p>
     <ul>
         <li th:text="${user.nameIDType}"></li>
         <li th:text="${user.nameID}"></li>
