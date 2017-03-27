@@ -32,6 +32,8 @@ sp:
   single_sign_on_service_location: http://localhost:8080/SingleSignOnService
   # ACS location
   acs_location_path: /saml/SSO
+  # Protocol binding
+  protocol_binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
   # Do we sign the authnRequest
   needs_signing: true
 

@@ -7,6 +7,7 @@ import org.opensaml.common.binding.BasicSAMLMessageContext;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
 import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
+import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Issuer;
@@ -15,27 +16,24 @@ import org.opensaml.saml2.core.Status;
 import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
-import org.opensaml.security.SAMLSignatureProfileValidator;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.ws.security.SecurityPolicyResolver;
 import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
-import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.CriteriaSet;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.credential.Credential;
 import org.opensaml.xml.security.criteria.EntityIDCriteria;
-import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureException;
-import org.opensaml.xml.signature.SignatureValidator;
 import org.opensaml.xml.validation.ValidationException;
 import org.opensaml.xml.validation.ValidatorSuite;
 import org.springframework.security.saml.key.KeyManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,19 +48,19 @@ import static org.opensaml.xml.Configuration.getValidatorSuite;
 public class SAMLMessageHandler {
 
   private final KeyManager keyManager;
+  private final Collection<SAMLMessageDecoder> decoders;
   private final SAMLMessageEncoder encoder;
-  private final SAMLMessageDecoder decoder;
   private final SecurityPolicyResolver resolver;
   private final String entityId;
 
   private final List<ValidatorSuite> validatorSuites;
 
-  public SAMLMessageHandler(KeyManager keyManager, SAMLMessageDecoder samlMessageDecoder,
-                            SAMLMessageEncoder samlMessageEncoder, SecurityPolicyResolver securityPolicyResolver,
+  public SAMLMessageHandler(KeyManager keyManager, Collection<SAMLMessageDecoder> decoders,
+                            SAMLMessageEncoder encoder, SecurityPolicyResolver securityPolicyResolver,
                             String entityId) {
     this.keyManager = keyManager;
-    this.encoder = samlMessageEncoder;
-    this.decoder = samlMessageDecoder;
+    this.encoder = encoder;
+    this.decoders = decoders;
     this.resolver = securityPolicyResolver;
     this.entityId = entityId;
     this.validatorSuites = asList(
@@ -70,13 +68,15 @@ public class SAMLMessageHandler {
       getValidatorSuite("saml2-core-spec-validator"));
   }
 
-  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request) throws ValidationException, SecurityException, MessageDecodingException {
+  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException {
     BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
 
     messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
     messageContext.setSecurityPolicyResolver(resolver);
 
-    decoder.decode(messageContext);
+    SAMLMessageDecoder samlMessageDecoder = samlMessageDecoder(postRequest);
+    samlMessageDecoder.decode(messageContext);
+
     SAMLObject inboundSAMLMessage = messageContext.getInboundSAMLMessage();
 
     AuthnRequest authnRequest = (AuthnRequest) inboundSAMLMessage;
@@ -87,12 +87,19 @@ public class SAMLMessageHandler {
     return messageContext;
   }
 
-  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
-    doSendAuthnResponse(principal, response, buildStatus(StatusCode.SUCCESS_URI));
+  private SAMLMessageDecoder samlMessageDecoder(boolean postRequest) {
+    return decoders.stream().filter(samlMessageDecoder -> postRequest ?
+      samlMessageDecoder.getBindingURI().equals(SAMLConstants.SAML2_POST_BINDING_URI) :
+      samlMessageDecoder.getBindingURI().equals(SAMLConstants.SAML2_REDIRECT_BINDING_URI))
+      .findAny()
+      .orElseThrow(() -> new RuntimeException(String.format("Only %s and %s are supported",
+        SAMLConstants.SAML2_REDIRECT_BINDING_URI,
+        SAMLConstants.SAML2_POST_BINDING_URI)));
   }
 
-  @SuppressWarnings("unchecked")
-  private void doSendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response, Status status) throws MarshallingException, SignatureException, MessageEncodingException {
+  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response, boolean postResponse) throws MarshallingException, SignatureException, MessageEncodingException {
+    Status status = buildStatus(StatusCode.SUCCESS_URI);
+
     Credential signingCredential = resolveCredential(entityId);
 
     Response authResponse = buildSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
@@ -127,6 +134,7 @@ public class SAMLMessageHandler {
     messageContext.setRelayState(principal.getRelayState());
 
     encoder.encode(messageContext);
+
   }
 
   private Credential resolveCredential(String entityId) {

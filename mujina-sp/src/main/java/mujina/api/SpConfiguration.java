@@ -16,13 +16,13 @@ public class SpConfiguration extends SharedConfiguration {
 
   private String defaultIdpSSOServiceURL;
   private String idpSSOServiceURL;
-  private String defaultProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
+  private String defaultProtocolBinding;
   private String protocolBinding;
   private String defaultAssertionConsumerServiceURL;
   private boolean defaultNeedsSigning;
   private String assertionConsumerServiceURL;
-  private final String spPrivateKey;
-  private final String spCertificate;
+  private String spPrivateKey;
+  private String spCertificate;
 
   @Autowired
   public SpConfiguration(JKSKeyManager keyManager,
@@ -30,6 +30,7 @@ public class SpConfiguration extends SharedConfiguration {
                          @Value("${sp.entity_id}") String defaultEntityId,
                          @Value("${sp.single_sign_on_service_location}") String defaultIdpSSOServiceURL,
                          @Value("${sp.acs_location_path}") String defaultAssertionConsumerServiceURLPath,
+                         @Value("${sp.protocol_binding}") String defaultProtocolBinding,
                          @Value("${sp.private_key}") String spPrivateKey,
                          @Value("${sp.certificate}") String spCertificate,
                          @Value("${sp.needs_signing}") boolean needsSigning) {
@@ -37,7 +38,7 @@ public class SpConfiguration extends SharedConfiguration {
     this.defaultEntityId = defaultEntityId;
     this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
     this.defaultAssertionConsumerServiceURL = spBaseUrl + defaultAssertionConsumerServiceURLPath;
-    this.protocolBinding = defaultProtocolBinding;
+    this.defaultProtocolBinding = defaultProtocolBinding;
     this.spPrivateKey = spPrivateKey;
     this.spCertificate = spCertificate;
     this.defaultNeedsSigning = needsSigning;

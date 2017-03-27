@@ -4,6 +4,7 @@ import mujina.api.IdpConfiguration;
 import mujina.saml.SAMLAttribute;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
+import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.NameIDType;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +35,19 @@ public class SsoController {
   private IdpConfiguration idpConfiguration;
 
   @GetMapping("/SingleSignOnService")
-  public void singleSignOnService(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+  public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
     throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
+    doSSO(request, response, authentication, false);
+  }
 
-    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request);
+  @PostMapping("/SingleSignOnService")
+  public void singleSignOnServicePost(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
+    doSSO(request, response, authentication, true);
+  }
+
+  private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MarshallingException, SignatureException, MessageEncodingException {
+    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, postRequest);
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
     SAMLPrincipal principal = new SAMLPrincipal(
@@ -48,8 +59,7 @@ public class SsoController {
       authnRequest.getAssertionConsumerServiceURL(),
       messageContext.getRelayState());
 
-    samlMessageHandler.sendAuthnResponse(principal, response);
-
+    samlMessageHandler.sendAuthnResponse(principal, response, authnRequest.getProtocolBinding().equals(SAMLConstants.SAML2_POST_BINDING_URI));
   }
 
 }

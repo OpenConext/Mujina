@@ -5,8 +5,10 @@ import mujina.saml.KeyStoreLocator;
 import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
+import org.opensaml.saml2.binding.decoding.HTTPPostDecoder;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
+import org.opensaml.saml2.binding.encoding.HTTPRedirectDeflateEncoder;
 import org.opensaml.util.storage.MapBasedStorageService;
 import org.opensaml.util.storage.ReplayCache;
 import org.opensaml.ws.security.SecurityPolicyResolver;
@@ -78,6 +80,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
       new MessageReplayRule(new ReplayCache(new MapBasedStorageService(), 14400000))));
 
     HTTPRedirectDeflateDecoder httpRedirectDeflateDecoder = new HTTPRedirectDeflateDecoder(parserPool);
+    HTTPPostDecoder httpPostDecoder = new HTTPPostDecoder(parserPool);
 
     if (environment.acceptsProfiles("test")) {
       //Lenient URI comparision
@@ -85,10 +88,12 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     }
 
     parserPool.initialize();
+    HTTPPostSimpleSignEncoder httpPostSimpleSignEncoder = new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true);
+
     return new SAMLMessageHandler(
       keyManager(),
-      httpRedirectDeflateDecoder,
-      new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true),
+      Arrays.asList(httpRedirectDeflateDecoder, httpPostDecoder),
+      httpPostSimpleSignEncoder,
       new StaticSecurityPolicyResolver(securityPolicy),
       idpEntityId);
   }
