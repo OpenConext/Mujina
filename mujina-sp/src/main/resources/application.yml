@@ -29,9 +29,11 @@ sp:
 #  idp_metadata_url: classpath:metadata/eb.idp.metadata.xml
 #  idp_metadata_url: https://engine.test2.surfconext.nl/authentication/idp/metadata
   # SingleSignOnServiceLocation
-  single_sign_on_service_location: http://localhost:8080/idp/SingleSignOnService
+  single_sign_on_service_location: http://localhost:8080/SingleSignOnService
   # ACS location
-  acs_location: ${sp.base_url}/SSO
+  acs_location_path: /saml/SSO
+  # Do we sign the authnRequest
+  needs_signing: true
 
 spring:
   velocity:

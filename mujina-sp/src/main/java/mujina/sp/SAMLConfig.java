@@ -1,5 +1,6 @@
 package mujina.sp;
 
+import mujina.api.SpConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.velocity.app.VelocityEngine;
@@ -17,6 +18,7 @@ import org.springframework.security.saml.processor.HTTPPostBinding;
 import org.springframework.security.saml.processor.HTTPRedirectDeflateBinding;
 import org.springframework.security.saml.processor.HTTPSOAP11Binding;
 import org.springframework.security.saml.processor.SAMLBinding;
+import org.springframework.security.saml.processor.SAMLProcessor;
 import org.springframework.security.saml.processor.SAMLProcessorImpl;
 import org.springframework.security.saml.websso.ArtifactResolutionProfile;
 import org.springframework.security.saml.websso.ArtifactResolutionProfileImpl;
@@ -48,10 +50,10 @@ public class SAMLConfig {
     return new HttpClient(multiThreadedHttpConnectionManager());
   }
 
-  @Bean
-  @Autowired
-  public HTTPArtifactBinding artifactBinding(ParserPool parserPool, VelocityEngine velocityEngine) {
-    return new HTTPArtifactBinding(parserPool, velocityEngine, artifactResolutionProfile(parserPool));
+  private HTTPArtifactBinding artifactBinding(ParserPool parserPool,
+                                             VelocityEngine velocityEngine,
+                                             ArtifactResolutionProfile artifactResolutionProfile) {
+    return new HTTPArtifactBinding(parserPool, velocityEngine, artifactResolutionProfile);
   }
 
   @Bean
@@ -87,14 +89,17 @@ public class SAMLConfig {
 
   @Autowired
   @Bean
-  public SAMLProcessorImpl processor(VelocityEngine velocityEngine, ParserPool parserPool) {
+  public SAMLProcessor processor(VelocityEngine velocityEngine,
+                                 ParserPool parserPool,
+                                 SpConfiguration spConfiguration) {
+    ArtifactResolutionProfile artifactResolutionProfile = new ArtifactResolutionProfileImpl(httpClient());
     Collection<SAMLBinding> bindings = new ArrayList<>();
     bindings.add(httpRedirectDeflateBinding(parserPool));
     bindings.add(httpPostBinding(parserPool, velocityEngine));
-    bindings.add(artifactBinding(parserPool, velocityEngine));
+    bindings.add(artifactBinding(parserPool, velocityEngine, artifactResolutionProfile));
     bindings.add(httpSOAP11Binding(parserPool));
     bindings.add(httpPAOS11Binding(parserPool));
-    return new SAMLProcessorImpl(bindings);
+    return new ConfigurableSAMLProcessor(bindings, spConfiguration);
   }
 
   @Bean
@@ -120,20 +125,16 @@ public class SAMLConfig {
   }
 
   @Bean
-  public WebSSOProfile webSSOprofile() {
-    return new WebSSOProfileImpl();
+  @Autowired
+  public WebSSOProfile webSSOprofile(SAMLProcessor samlProcessor) {
+    WebSSOProfileImpl webSSOProfile = new WebSSOProfileImpl();
+    webSSOProfile.setProcessor(samlProcessor);
+    return webSSOProfile;
   }
 
   @Bean
   public WebSSOProfileECPImpl ecpprofile() {
     return new WebSSOProfileECPImpl();
   }
-
-  private ArtifactResolutionProfile artifactResolutionProfile(ParserPool parserPool) {
-    final ArtifactResolutionProfileImpl artifactResolutionProfile = new ArtifactResolutionProfileImpl(httpClient());
-    artifactResolutionProfile.setProcessor(new SAMLProcessorImpl(soapBinding(parserPool)));
-    return artifactResolutionProfile;
-  }
-
 
 }

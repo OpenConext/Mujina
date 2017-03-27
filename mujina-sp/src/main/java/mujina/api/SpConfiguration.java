@@ -18,32 +18,36 @@ public class SpConfiguration extends SharedConfiguration {
   private String idpSSOServiceURL;
   private String defaultProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
   private String protocolBinding;
-  private final String defaultAssertionConsumerServiceURL;
+  private String defaultAssertionConsumerServiceURL;
+  private boolean defaultNeedsSigning;
   private String assertionConsumerServiceURL;
   private final String spPrivateKey;
   private final String spCertificate;
 
   @Autowired
   public SpConfiguration(JKSKeyManager keyManager,
+                         @Value("${sp.base_url}") String spBaseUrl,
                          @Value("${sp.entity_id}") String defaultEntityId,
                          @Value("${sp.single_sign_on_service_location}") String defaultIdpSSOServiceURL,
-                         @Value("${sp.acs_location}") String defaultAssertionConsumerServiceURL,
+                         @Value("${sp.acs_location_path}") String defaultAssertionConsumerServiceURLPath,
                          @Value("${sp.private_key}") String spPrivateKey,
-                         @Value("${sp.certificate}") String spCertificate) {
+                         @Value("${sp.certificate}") String spCertificate,
+                         @Value("${sp.needs_signing}") boolean needsSigning) {
     super(keyManager);
     this.defaultEntityId = defaultEntityId;
     this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
-    this.defaultAssertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
+    this.defaultAssertionConsumerServiceURL = spBaseUrl + defaultAssertionConsumerServiceURLPath;
     this.protocolBinding = defaultProtocolBinding;
     this.spPrivateKey = spPrivateKey;
     this.spCertificate = spCertificate;
+    this.defaultNeedsSigning = needsSigning;
     reset();
   }
 
   @Override
   public void reset() {
     setEntityId(defaultEntityId, false);
-    setNeedsSigning(false);
+    setNeedsSigning(defaultNeedsSigning);
     resetKeyStore(defaultEntityId, spPrivateKey, spCertificate);
     idpSSOServiceURL = defaultIdpSSOServiceURL;
     protocolBinding = defaultProtocolBinding;

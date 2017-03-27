@@ -16,14 +16,16 @@ Mujina
 [![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
 [![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
 
-Mujina mocks a SAML2 Identity and Service Provider (IdP & SP).
+Mujina is a SAML2 Identity and Service Provider (IdP & SP). Note that backward incompatibilities were introduced in version 5.0.0. If you want to migrate from pre-5 versions to the 5 version 
+or post-5 version then the following has changed:
+ 
+* We no longer use Tomcat, but standalone Spring boot applications
+* The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
+ 
 Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up.
-Thus, Mujina makes testing your stack a breeze! Mujina can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
+Mujina can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
 
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.
-SURFconext also exposes a REST API for  Service Providers to offer the end-user context about the groups and memberships of the user (typically students, researchers and educational advisors).
-Mujina SP and IdP can be used to test the SURFconext cloud broker capabilities.
-The OAuth playground can be used to test the SURFconext REST API (or any other OAuth compliant API like Google, Twitter, Facebook or Foursquare).
 
 Features
 --------

@@ -84,6 +84,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Value("${sp.passphrase}")
   private String spPassphrase;
 
+  @Value("${sp.acs_location_path}")
+  private String assertionConsumerServiceURLPath;
+
   private DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
 
   @Bean
@@ -121,7 +124,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
     http
       .authorizeRequests()
-      .antMatchers("/","/metadata", "/favicon.ico","/api/**", "/saml/SSO/**").permitAll()
+      .antMatchers("/","/metadata", "/favicon.ico","/api/**", assertionConsumerServiceURLPath + "/**").permitAll()
       .anyRequest().hasRole("USER")
       .and()
       .httpBasic().authenticationEntryPoint(samlEntryPoint())
@@ -182,7 +185,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
     List<SecurityFilterChain> chains = new ArrayList<>();
     chains.add(chain("/login/**", samlEntryPoint()));
     chains.add(chain("/metadata/**", metadataDisplayFilter()));
-    chains.add(chain("/saml/SSO/**", samlWebSSOProcessingFilter()));
+    chains.add(chain(assertionConsumerServiceURLPath + "/**", samlWebSSOProcessingFilter()));
     return new FilterChainProxy(chains);
   }
 
