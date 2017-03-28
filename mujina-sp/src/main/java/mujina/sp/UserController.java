@@ -1,5 +1,6 @@
 package mujina.sp;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserController {
 
   @GetMapping("/")
-  public String index() {
-    return "index";
+  public String index(Authentication authentication) {
+    return authentication == null || authentication instanceof AnonymousAuthenticationToken ? "index" : "redirect:/user.html";
   }
 
   @GetMapping("/user.html")
