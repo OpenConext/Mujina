@@ -26,7 +26,6 @@ public abstract class SharedConfiguration {
   private String keystorePassword = "secret";
   private boolean needsSigning;
   private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-  private String sloEndpoint;
   private String entityId;
 
   public SharedConfiguration(JKSKeyManager keyManager) {

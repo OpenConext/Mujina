@@ -50,16 +50,18 @@ public class SsoController {
     SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, postRequest);
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
+    String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
+
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
       NameIDType.UNSPECIFIED,
       idpConfiguration.getAttributes().entrySet().stream().map(entry -> new SAMLAttribute(entry.getKey(), entry.getValue())).collect(toList()),
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
-      authnRequest.getAssertionConsumerServiceURL(),
+      assertionConsumerServiceURL,
       messageContext.getRelayState());
 
-    samlMessageHandler.sendAuthnResponse(principal, response, authnRequest.getProtocolBinding().equals(SAMLConstants.SAML2_POST_BINDING_URI));
+    samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
 }

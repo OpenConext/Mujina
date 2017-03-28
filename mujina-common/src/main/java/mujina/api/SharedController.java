@@ -43,12 +43,6 @@ public class SharedController {
     configuration.setNeedsSigning(needsSigning);
   }
 
-  @PutMapping("/sloendpoint")
-  public void setSloEndpoint(@RequestBody String sloEndpoint) {
-    LOG.debug("Request to set SLO Service Endpoint to {}", sloEndpoint);
-    configuration.setSloEndpoint(sloEndpoint);
-  }
-
   @GetMapping("/configuration")
   public SharedConfiguration conf() {
     LOG.debug("Request to receive configuration");

@@ -7,7 +7,7 @@
               _/ |
              |__/
 
-  Mock Identity and Service Provider using OpenSAML & Spring Boot
+  Configurable Identity and Service Provider build with OpenSAML & Java Spring Boot
 </pre>
 
 Mujina
@@ -16,33 +16,32 @@ Mujina
 [![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
 [![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
 
-Mujina is a SAML2 Identity and Service Provider (IdP & SP). Note that backward incompatibilities were introduced in version 5.0.0. If you want to migrate from pre-5 versions to the 5 version 
-or post-5 version then the following has changed:
+Mujina is a SAML2 Identity and Service Provider (IdP & SP). 
+
+Note that backward incompatibilities were introduced in version 5.0.0. If you want to migrate from pre-5 versions to the post-5 versions 
+then the following has changed:
  
 * We no longer use Tomcat, but standalone Spring boot applications
 * The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
  
-Almost all characteristics of either the IdP or SP can be configured on-the-fly using a REST API. This approach removes the need for special test configuration sets in your set-up.
-Mujina can be used in combination with test suites like Selenium or Jmeter to automate authentication testing for your applications.
+Characteristics of both the IdP or SP can be runtime changed with the REST API. 
 
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.
 
 Features
 --------
-- A SAML2-compliant Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. A REST api allows for the 'just-in-time' manipulation of:
+- A SAML2-compliant Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. The REST api allows for the manipulation of:
   * user credentials (either a specific username & password or allow any username and password)
   * user role
   * any user attributes
   * signing certificate
   * entityID
   * ACS endpoint
-  * SLO Endpoint of the SP (HTTP Post Binding)
 
-- A SAML2-compliant Service Provider. The SP displays the attributes as these were received from an IdP. A REST api allows for the 'just-in-time' manipulation of:
+- A SAML2-compliant Service Provider. The SP displays the attributes as these were received from an IdP. The REST api allows for the manipulation of:
   * entityID
   * signing certificate  
   * sso Service URL
-  * SLO Endpoint of the IDP (HTTP Post Binding)
 
 Defaults
 --------
@@ -64,13 +63,11 @@ The default Identity Provider configuration is as follows:
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
   If the ACS endpoint is set using the IdP api this is not neccesary. Use of the api overrides values set in AuthnRequests
-* By default the peers SLO endpoint is not configured and no SLO Requests are sent
 
 The default Service Provider configuration is as follows:
 
 * The Entity ID is "http://mock-sp"
 * There is a default certificate and private key available
-* By default the peers SLO endpoint is not configured and no SLO Requests are sent
 
 In this document you will find some examples for overriding the default configuration.
 After you override configuration you can go back to the default using the reset API.
@@ -293,16 +290,4 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '"http://localhost:8080/SingleSignOnService/vo:test"' \
         http://localhost:9090/api/ssoServiceURL
-```
-
-Changing the peers SLO Service URL
----------------------
-
-This API is available on both the IDP and the SP.
-
-```bash
-curl -v -H "Accept: application/json" \
-        -H "Content-type: application/json" \
-        -X PUT -d '"http://my_sp/SingleLogoutService"' \
-        http://localhost:8080/api/sloendpoint
 ```

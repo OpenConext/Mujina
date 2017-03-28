@@ -1,5 +1,6 @@
 package mujina.idp;
 
+import mujina.api.IdpConfiguration;
 import mujina.saml.SAMLPrincipal;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObject;
@@ -51,18 +52,18 @@ public class SAMLMessageHandler {
   private final Collection<SAMLMessageDecoder> decoders;
   private final SAMLMessageEncoder encoder;
   private final SecurityPolicyResolver resolver;
-  private final String entityId;
+  private final IdpConfiguration idpConfiguration;
 
   private final List<ValidatorSuite> validatorSuites;
 
   public SAMLMessageHandler(KeyManager keyManager, Collection<SAMLMessageDecoder> decoders,
                             SAMLMessageEncoder encoder, SecurityPolicyResolver securityPolicyResolver,
-                            String entityId) {
+                            IdpConfiguration idpConfiguration) {
     this.keyManager = keyManager;
     this.encoder = encoder;
     this.decoders = decoders;
     this.resolver = securityPolicyResolver;
-    this.entityId = entityId;
+    this.idpConfiguration = idpConfiguration;
     this.validatorSuites = asList(
       getValidatorSuite("saml2-core-schema-validator"),
       getValidatorSuite("saml2-core-spec-validator"));
@@ -97,9 +98,10 @@ public class SAMLMessageHandler {
         SAMLConstants.SAML2_POST_BINDING_URI)));
   }
 
-  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response, boolean postResponse) throws MarshallingException, SignatureException, MessageEncodingException {
+  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
     Status status = buildStatus(StatusCode.SUCCESS_URI);
 
+    String entityId = idpConfiguration.getEntityId();
     Credential signingCredential = resolveCredential(entityId);
 
     Response authResponse = buildSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
@@ -114,7 +116,7 @@ public class SAMLMessageHandler {
     signAssertion(assertion, signingCredential);
 
     authResponse.getAssertions().add(assertion);
-    authResponse.setDestination(principal.getAssertionConsumerServiceURL());
+    authResponse.setDestination( principal.getAssertionConsumerServiceURL());
 
     authResponse.setStatus(status);
 

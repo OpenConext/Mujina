@@ -52,18 +52,6 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   @Autowired
   private Environment environment;
 
-  @Value("${idp.entity_id}")
-  private String idpEntityId;
-
-  @Value("${idp.private_key}")
-  private String idpPrivateKey;
-
-  @Value("${idp.certificate}")
-  private String idpCertificate;
-
-  @Value("${idp.passphrase}")
-  private String idpPassphrase;
-
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("/login").setViewName("login");
@@ -72,7 +60,9 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   @Bean
   @Autowired
   public SAMLMessageHandler samlMessageHandler(@Value("${idp.clock_skew}") int clockSkew,
-                                               @Value("${idp.expires}") int expires)
+                                               @Value("${idp.expires}") int expires,
+                                               IdpConfiguration idpConfiguration,
+                                               JKSKeyManager keyManager)
     throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException {
     StaticBasicParserPool parserPool = new StaticBasicParserPool();
     BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
@@ -91,11 +81,11 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     HTTPPostSimpleSignEncoder httpPostSimpleSignEncoder = new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true);
 
     return new SAMLMessageHandler(
-      keyManager(),
+      keyManager,
       Arrays.asList(httpRedirectDeflateDecoder, httpPostDecoder),
       httpPostSimpleSignEncoder,
       new StaticSecurityPolicyResolver(securityPolicy),
-      idpEntityId);
+      idpConfiguration);
   }
 
   @Bean
@@ -103,8 +93,12 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     return new SAMLBootstrap();
   }
 
+  @Autowired
   @Bean
-  public JKSKeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
+  public JKSKeyManager keyManager(@Value("${idp.entity_id}") String idpEntityId,
+                                  @Value("${idp.private_key}") String idpPrivateKey,
+                                  @Value("${idp.certificate}") String idpCertificate,
+                                  @Value("${idp.passphrase}") String idpPassphrase) throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStore keyStore = KeyStoreLocator.createKeyStore(idpPassphrase);
     KeyStoreLocator.addPrivateKey(keyStore, idpEntityId, idpPrivateKey, idpCertificate, idpPassphrase);
     return new JKSKeyManager(keyStore, Collections.singletonMap(idpEntityId, idpPassphrase), idpEntityId);
