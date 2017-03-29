@@ -74,13 +74,6 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     HTTPRedirectDeflateDecoder httpRedirectDeflateDecoder = new HTTPRedirectDeflateDecoder(parserPool);
     HTTPPostDecoder httpPostDecoder = new HTTPPostDecoder(parserPool);
 
-    if (environment.acceptsProfiles("test")) {
-      //Lenient URI comparision
-      URIComparator lenientURIComparator = (uri1, uri2) -> true;
-      httpRedirectDeflateDecoder.setURIComparator(lenientURIComparator);
-      httpPostDecoder.setURIComparator(lenientURIComparator);
-    }
-
     parserPool.initialize();
     HTTPPostSimpleSignEncoder httpPostSimpleSignEncoder = new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true);
 

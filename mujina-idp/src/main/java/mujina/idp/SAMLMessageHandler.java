@@ -80,7 +80,6 @@ public class SAMLMessageHandler {
 
     proxiedSAMLContextProviderLB.populateGenericContext(request, response, messageContext);
 
-    messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
     messageContext.setSecurityPolicyResolver(resolver);
 
     SAMLMessageDecoder samlMessageDecoder = samlMessageDecoder(postRequest);

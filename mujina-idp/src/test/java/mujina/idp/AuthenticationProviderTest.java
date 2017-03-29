@@ -13,7 +13,6 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.core.StringContains.containsString;
 
 @TestPropertySource(properties = {"idp.expires:" + (Integer.MAX_VALUE / 2 - 1), "idp.clock_skew: " + (Integer.MAX_VALUE / 2 - 1)})
-@ActiveProfiles(profiles = "test")
 public class AuthenticationProviderTest extends AbstractIntegrationTest {
 
   @Test

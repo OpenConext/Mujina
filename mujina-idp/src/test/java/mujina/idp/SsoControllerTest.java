@@ -21,7 +21,6 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.junit.Assert.assertTrue;
 
 @TestPropertySource(properties = {"idp.expires:" + (Integer.MAX_VALUE / 2 - 1), "idp.clock_skew: " + (Integer.MAX_VALUE / 2 - 1)})
-@ActiveProfiles(profiles = "test")
 public class SsoControllerTest extends AbstractIntegrationTest {
 
   private List<String[]> params = Arrays.asList(
