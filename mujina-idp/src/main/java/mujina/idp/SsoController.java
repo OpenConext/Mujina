@@ -6,6 +6,7 @@ import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.NameIDType;
+import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.xml.io.MarshallingException;
@@ -35,18 +36,18 @@ public class SsoController {
 
   @GetMapping("/SingleSignOnService")
   public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
+    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException, MetadataProviderException {
     doSSO(request, response, authentication, false);
   }
 
   @PostMapping("/SingleSignOnService")
   public void singleSignOnServicePost(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException {
+    throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException, MetadataProviderException {
     doSSO(request, response, authentication, true);
   }
 
-  private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MarshallingException, SignatureException, MessageEncodingException {
-    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, postRequest);
+  private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MarshallingException, SignatureException, MessageEncodingException, MetadataProviderException {
+    SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, response, postRequest);
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
     String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();

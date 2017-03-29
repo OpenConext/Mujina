@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.openconext</groupId>
     <artifactId>mujina</artifactId>
-    <version>5.0.0</version>
+    <version>5.0.1</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

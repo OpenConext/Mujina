@@ -1,11 +1,11 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
+import mujina.saml.ProxiedSAMLContextProviderLB;
 import mujina.saml.SAMLPrincipal;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.binding.SAMLMessageContext;
 import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
 import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
 import org.opensaml.common.xml.SAMLConstants;
@@ -17,6 +17,7 @@ import org.opensaml.saml2.core.Status;
 import org.opensaml.saml2.core.StatusCode;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
+import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.ws.security.SecurityPolicyResolver;
@@ -30,10 +31,13 @@ import org.opensaml.xml.security.criteria.EntityIDCriteria;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.validation.ValidationException;
 import org.opensaml.xml.validation.ValidatorSuite;
+import org.springframework.security.saml.context.SAMLMessageContext;
 import org.springframework.security.saml.key.KeyManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -55,10 +59,11 @@ public class SAMLMessageHandler {
   private final IdpConfiguration idpConfiguration;
 
   private final List<ValidatorSuite> validatorSuites;
+  private final ProxiedSAMLContextProviderLB proxiedSAMLContextProviderLB;
 
   public SAMLMessageHandler(KeyManager keyManager, Collection<SAMLMessageDecoder> decoders,
                             SAMLMessageEncoder encoder, SecurityPolicyResolver securityPolicyResolver,
-                            IdpConfiguration idpConfiguration) {
+                            IdpConfiguration idpConfiguration, String idpBaseUrl) throws URISyntaxException {
     this.keyManager = keyManager;
     this.encoder = encoder;
     this.decoders = decoders;
@@ -67,10 +72,13 @@ public class SAMLMessageHandler {
     this.validatorSuites = asList(
       getValidatorSuite("saml2-core-schema-validator"),
       getValidatorSuite("saml2-core-spec-validator"));
+    this.proxiedSAMLContextProviderLB = new ProxiedSAMLContextProviderLB(new URI(idpBaseUrl));
   }
 
-  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException {
-    BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+  public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request, HttpServletResponse response, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MetadataProviderException {
+    SAMLMessageContext messageContext = new SAMLMessageContext();
+
+    proxiedSAMLContextProviderLB.populateGenericContext(request, response, messageContext);
 
     messageContext.setInboundMessageTransport(new HttpServletRequestAdapter(request));
     messageContext.setSecurityPolicyResolver(resolver);

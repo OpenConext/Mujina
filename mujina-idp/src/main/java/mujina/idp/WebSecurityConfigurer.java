@@ -2,6 +2,7 @@ package mujina.idp;
 
 import mujina.api.IdpConfiguration;
 import mujina.saml.KeyStoreLocator;
+import mujina.saml.ProxiedSAMLContextProviderLB;
 import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
@@ -27,6 +28,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLBootstrap;
+import org.springframework.security.saml.context.SAMLContextProvider;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -34,6 +36,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -58,9 +62,10 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   @Autowired
   public SAMLMessageHandler samlMessageHandler(@Value("${idp.clock_skew}") int clockSkew,
                                                @Value("${idp.expires}") int expires,
+                                               @Value("${idp.base_url}") String idpBaseUrl,
                                                IdpConfiguration idpConfiguration,
                                                JKSKeyManager keyManager)
-    throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException {
+    throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException, URISyntaxException {
     StaticBasicParserPool parserPool = new StaticBasicParserPool();
     BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
     securityPolicy.getPolicyRules().addAll(Arrays.asList(new IssueInstantRule(clockSkew, expires),
@@ -84,7 +89,8 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
       Arrays.asList(httpRedirectDeflateDecoder, httpPostDecoder),
       httpPostSimpleSignEncoder,
       new StaticSecurityPolicyResolver(securityPolicy),
-      idpConfiguration);
+      idpConfiguration,
+      idpBaseUrl);
   }
 
   @Bean

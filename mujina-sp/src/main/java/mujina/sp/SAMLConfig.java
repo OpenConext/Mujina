@@ -82,17 +82,6 @@ public class SAMLConfig {
   public HTTPPostBinding httpPostBinding(ParserPool parserPool, VelocityEngine velocityEngine) {
     HTTPPostEncoder encoder = new HTTPPostEncoder(velocityEngine, "/templates/saml2-post-binding.vm");
     HTTPPostDecoder decoder = new HTTPPostDecoder(parserPool);
-    if (environment.acceptsProfiles("test")) {
-      //Lenient URI comparision
-      URIComparator lenientURIComparator = (uri1, uri2) -> true;
-      decoder.setURIComparator(lenientURIComparator);
-      return new HTTPPostBinding(parserPool, decoder, encoder) {
-        @Override
-        public void getSecurityPolicy(List<SecurityPolicyRule> securityPolicy, SAMLMessageContext samlContext) {
-          //nope
-        }
-      };
-    }
     return new HTTPPostBinding(parserPool, decoder, encoder);
   }
 

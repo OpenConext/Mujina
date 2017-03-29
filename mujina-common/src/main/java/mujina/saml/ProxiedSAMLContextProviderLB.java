@@ -1,4 +1,4 @@
-package mujina.sp;
+package mujina.saml;
 
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.springframework.security.saml.context.SAMLContextProviderLB;
@@ -21,11 +21,9 @@ public class ProxiedSAMLContextProviderLB extends SAMLContextProviderLB {
     }
   }
 
-  //promoted public for testing purposes
   @Override
   public void populateGenericContext(HttpServletRequest request, HttpServletResponse response, SAMLMessageContext context) throws MetadataProviderException {
     super.populateGenericContext(request, response, context);
   }
-
 
 }
