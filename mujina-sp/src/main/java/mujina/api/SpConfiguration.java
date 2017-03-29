@@ -50,9 +50,10 @@ public class SpConfiguration extends SharedConfiguration {
     setEntityId(defaultEntityId, false);
     setNeedsSigning(defaultNeedsSigning);
     resetKeyStore(defaultEntityId, spPrivateKey, spCertificate);
-    idpSSOServiceURL = defaultIdpSSOServiceURL;
-    protocolBinding = defaultProtocolBinding;
-    assertionConsumerServiceURL = defaultAssertionConsumerServiceURL;
+    setIdpSSOServiceURL(defaultIdpSSOServiceURL);
+    setProtocolBinding(defaultProtocolBinding);
+    setAssertionConsumerServiceURL(defaultAssertionConsumerServiceURL);
+    setSignatureAlgorithm(getDefaultSignatureAlgorithm());
   }
 
 }

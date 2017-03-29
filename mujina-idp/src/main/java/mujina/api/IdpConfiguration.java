@@ -51,6 +51,7 @@ public class IdpConfiguration extends SharedConfiguration {
     resetUsers();
     setAcsEndpoint(null);
     setAuthenticationMethod(this.defaultAuthenticationMethod);
+    setSignatureAlgorithm(getDefaultSignatureAlgorithm());
   }
 
   private void resetUsers() {
@@ -71,7 +72,6 @@ public class IdpConfiguration extends SharedConfiguration {
     putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
     putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
     putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
-    putAttribute("urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1", "guest");
   }
 
   private void putAttribute(String key, String... values) {

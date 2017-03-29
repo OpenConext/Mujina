@@ -37,17 +37,20 @@ Features
   * signing certificate
   * entityID
   * ACS endpoint
+  * signature Algorithm
 
 - A SAML2-compliant Service Provider. The SP displays the attributes as these were received from an IdP. The REST api allows for the manipulation of:
   * entityID
   * signing certificate  
-  * sso Service URL
+  * SSO Service URL
+  * signature Algorithm
 
 Defaults
 --------
 The default Identity Provider configuration is as follows:
 
 * The Entity ID is "http://mock-idp"
+* The signatureAlgorithm is "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
 * It has the following attributes. Attributes are always stored as lists. Even when they contain a single value.
@@ -59,14 +62,14 @@ The default Identity Provider configuration is as follows:
     * "urn:mace:dir:attribute-def:mail" is "j.doe@example.com"
     * "urn:mace:terena.org:attribute-def:schacHomeOrganization" is "example.com"
     * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
-    * "urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1" is "guest"
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
-  If the ACS endpoint is set using the IdP api this is not neccesary. Use of the api overrides values set in AuthnRequests
+  If the ACS endpoint is set using the IdP api this is not necessary. Use of the api overrides values set in AuthnRequests
 
 The default Service Provider configuration is as follows:
 
 * The Entity ID is "http://mock-sp"
+* The signatureAlgorithm is "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 * There is a default certificate and private key available
 
 In this document you will find some examples for overriding the default configuration.
@@ -167,9 +170,21 @@ This API is available on both the IDP and the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '"myEntityId"' \
+        -X PUT -d "myEntityId" \
         http://localhost:8080/api/entityid
 ```
+
+Setting the Signature Algorithm
+-------------
+
+This API is available on both the IDP and the SP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d "http://www.w3.org/2000/09/xmldsig#rsa-sha1" \
+        http://localhost:9090/api/signatureAlgorithm
+```        
 
 Changing the signing credentials (Both IDP and SP)
 --------------------------------
@@ -253,7 +268,7 @@ This API is only available on the IDP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '"ALL"' \
+        -X PUT -d "ALL" \
         http://localhost:8080/api/authmethod
 ```
 
@@ -263,7 +278,7 @@ Setting the Assertion Consumer Service (ACS) endpoint
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '"https://my_sp.no:443/acsendpoint_path"' \
+        -X PUT -d "https://my_sp.no:443/acsendpoint_path" \
         http://localhost:8080/api/acsendpoint
 ```
 
@@ -291,6 +306,6 @@ This API is only available on the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '"http://localhost:8080/SingleSignOnService/vo:test"' \
+        -X PUT -d "http://localhost:8080/SingleSignOnService/vo:test" \
         http://localhost:9090/api/ssoServiceURL
 ```

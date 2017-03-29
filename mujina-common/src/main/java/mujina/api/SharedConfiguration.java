@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import mujina.saml.KeyStoreLocator;
+import org.opensaml.xml.Configuration;
+import org.opensaml.xml.security.BasicSecurityConfiguration;
+import org.opensaml.xml.signature.SignatureConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.saml.key.JKSKeyManager;
@@ -24,7 +27,8 @@ public abstract class SharedConfiguration {
   private JKSKeyManager keyManager;
   private String keystorePassword = "secret";
   private boolean needsSigning;
-  private String signatureAlgorithm = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+  private String defaultSignatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
+  private String signatureAlgorithm;
   private String entityId;
 
   public SharedConfiguration(JKSKeyManager keyManager) {
@@ -72,4 +76,8 @@ public abstract class SharedConfiguration {
     }
   }
 
+  public void setSignatureAlgorithm(String signatureAlgorithm) {
+    this.signatureAlgorithm = signatureAlgorithm;
+    BasicSecurityConfiguration.class.cast(Configuration.getGlobalSecurityConfiguration()).registerSignatureAlgorithmURI("RSA", signatureAlgorithm);
+  }
 }

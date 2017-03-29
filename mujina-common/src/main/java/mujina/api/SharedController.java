@@ -41,6 +41,12 @@ public class SharedController {
     configuration.setNeedsSigning(needsSigning);
   }
 
+  @PutMapping("/signatureAlgorithm")
+  public void setSignatureAlgorithm(@RequestBody String signatureAlgorithm) {
+    LOG.debug("Request to set signatureAlgorithm to {}", signatureAlgorithm);
+    configuration.setSignatureAlgorithm(signatureAlgorithm);
+  }
+
   @GetMapping("/configuration")
   public SharedConfiguration conf() {
     LOG.debug("Request to receive configuration");

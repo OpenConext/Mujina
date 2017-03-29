@@ -93,11 +93,6 @@
         <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">example.com
         </saml2:AttributeValue>
       </saml2:Attribute>
-      <saml2:Attribute Name="urn:oid:1.3.6.1.4.1.1076.20.100.10.10.1"
-                       NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
-        <saml2:AttributeValue xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">guest
-        </saml2:AttributeValue>
-      </saml2:Attribute>
     </saml2:AttributeStatement>
   </saml2:Assertion>
 </saml2p:Response>
