@@ -4,13 +4,25 @@ import mujina.api.SpConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.common.SAMLException;
+import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.saml2.binding.decoding.HTTPPostDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostEncoder;
+import org.opensaml.saml2.core.Assertion;
+import org.opensaml.saml2.core.AuthnRequest;
+import org.opensaml.ws.security.SecurityPolicyRule;
+import org.opensaml.xml.encryption.DecryptionException;
 import org.opensaml.xml.parse.ParserPool;
+import org.opensaml.xml.security.SecurityException;
+import org.opensaml.xml.signature.Signature;
+import org.opensaml.xml.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.saml.SAMLBootstrap;
+import org.springframework.security.saml.context.SAMLMessageContext;
 import org.springframework.security.saml.log.SAMLDefaultLogger;
 import org.springframework.security.saml.processor.HTTPArtifactBinding;
 import org.springframework.security.saml.processor.HTTPPAOS11Binding;
@@ -30,6 +42,7 @@ import org.springframework.security.saml.websso.WebSSOProfileImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Typically this should all be done by default convention in the Spring SAML library,
@@ -38,6 +51,9 @@ import java.util.Collection;
  */
 @Configuration
 public class SAMLConfig {
+
+  @Autowired
+  private Environment environment;
 
   @Bean
   public MultiThreadedHttpConnectionManager multiThreadedHttpConnectionManager() {
@@ -65,7 +81,19 @@ public class SAMLConfig {
   @Autowired
   public HTTPPostBinding httpPostBinding(ParserPool parserPool, VelocityEngine velocityEngine) {
     HTTPPostEncoder encoder = new HTTPPostEncoder(velocityEngine, "/templates/saml2-post-binding.vm");
-    return new HTTPPostBinding(parserPool, new HTTPPostDecoder(parserPool), encoder);
+    HTTPPostDecoder decoder = new HTTPPostDecoder(parserPool);
+    if (environment.acceptsProfiles("test")) {
+      //Lenient URI comparision
+      URIComparator lenientURIComparator = (uri1, uri2) -> true;
+      decoder.setURIComparator(lenientURIComparator);
+      return new HTTPPostBinding(parserPool, decoder, encoder) {
+        @Override
+        public void getSecurityPolicy(List<SecurityPolicyRule> securityPolicy, SAMLMessageContext samlContext) {
+          //nope
+        }
+      };
+    }
+    return new HTTPPostBinding(parserPool, decoder, encoder);
   }
 
   @Bean
@@ -113,7 +141,15 @@ public class SAMLConfig {
 
   @Bean
   public WebSSOProfileConsumer webSSOprofileConsumer() {
-    WebSSOProfileConsumerImpl webSSOProfileConsumer = new WebSSOProfileConsumerImpl();
+    WebSSOProfileConsumerImpl webSSOProfileConsumer = environment.acceptsProfiles("test") ?
+      new WebSSOProfileConsumerImpl() {
+        @Override
+        protected void verifyAssertion(Assertion assertion, AuthnRequest request, SAMLMessageContext context) throws AuthenticationException, SAMLException, org.opensaml.xml.security.SecurityException, ValidationException, DecryptionException {
+          //nope
+          context.setSubjectNameIdentifier(assertion.getSubject().getNameID());
+        }
+      } : new WebSSOProfileConsumerImpl();
+      //verifyAssertionSignature;
     webSSOProfileConsumer.setResponseSkew(15 * 60);
     return webSSOProfileConsumer;
   }

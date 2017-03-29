@@ -11,7 +11,7 @@ public class UserController {
 
   @GetMapping("/")
   public String index(Authentication authentication) {
-    return authentication == null || authentication instanceof AnonymousAuthenticationToken ? "index" : "redirect:/user.html";
+    return authentication == null ? "index" : "redirect:/user.html";
   }
 
   @GetMapping("/user.html")

@@ -35,13 +35,13 @@ public class SpConfiguration extends SharedConfiguration {
                          @Value("${sp.certificate}") String spCertificate,
                          @Value("${sp.needs_signing}") boolean needsSigning) {
     super(keyManager);
-    this.defaultEntityId = defaultEntityId;
-    this.defaultIdpSSOServiceURL = defaultIdpSSOServiceURL;
-    this.defaultAssertionConsumerServiceURL = spBaseUrl + defaultAssertionConsumerServiceURLPath;
-    this.defaultProtocolBinding = defaultProtocolBinding;
-    this.spPrivateKey = spPrivateKey;
-    this.spCertificate = spCertificate;
-    this.defaultNeedsSigning = needsSigning;
+    this.setDefaultEntityId(defaultEntityId);
+    this.setDefaultIdpSSOServiceURL(defaultIdpSSOServiceURL);
+    this.setDefaultAssertionConsumerServiceURL(spBaseUrl + defaultAssertionConsumerServiceURLPath);
+    this.setDefaultProtocolBinding(defaultProtocolBinding);
+    this.setSpPrivateKey(spPrivateKey);
+    this.setSpCertificate(spCertificate);
+    this.setDefaultNeedsSigning(needsSigning);
     reset();
   }
 

@@ -1,6 +1,5 @@
 package mujina.idp;
 
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,7 +10,7 @@ public class UserController {
 
   @GetMapping("/")
   public String index(Authentication authentication) {
-    return authentication == null || authentication instanceof AnonymousAuthenticationToken ? "index" : "redirect:/user.html";
+    return authentication == null ? "index" : "redirect:/user.html";
   }
 
   @GetMapping("/user.html")
