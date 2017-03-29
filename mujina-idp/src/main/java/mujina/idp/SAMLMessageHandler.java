@@ -116,7 +116,7 @@ public class SAMLMessageHandler {
     signAssertion(assertion, signingCredential);
 
     authResponse.getAssertions().add(assertion);
-    authResponse.setDestination( principal.getAssertionConsumerServiceURL());
+    authResponse.setDestination(principal.getAssertionConsumerServiceURL());
 
     authResponse.setStatus(status);
 

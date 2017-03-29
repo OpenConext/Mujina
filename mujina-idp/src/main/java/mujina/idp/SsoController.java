@@ -4,7 +4,6 @@ import mujina.api.IdpConfiguration;
 import mujina.saml.SAMLAttribute;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
-import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.NameIDType;
 import org.opensaml.ws.message.decoder.MessageDecodingException;

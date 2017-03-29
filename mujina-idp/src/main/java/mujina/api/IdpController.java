@@ -1,30 +1,22 @@
 package mujina.api;
 
-import mujina.api.SharedController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
 @RestController
-@RequestMapping(path = "/api" ,consumes = "application/json")
+@RequestMapping(path = "/api", consumes = "application/json")
 public class IdpController extends SharedController {
 
   @Autowired
@@ -38,7 +30,7 @@ public class IdpController extends SharedController {
     configuration().setAttributes(attributes);
   }
 
-  @PutMapping("/attributes/{name:.+}" )
+  @PutMapping("/attributes/{name:.+}")
   public void setAttribute(@PathVariable String name, @RequestBody List<String> values) {
     LOG.debug("Request to set attribute {} to {}", name, values);
     configuration().getAttributes().put(name, values);

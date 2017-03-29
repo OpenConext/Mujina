@@ -260,8 +260,6 @@ curl -v -H "Accept: application/json" \
 Setting the Assertion Consumer Service (ACS) endpoint
 ---------------------------------
 
-This API is only available on the IDP.
-
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
@@ -274,8 +272,13 @@ The authentication method API has two possible values.
 * USER
 * ALL
 
-The default setting is USER.
-This setting requires a valid user to be known in Mujina's IdP.
+The setting is configurable in the application.yml
+```
+# Authentication method ALL for every username / password combination and USER for the configured users
+auth_method: USER
+```
+
+The USER setting requires a valid user to be known in Mujina's IdP and the ALL accepts everything.
 
 The ALL setting allows any username and password combination.
 As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the username each time a user logs in.

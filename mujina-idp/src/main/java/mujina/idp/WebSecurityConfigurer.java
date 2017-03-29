@@ -8,10 +8,8 @@ import org.opensaml.common.binding.security.MessageReplayRule;
 import org.opensaml.saml2.binding.decoding.HTTPPostDecoder;
 import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
-import org.opensaml.saml2.binding.encoding.HTTPRedirectDeflateEncoder;
 import org.opensaml.util.storage.MapBasedStorageService;
 import org.opensaml.util.storage.ReplayCache;
-import org.opensaml.ws.security.SecurityPolicyResolver;
 import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
 import org.opensaml.xml.parse.StaticBasicParserPool;
@@ -30,7 +28,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.key.JKSKeyManager;
-import org.springframework.security.saml.key.KeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -74,7 +71,9 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
 
     if (environment.acceptsProfiles("test")) {
       //Lenient URI comparision
-      httpRedirectDeflateDecoder.setURIComparator((uri1, uri2) -> true);
+      URIComparator lenientURIComparator = (uri1, uri2) -> true;
+      httpRedirectDeflateDecoder.setURIComparator(lenientURIComparator);
+      httpPostDecoder.setURIComparator(lenientURIComparator);
     }
 
     parserPool.initialize();

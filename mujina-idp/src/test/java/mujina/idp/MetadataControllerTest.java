@@ -7,7 +7,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.config.RestAssuredConfig.newConfig;
 import static io.restassured.config.XmlConfig.xmlConfig;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
 
 public class MetadataControllerTest extends AbstractIntegrationTest {
 
@@ -15,7 +15,7 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
   public void metadata() throws Exception {
     given()
       .config(newConfig()
-        .xmlConfig(xmlConfig().declareNamespace("md","urn:oasis:names:tc:SAML:2.0:metadata")))
+        .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
       .header("Content-Type", "application/xml")
       .get("/metadata")
       .then()

@@ -2,7 +2,6 @@ package mujina.api;
 
 import lombok.Getter;
 import lombok.Setter;
-import mujina.api.SharedConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,11 +55,10 @@ public class IdpConfiguration extends SharedConfiguration {
 
   private void resetUsers() {
     users.clear();
-    UsernamePasswordAuthenticationToken admin = new UsernamePasswordAuthenticationToken("admin", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
-      new SimpleGrantedAuthority("ROLE_ADMIN")));
-    UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken("user", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
-    users.add(admin);
-    users.add(user);
+    users.addAll(Arrays.asList(
+      new UsernamePasswordAuthenticationToken("admin", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+        new SimpleGrantedAuthority("ROLE_ADMIN"))),
+      new UsernamePasswordAuthenticationToken("user", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")))));
   }
 
   private void resetAttributes() {

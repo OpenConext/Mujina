@@ -8,11 +8,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static io.restassured.RestAssured.given;
-import static mujina.api.AuthenticationMethod.ALL;
 import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.*;
 
 @TestPropertySource(properties = {"idp.expires:" + (Integer.MAX_VALUE / 2 - 1), "idp.clock_skew: " + (Integer.MAX_VALUE / 2 - 1)})
 @ActiveProfiles(profiles = "test")

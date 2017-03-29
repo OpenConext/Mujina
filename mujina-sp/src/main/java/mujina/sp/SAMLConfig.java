@@ -19,7 +19,6 @@ import org.springframework.security.saml.processor.HTTPRedirectDeflateBinding;
 import org.springframework.security.saml.processor.HTTPSOAP11Binding;
 import org.springframework.security.saml.processor.SAMLBinding;
 import org.springframework.security.saml.processor.SAMLProcessor;
-import org.springframework.security.saml.processor.SAMLProcessorImpl;
 import org.springframework.security.saml.websso.ArtifactResolutionProfile;
 import org.springframework.security.saml.websso.ArtifactResolutionProfileImpl;
 import org.springframework.security.saml.websso.WebSSOProfile;
@@ -51,8 +50,8 @@ public class SAMLConfig {
   }
 
   private HTTPArtifactBinding artifactBinding(ParserPool parserPool,
-                                             VelocityEngine velocityEngine,
-                                             ArtifactResolutionProfile artifactResolutionProfile) {
+                                              VelocityEngine velocityEngine,
+                                              ArtifactResolutionProfile artifactResolutionProfile) {
     return new HTTPArtifactBinding(parserPool, velocityEngine, artifactResolutionProfile);
   }
 

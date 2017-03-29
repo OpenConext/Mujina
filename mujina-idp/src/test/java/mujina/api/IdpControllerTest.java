@@ -13,7 +13,10 @@ import static mujina.api.AuthenticationMethod.ALL;
 import static mujina.api.AuthenticationMethod.USER;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class IdpControllerTest extends AbstractIntegrationTest {
 

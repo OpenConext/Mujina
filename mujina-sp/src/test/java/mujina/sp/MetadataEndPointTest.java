@@ -15,7 +15,7 @@ public class MetadataEndPointTest extends AbstractIntegrationTest {
   public void metadata() throws Exception {
     given()
       .config(newConfig()
-        .xmlConfig(xmlConfig().declareNamespace("md","urn:oasis:names:tc:SAML:2.0:metadata")))
+        .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
       .header("Content-Type", "application/xml")
       .get("/metadata")
       .then()
