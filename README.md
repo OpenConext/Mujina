@@ -7,7 +7,7 @@
               _/ |
              |__/
 
-  Configurable Identity and Service Provider build with OpenSAML & Java Spring Boot
+  Configurable Identity and Service Provider built with OpenSAML & Java Spring Boot
 </pre>
 
 Mujina
