@@ -84,19 +84,6 @@ public class IdpControllerTest extends AbstractIntegrationTest {
     assertEquals(acs, idpConfiguration.getAcsEndpoint());
   }
 
-  @Test
-  public void configuration() throws Exception {
-    given()
-      .header("Content-Type", "application/json")
-      .get("/api/configuration")
-      .then()
-      .statusCode(SC_OK)
-      .body("needsSigning", equalTo(idpConfiguration.isNeedsSigning()))
-      .body("signatureAlgorithm", equalTo(idpConfiguration.getSignatureAlgorithm()))
-      .body("entityId", equalTo(idpConfiguration.getEntityId()))
-      .body("authenticationMethod", equalTo(idpConfiguration.getAuthenticationMethod().name()));
-  }
-
   private void api(Object body, String path) {
     given()
       .body(body)

@@ -34,19 +34,6 @@ public class SpControllerTest extends AbstractIntegrationTest {
     assertEquals(assertionConsumerServiceURL, spConfiguration.getAssertionConsumerServiceURL());
   }
 
-  @Test
-  public void configuration() throws Exception {
-    given()
-      .header("Content-Type", "application/json")
-      .get("/api/configuration")
-      .then()
-      .statusCode(SC_OK)
-      .body("idpSSOServiceURL", equalTo(spConfiguration.getIdpSSOServiceURL()))
-      .body("protocolBinding", equalTo(spConfiguration.getProtocolBinding()))
-      .body("entityId", equalTo(spConfiguration.getEntityId()))
-      .body("assertionConsumerServiceURL", equalTo(spConfiguration.getAssertionConsumerServiceURL()));
-  }
-
   private void api(Object body, String path) {
     given()
       .body(body)

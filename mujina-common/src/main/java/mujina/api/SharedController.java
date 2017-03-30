@@ -47,9 +47,4 @@ public class SharedController {
     configuration.setSignatureAlgorithm(signatureAlgorithm);
   }
 
-  @GetMapping("/configuration")
-  public SharedConfiguration conf() {
-    LOG.debug("Request to receive configuration");
-    return configuration;
-  }
 }

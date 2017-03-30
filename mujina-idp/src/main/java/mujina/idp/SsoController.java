@@ -22,7 +22,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
 @Controller
@@ -55,13 +59,21 @@ public class SsoController {
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
       NameIDType.UNSPECIFIED,
-      idpConfiguration.getAttributes().entrySet().stream().map(entry -> new SAMLAttribute(entry.getKey(), entry.getValue())).collect(toList()),
+      attributes(authentication.getName()),
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
       assertionConsumerServiceURL,
       messageContext.getRelayState());
 
     samlMessageHandler.sendAuthnResponse(principal, response);
+  }
+
+  private List<SAMLAttribute> attributes(String uid) {
+    return idpConfiguration.getAttributes().entrySet().stream()
+      .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
+        new SAMLAttribute(entry.getKey(), singletonList(uid)) :
+        new SAMLAttribute(entry.getKey(), entry.getValue()))
+      .collect(toList());
   }
 
 }
