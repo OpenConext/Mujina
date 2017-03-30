@@ -17,6 +17,7 @@ import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -79,9 +80,12 @@ public class SAMLConfig {
 
   @Bean
   @Autowired
-  public HTTPPostBinding httpPostBinding(ParserPool parserPool, VelocityEngine velocityEngine) {
+  public HTTPPostBinding httpPostBinding(ParserPool parserPool, VelocityEngine velocityEngine, @Value("${sp.compare_endpoints}") boolean compareEndpoints) {
     HTTPPostEncoder encoder = new HTTPPostEncoder(velocityEngine, "/templates/saml2-post-binding.vm");
     HTTPPostDecoder decoder = new HTTPPostDecoder(parserPool);
+    if (!compareEndpoints) {
+      decoder.setURIComparator((uri1, uri2) -> true);
+    }
     return new HTTPPostBinding(parserPool, decoder, encoder);
   }
 
@@ -107,11 +111,12 @@ public class SAMLConfig {
   @Bean
   public SAMLProcessor processor(VelocityEngine velocityEngine,
                                  ParserPool parserPool,
-                                 SpConfiguration spConfiguration) {
+                                 SpConfiguration spConfiguration,
+                                 @Value("${sp.compare_endpoints}") boolean compareEndpoints) {
     ArtifactResolutionProfile artifactResolutionProfile = new ArtifactResolutionProfileImpl(httpClient());
     Collection<SAMLBinding> bindings = new ArrayList<>();
     bindings.add(httpRedirectDeflateBinding(parserPool));
-    bindings.add(httpPostBinding(parserPool, velocityEngine));
+    bindings.add(httpPostBinding(parserPool, velocityEngine, compareEndpoints));
     bindings.add(artifactBinding(parserPool, velocityEngine, artifactResolutionProfile));
     bindings.add(httpSOAP11Binding(parserPool));
     bindings.add(httpPAOS11Binding(parserPool));
@@ -138,7 +143,6 @@ public class SAMLConfig {
           context.setSubjectNameIdentifier(assertion.getSubject().getNameID());
         }
       } : new WebSSOProfileConsumerImpl();
-      //verifyAssertionSignature;
     webSSOProfileConsumer.setResponseSkew(15 * 60);
     return webSSOProfileConsumer;
   }

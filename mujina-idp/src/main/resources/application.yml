@@ -30,6 +30,8 @@ idp:
   expires: 300
   # Authentication method ALL for every username / password combination and USER for the configured users
   auth_method: USER
+  # Are endpoints compared. If so then pay notice to the base_url when behind a load balancer
+  compare_endpoints: true
 
 spring:
   mvc:

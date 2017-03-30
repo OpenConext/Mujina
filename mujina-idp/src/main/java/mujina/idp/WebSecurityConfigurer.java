@@ -63,6 +63,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   public SAMLMessageHandler samlMessageHandler(@Value("${idp.clock_skew}") int clockSkew,
                                                @Value("${idp.expires}") int expires,
                                                @Value("${idp.base_url}") String idpBaseUrl,
+                                               @Value("${idp.compare_endpoints}") boolean compareEndpoints,
                                                IdpConfiguration idpConfiguration,
                                                JKSKeyManager keyManager)
     throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException, URISyntaxException {
@@ -73,6 +74,11 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
 
     HTTPRedirectDeflateDecoder httpRedirectDeflateDecoder = new HTTPRedirectDeflateDecoder(parserPool);
     HTTPPostDecoder httpPostDecoder = new HTTPPostDecoder(parserPool);
+    if (!compareEndpoints) {
+      URIComparator noopComparator = (uri1, uri2) -> true;
+      httpPostDecoder.setURIComparator(noopComparator);
+      httpRedirectDeflateDecoder.setURIComparator(noopComparator);
+    }
 
     parserPool.initialize();
     HTTPPostSimpleSignEncoder httpPostSimpleSignEncoder = new HTTPPostSimpleSignEncoder(VelocityFactory.getEngine(), "/templates/saml2-post-simplesign-binding.vm", true);
