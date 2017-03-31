@@ -6,3 +6,4 @@ target/
 .classpath
 .project
 .settings
+application.t03.yml
