@@ -22,7 +22,7 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
       .statusCode(SC_OK)
       .body(
         "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
-        equalTo("http://localhost:8080/SingleSignOnService"));
+        equalTo("http://localhost:" + serverPort + "/SingleSignOnService"));
   }
 
 }
