@@ -2,6 +2,7 @@ package mujina.idp;
 
 import mujina.api.IdpConfiguration;
 import mujina.saml.ProxiedSAMLContextProviderLB;
+import mujina.saml.SAMLBuilder;
 import mujina.saml.SAMLPrincipal;
 import org.joda.time.DateTime;
 import org.opensaml.common.SAMLObject;
@@ -115,7 +116,7 @@ public class SAMLMessageHandler {
     Issuer issuer = buildIssuer(entityId);
 
     authResponse.setIssuer(issuer);
-    authResponse.setID(UUID.randomUUID().toString());
+    authResponse.setID(SAMLBuilder.randomSAMLId());
     authResponse.setIssueInstant(new DateTime());
     authResponse.setInResponseTo(principal.getRequestID());
 

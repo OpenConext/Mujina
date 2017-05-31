@@ -1,6 +1,7 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
+import mujina.saml.SAMLBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
 import org.opensaml.common.xml.SAMLConstants;
@@ -53,7 +54,7 @@ public class MetadataController {
   public String metadata() throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
     EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
     entityDescriptor.setEntityID(idpConfiguration.getEntityId());
-    entityDescriptor.setID(UUID.randomUUID().toString());
+    entityDescriptor.setID(SAMLBuilder.randomSAMLId());
     entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
 
     Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);

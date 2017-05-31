@@ -114,7 +114,7 @@ public class SAMLBuilder {
 
     assertion.getAttributeStatements().add(buildAttributeStatement(principal.getAttributes()));
 
-    assertion.setID(UUID.randomUUID().toString());
+    assertion.setID(randomSAMLId());
     assertion.setIssueInstant(new DateTime());
 
     return assertion;
@@ -153,6 +153,10 @@ public class SAMLBuilder {
       }
     }
     return Optional.empty();
+  }
+
+  public static String randomSAMLId() {
+    return "_" + UUID.randomUUID().toString();
   }
 
   private static AuthnStatement buildAuthnStatement(DateTime authnInstant, String entityID) {
