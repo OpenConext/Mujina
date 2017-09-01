@@ -78,9 +78,10 @@ public class MetadataController {
     idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
 
     String localPort = environment.getProperty("local.server.port");
-    
+    String localAddress = environment.getProperty("server.address");
+
     SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
-    singleSignOnService.setLocation("http://localhost:" + localPort + "/SingleSignOnService");
+    singleSignOnService.setLocation("http://" + localAddress + ":" + localPort + "/SingleSignOnService");
     singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 
     idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);

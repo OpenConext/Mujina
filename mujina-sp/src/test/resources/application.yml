@@ -3,10 +3,8 @@ logging:
   config: classpath:logback.xml
 
 server:
-  # The ip address that the IDP is running on
-  address: 10.1.10.80
   # The port to where this Spring Boot application listens to. e.g. http://localhost:{{ springapp_tcpport }}
-  port: 8080
+  port: 9090
   # The context path of the server. You can skip this value in the overriding application.yml on the classpath
   contextPath:
   session:
@@ -15,30 +13,32 @@ server:
     cookie:
       secure: false
 
-# Identity Provider
-idp:
-  entity_id: http://mock-idp
+sp:
   # base url
-  base_url: http://10.1.10.80:8080
+  base_url: http://localhost:9090
+  # Entity ID of the SP
+  entity_id: http://mock-sp
   # Private key used to sign the SAML response
   private_key: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDev3DSWTYAS8ZC95DnoWNzo9BZDmweOLoU9PuSXXPPPjrUTBlS1ivmvkN4P107V2KWZVS0ZnX48bncNR0VoLHZ0cmARZh/BtBKGOcF0aEwMNuAM9RFRuWnmLfKpn9ACtYOYpwVomZKoj+AJgFleUkm1k9ItiCKOiYk5NCB9+W7ePovYaoUqlG9aHMbIjQypT6CFPahLx6XfN5Xj+ujHQOldqQPtWEyoy8BH9TT3DGMCC1QXM1rOtgDnzmOOfEvzSJ/ZiTc23dPNwKLEl54wPP7iSfdvdD3t5o8ywf/675NBUt8aGWMV1y+HN3Z2/loh0N0ZSuIwohq8KWGysJy1GIHAgMBAAECggEABMS+apJkWI9GuEpKfNr0oRYhsLZhVChMu4QfGpwLjaU8Zy0V4bMaD3+FPD7HBS0yvBuBO7dx0RmDrBYrADqHdC1MjgVvZVDFBsEPuQ0q0ThKiq0RX0ZMRlE7pgf4c2uH95je1Iu8et6MU3b80qpNCZrO6bSUb8Ec7e9EE3Q2I9RB9VqKhw1WZdq6EkUP7BvFPZblklMBkBI0XLJ6SPuQvPcQnKTngq+9lOoS7vev9foj1HVpsaJEJ/k8VAsrTldivibZJYSDF5ATy2CsdZunPmTsZ8stD5upDhtgf3TEyhIvh20tg+e/Voyt2BLjayLo1T5+Wqb9C13d1LGbNQQZeQKBgQDw1KBHa5uGr54lIZy5TkM8+8tMaCOjux7Q/QbP8/zFYDGkTV/zkqFND5QYQWC8sCPNOBTuLtHnq3GCC5MV/2knHIaAzeE73hUpGJWLORaXNcp0C2AzZN+H7VblT9J9Ai/K5iFEg56aEIf2fMSkn2KMxiV7QGSh6IkBHpNMMepHxQKBgQDsxztLYQIe9AouaJ5xX2vLoaHy/IsLXCLapWA9LIHp39qyz73z/qlWa3794zOT8H4MDRsj1bBSSPZf4CqIcE9ZE2Sar5wmoIrifM2BRR5wGu0V25C7iZbPY0N9OLeXQ1uBYz2mxD+9soFO3fYIU/C3YesY/dusyQkWtgzIbqhTWwKBgQDRLh45asIf7pJSdiuG2O+WHK6soxexs2pE5EHyhl5bof38VCivjAEGyi08FC1ON0AhlEC50XkI3OUuq5cKWFqhWimJ30lvkqqWk3/w+Zkhpds/iFH60fdGPWRosTiG1Etm1RS4SgqMjydJdX3n73jOBZ2wvHGsICpACqquV/zCcQKBgClKsU968mi9fE0Nl5wD3QOdA2Yhnonznmxs7LSeX2WO0U/fpKu5XISiqHnUNnl1NjYZzwLX0DD5YmXj7ObwVxYcqK3FNEEUPEQ1KY2CpUU9nNzz9nCOFQvDrtBWpMWvTHTq/qRnkwoc6Cn90VswcEk6vUoVc0rVoE0ioGYPzjEDAoGAFl9Bw9pBm6rLYMhR9LplI0eXK0zbyycMPypr0u8zADjF3MDv8eY52uJSAPwXw9CBPXgaguMKfeo2pKXdRefTJxpUonowT/Kwy5d8NlQ0/gXgx/eq9ciUudk8Fs+0aZ8Q4WXGoZIlywUeaijKZFdPmozH9nIoAz3mQYF+t1q8o9k=
   # Public certificate to verify the signature of the SAML response
   certificate: MIIDJzCCAg+gAwIBAgIJALnU9maqZ5LTMA0GCSqGSIb3DQEBCwUAMCoxKDAmBgNVBAoMH2NlcmVicm9kYXRhLCBDTj1jZXJlYnJvZGF0YS5jb20wHhcNMTcwODMwMTgyMTA3WhcNMjcwODMwMTgyMTA3WjAqMSgwJgYDVQQKDB9jZXJlYnJvZGF0YSwgQ049Y2VyZWJyb2RhdGEuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3r9w0lk2AEvGQveQ56Fjc6PQWQ5sHji6FPT7kl1zzz461EwZUtYr5r5DeD9dO1dilmVUtGZ1+PG53DUdFaCx2dHJgEWYfwbQShjnBdGhMDDbgDPURUblp5i3yqZ/QArWDmKcFaJmSqI/gCYBZXlJJtZPSLYgijomJOTQgfflu3j6L2GqFKpRvWhzGyI0MqU+ghT2oS8el3zeV4/rox0DpXakD7VhMqMvAR/U09wxjAgtUFzNazrYA585jjnxL80if2Yk3Nt3TzcCixJeeMDz+4kn3b3Q97eaPMsH/+u+TQVLfGhljFdcvhzd2dv5aIdDdGUriMKIavClhsrCctRiBwIDAQABo1AwTjAdBgNVHQ4EFgQUADxZftDVTne3VbtIZvgywHP2fCgwHwYDVR0jBBgwFoAUADxZftDVTne3VbtIZvgywHP2fCgwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAl5dB+X5Zn2jTKZ4MxKGJ4j/T1TnEMbGObCsFQP2izU/djuR3UpzYImauMY7PAWotUMzTu58acghAOcISyxokHOb4JsGHtpRuvGQoYXzsYkIqGohUQBRjBGT8ZB9CKLd28S+xv9oPAhENvm41LNQhwI8ZUvQzZmbBXilNl/Ng+uMae1dCH5HHbJ3aDXtLdwTgu1wlAyUzZ5NgBV/c0NHMdmgd/nPPauigH4R9X91Rg5RMS3mEd2GAaqjqV/5UgYS05Jq+vdsMCS4fx9fKh0fOoRuxWKFW8Zcg9JeAUhdlyD9CJUj3rMI9ne11scUWJIvHafX+tBVJD+C01Hf7U8eZlQ==
   # Passphrase of the keystore
   passphrase: secret
-  # The number of seconds before a lower time bound, or after an upper time bound, to consider still acceptable
-  clock_skew: 300
-  # Number of seconds after a message issue instant after which the message is considered expired
-  expires: 300
-  # Authentication method ALL for every username / password combination and USER for the configured users
-  auth_method: USER
+  # Resource URL for the idp metadata
+  idp_metadata_url: classpath:metadata/mujina.local.idp.metadata.xml
+  # SingleSignOnServiceLocation
+  single_sign_on_service_location: http://localhost:8080/SingleSignOnService
+  # ACS location
+  acs_location_path: /saml/SSO
+  # Protocol binding
+  protocol_binding: urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+  # Do we sign the authnRequest
+  needs_signing: true
   # Are endpoints compared. If so then pay notice to the base_url when behind a load balancer
   compare_endpoints: true
 
+
 spring:
-  mvc:
-    favicon:
-      enabled: false
   velocity:
     check-template-location: False
 
