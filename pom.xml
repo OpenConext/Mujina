@@ -19,7 +19,7 @@
 
   <groupId>org.openconext</groupId>
   <artifactId>mujina</artifactId>
-  <version>5.0.7-SNAPSHOT</version>
+  <version>5.0.7</version>
   <packaging>pom</packaging>
 
   <properties>
