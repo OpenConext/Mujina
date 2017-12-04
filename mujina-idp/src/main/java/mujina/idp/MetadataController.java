@@ -78,12 +78,18 @@ public class MetadataController {
     idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
 
     String localPort = environment.getProperty("local.server.port");
-    
+
     SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
     singleSignOnService.setLocation("http://localhost:" + localPort + "/SingleSignOnService");
     singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 
     idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
+
+    SingleSignOnService singleSignOnService2 = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
+    singleSignOnService2.setLocation("http://localhost:" + localPort + "/SingleSignOnService");
+    singleSignOnService2.setBinding(SAMLConstants.SAML2_POST_BINDING_URI);
+
+    idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService2);
 
     X509KeyInfoGeneratorFactory keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
     keyInfoGeneratorFactory.setEmitEntityCertificate(true);

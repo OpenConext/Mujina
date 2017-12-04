@@ -58,7 +58,7 @@ public class SsoController {
 
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
-      NameIDType.UNSPECIFIED,
+      authentication.getName().contains("@") ? NameIDType.EMAIL : NameIDType.UNSPECIFIED,
       attributes(authentication.getName()),
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
