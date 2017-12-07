@@ -57,7 +57,6 @@ public class SAMLBuilder {
     subjectConfirmationData.setRecipient(recipient);
     subjectConfirmationData.setInResponseTo(inResponseTo);
     subjectConfirmationData.setNotOnOrAfter(new DateTime().plusMinutes(8 * 60));
-    //subjectConfirmationData.setAddress(recipient);
 
     subjectConfirmation.setSubjectConfirmationData(subjectConfirmationData);
 

@@ -58,19 +58,13 @@ public class IdpConfiguration extends SharedConfiguration {
   private void resetUsers() {
     users.clear();
     users.addAll(Arrays.asList(
-        new UsernamePasswordAuthenticationToken("admin", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
-            new SimpleGrantedAuthority("ROLE_ADMIN"))),
-        new UsernamePasswordAuthenticationToken("j.doe@example.com", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
-            new SimpleGrantedAuthority("ROLE_ADMIN"))),
+      new UsernamePasswordAuthenticationToken("admin", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+        new SimpleGrantedAuthority("ROLE_ADMIN"))),
       new UsernamePasswordAuthenticationToken("user", "secret", Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")))));
   }
 
   private void resetAttributes() {
     attributes.clear();
-    putAttribute("urn:oid:2.5.4.3", "Jon");
-    putAttribute("urn:oid:0.9.2342.19200300.100.1.3", "j.doe@example.com");
-    putAttribute("urn:oid:2.16.840.1.113730.3.1.241", "Jonathan Doe");
-
     putAttribute("urn:mace:dir:attribute-def:uid", "john.doe");
     putAttribute("urn:mace:dir:attribute-def:cn", "John Doe");
     putAttribute("urn:mace:dir:attribute-def:givenName", "John");
