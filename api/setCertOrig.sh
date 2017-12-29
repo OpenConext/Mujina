@@ -1,3 +1,11 @@
+#Set host address or accept from argument
+if [ -n "$1" ]; then
+	  deploymentURL="$1"
+	else
+		  deploymentURL="http://localhost:8080"
+fi
+
+
 export CERT=MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJO\
 	TDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECgwH\
 	U3VyZm5ldDEPMA0GA1UECwwGQ29uZXh0MB4XDTEyMDMwODA4NTQyNFoXDTEzMDMw\
@@ -23,6 +31,6 @@ export KEY=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANrJVXuOfVlAy+EV8SX+Y
 	QQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ\
 	5JCAUQcdrEQJ
 curl -v -H "Accept: application/json" \
-	        -H "Content-type: application/json" \
-					        -X POST -d "{\"certificate\": \"$CERT\",\"key\":\"$KEY\"}" \
-									        http://localhost:8080/api/signing-credential
+        -H "Content-type: application/json" \
+        -X POST -d "{\"certificate\": \"$CERT\",\"key\":\"$KEY\"}" \
+        $deploymentURL/api/signing-credential

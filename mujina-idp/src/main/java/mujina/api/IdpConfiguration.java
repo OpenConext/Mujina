@@ -65,14 +65,8 @@ public class IdpConfiguration extends SharedConfiguration {
 
   private void resetAttributes() {
     attributes.clear();
-    putAttribute("urn:mace:dir:attribute-def:uid", "john.doe");
-    putAttribute("urn:mace:dir:attribute-def:cn", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:givenName", "John");
-    putAttribute("urn:mace:dir:attribute-def:sn", "Doe");
-    putAttribute("urn:mace:dir:attribute-def:displayName", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-    putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-    putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+    putAttribute("LAA_ACCOUNTS", "0A123B:0A123C");
+    putAttribute("LAA_APP_ROLES", "CCR_Solicitor,CCR_CCRDirector,CCR_CCRGradeA1,CCR_CCRGradeA2,CCR_CCRGradeA3,CCR_CCRGradeB1,CCR_CCRGradeD");
   }
 
   private void putAttribute(String key, String... values) {

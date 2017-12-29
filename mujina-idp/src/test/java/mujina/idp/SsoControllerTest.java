@@ -67,7 +67,7 @@ public class SsoControllerTest extends AbstractIntegrationTest {
     Matcher matcher = Pattern.compile("name=\"SAMLResponse\" value=\"(.*?)\"").matcher(html);
     matcher.find();
     String samlResponse = new String(Base64.getDecoder().decode(matcher.group(1)));
-    assertTrue(samlResponse.contains("j.doe@example.com"));
+    assertTrue(samlResponse.contains("LAA_APP_ROLES"));
   }
 
 }
