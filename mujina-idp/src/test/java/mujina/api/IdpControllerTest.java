@@ -1,6 +1,7 @@
 package mujina.api;
 
 import mujina.AbstractIntegrationTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -21,7 +22,12 @@ import static org.junit.Assert.assertTrue;
 public class IdpControllerTest extends AbstractIntegrationTest {
 
   private static final String NEW_ATTRIBUTE = "urn:mace:dir:attribute-def:new";
-  private static final String UID_ATTRIBUTE = "urn:mace:dir:attribute-def:uid";
+  private static final String LAA_ACCOUNTS_ATTRIBUTE = "LAA_ACCOUNTS";
+
+  @Before
+  public void setup() {
+    idpConfiguration.reset();
+  }
 
   @Test
   public void setAttributes() throws Exception {
@@ -44,15 +50,16 @@ public class IdpControllerTest extends AbstractIntegrationTest {
 
   @Test
   public void removeAttribute() throws Exception {
-    assertEquals(Arrays.asList("john.doe"), idpConfiguration.getAttributes().get(UID_ATTRIBUTE));
+    idpConfiguration.putAttribute(LAA_ACCOUNTS_ATTRIBUTE, "0A123B:0A123C");
+    assertEquals(Collections.singletonList("0A123B:0A123C"), idpConfiguration.getAttributes().get(LAA_ACCOUNTS_ATTRIBUTE));
 
     given()
       .header("Content-Type", "application/json")
-      .delete("/api/attributes/urn:mace:dir:attribute-def:uid")
+      .delete("/api/attributes/LAA_ACCOUNTS")
       .then()
       .statusCode(SC_OK);
 
-    assertFalse(idpConfiguration.getAttributes().containsKey(UID_ATTRIBUTE));
+    assertFalse(idpConfiguration.getAttributes().containsKey(LAA_ACCOUNTS_ATTRIBUTE));
   }
 
   @Test
