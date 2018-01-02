@@ -1,8 +1,8 @@
-#Accept optional argument name and host address arguments
+#Accept optional entity id and host address argument
 if [ -n "$1" ]; then
-    attributeName="$1"
+    entityId="$1"
 else
-    attributeName="foo"
+    entityId="http://mock-idp"
 fi
 
 if [ -n "$2" ]; then
@@ -13,5 +13,5 @@ fi
 
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X DELETE \
-        ${deploymentURL}/api/attributes/${attributeName}
+        -X PUT -d ${entityId} \
+        ${deploymentURL}/api/entityid

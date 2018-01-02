@@ -1,6 +1,7 @@
 package mujina.api;
 
 import mujina.AbstractIntegrationTest;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -23,6 +24,11 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   private static final String NEW_ATTRIBUTE = "urn:mace:dir:attribute-def:new";
   private static final String LAA_ACCOUNTS_ATTRIBUTE = "LAA_ACCOUNTS";
 
+  @Before
+  public void setup() {
+    idpConfiguration.reset();
+  }
+
   @Test
   public void setAttributes() throws Exception {
     List<String> values = Arrays.asList("value1", "value2");
@@ -44,7 +50,8 @@ public class IdpControllerTest extends AbstractIntegrationTest {
 
   @Test
   public void removeAttribute() throws Exception {
-    assertEquals(Arrays.asList("0A123B:0A123C"), idpConfiguration.getAttributes().get(LAA_ACCOUNTS_ATTRIBUTE));
+    idpConfiguration.putAttribute(LAA_ACCOUNTS_ATTRIBUTE, "0A123B:0A123C");
+    assertEquals(Collections.singletonList("0A123B:0A123C"), idpConfiguration.getAttributes().get(LAA_ACCOUNTS_ATTRIBUTE));
 
     given()
       .header("Content-Type", "application/json")

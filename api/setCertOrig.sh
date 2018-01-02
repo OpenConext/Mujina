@@ -1,10 +1,12 @@
-#Set host address or accept from argument
+#Accept optional host address argument
 if [ -n "$1" ]; then
-	  deploymentURL="$1"
-	else
-		  deploymentURL="http://localhost:8080"
+    deploymentURL="$1"
+else
+    deploymentURL="http://localhost:8080"
 fi
 
+#todo this script is not working, probably something to do with a Java keystore
+#todo "status":500,"error":"Internal Server Error","exception":"java.lang.RuntimeException","message":"Unable to append signing credential"
 
 export CERT=MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJO\
 	TDEQMA4GA1UECAwHVXRyZWNodDEQMA4GA1UEBwwHVXRyZWNodDEQMA4GA1UECgwH\
@@ -18,6 +20,7 @@ export CERT=MIICHzCCAYgCCQD7KMJ17XQa7TANBgkqhkiG9w0BAQUFADBUMQswCQYDVQQGEwJO\
 	9IFVdJ/P7uSlYFtJ9cMxec85cYLmWL1aVgF5ZFFJqC25blyPJu2GRcSxoVwB3ae8\
 	sPCECWwqRQA4AHKIjiW5NgrAGYR++ssTOQR8mcAucEBfNaNdlJoy8GdZIhHZNkGl\
 	yHfY8kWS3OWkGzhWSsuRCLl78A==
+
 export KEY=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANrJVXuOfVlAy+EV8SX+YebeaFGz\
 	5D5RWfZUMrEqEt35xU3QoMwOhc0MxkQ3H0Y9B51gXQNWB/i8QYzXASCf5wXO0rLuHuKzDtzEgFeT\
 	rqNzGhoB6launQg+O3+dm/fHX+kEwANwvu7B6jnYkNFAwgCtAvqj+S7U3JgfEKyYSplfAgMBAAEC\
@@ -30,6 +33,7 @@ export KEY=MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBANrJVXuOfVlAy+EV8SX+Y
 	28ceBUgXKMZqS+ywZRzL8YOF5gaGH4TYSCSeWiXsTUtoQN/OaFAqAQBMm2Rrn0KoXcGe5fvN0h0C\
 	QQDgNLxVcByrVgmRmTPTwLhSfIveOqE6jBlQ8o0KyoQl4zCSDDtMEb9NEFxxvI7NNjgdZh1RKrzZ\
 	5JCAUQcdrEQJ
+
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X POST -d "{\"certificate\": \"$CERT\",\"key\":\"$KEY\"}" \
