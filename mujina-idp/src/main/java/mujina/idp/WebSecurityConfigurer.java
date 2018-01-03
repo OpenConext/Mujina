@@ -3,6 +3,7 @@ package mujina.idp;
 import mujina.api.IdpConfiguration;
 import mujina.saml.KeyStoreLocator;
 import mujina.saml.ProxiedSAMLContextProviderLB;
+import mujina.saml.UpgradedSAMLBootstrap;
 import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.common.binding.security.IssueInstantRule;
 import org.opensaml.common.binding.security.MessageReplayRule;
@@ -94,7 +95,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
 
   @Bean
   public static SAMLBootstrap sAMLBootstrap() {
-    return new SAMLBootstrap();
+    return new UpgradedSAMLBootstrap();
   }
 
   @Autowired

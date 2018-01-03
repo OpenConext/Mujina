@@ -1,6 +1,7 @@
 package mujina.sp;
 
 import mujina.api.SpConfiguration;
+import mujina.saml.UpgradedSAMLBootstrap;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.velocity.app.VelocityEngine;
@@ -125,7 +126,7 @@ public class SAMLConfig {
 
   @Bean
   public static SAMLBootstrap sAMLBootstrap() {
-    return new SAMLBootstrap();
+    return new UpgradedSAMLBootstrap();
   }
 
   @Bean
