@@ -46,9 +46,9 @@
 
 
   <scm>
-    <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
-    <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
-    <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
+    <connection>scm:git:git://github.com/bazzani/Mujina.git</connection>
+    <developerConnection>scm:git:git@github.com:bazzani/Mujina.git</developerConnection>
+    <url>scm:git:git@github.com:bazzani/Mujina.git</url>
     <tag>HEAD</tag>
   </scm>
 
