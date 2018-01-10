@@ -13,8 +13,8 @@
 Mujina
 ======
 
-[![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
-[![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
+[![Build Status](https://travis-ci.org/ministryofjustice/laa-saml-mock.svg)](https://travis-ci.org/ministryofjustice/laa-saml-mock)
+[![codecov.io](https://codecov.io/github/ministryofjustice/laa-saml-mock/coverage.svg)](https://codecov.io/github/ministryofjustice/laa-saml-mock)
 
 Mujina is a SAML2 Identity and Service Provider (IdP & SP). 
 
