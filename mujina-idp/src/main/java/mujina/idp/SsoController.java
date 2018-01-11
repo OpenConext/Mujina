@@ -59,7 +59,7 @@ public class SsoController {
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
       NameIDType.UNSPECIFIED,
-      attributes(authentication.getName()),
+      attributes(),
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
       assertionConsumerServiceURL,
@@ -68,12 +68,9 @@ public class SsoController {
     samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
-  private List<SAMLAttribute> attributes(String uid) {
+  private List<SAMLAttribute> attributes() {
     return idpConfiguration.getAttributes().entrySet().stream()
-      .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
-        new SAMLAttribute(entry.getKey(), singletonList(uid)) :
-        new SAMLAttribute(entry.getKey(), entry.getValue()))
+      .map(entry ->  new SAMLAttribute(entry.getKey(), entry.getValue()))
       .collect(toList());
   }
-
 }

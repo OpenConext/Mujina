@@ -1,3 +1,12 @@
 ul {
     list-style: none;
 }
+
+div.laa-logo {
+    background-image: url("/laa_logo.png");
+    background-repeat: no-repeat;
+    width:239px;
+    height:45px;
+    margin:0;
+    padding:0;
+}
