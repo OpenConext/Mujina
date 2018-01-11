@@ -44,11 +44,10 @@
     <module>mujina-idp</module>
   </modules>
 
-
   <scm>
-    <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
-    <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
-    <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
+    <connection>scm:git:git://github.com/ministryofjustice/laa-saml-mock.git</connection>
+    <developerConnection>scm:git:git@github.com:ministryofjustice/laa-saml-mock.git</developerConnection>
+    <url>scm:git:git@github.com:ministryofjustice/laa-saml-mock.git</url>
     <tag>HEAD</tag>
   </scm>
 
