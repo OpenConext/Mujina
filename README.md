@@ -1,3 +1,14 @@
+## LAA customisation of the Mujina project
+
+#### Useful sections in this document
+
+* [Build Mujina](#build-mujina)
+* [Run the IDP](#run-the-idp)
+* [Run the SP](#run-the-sp)
+
+##### The original project can be found @ https://github.com/OpenConext/Mujina
+---
+
 <pre>___  ___        _  _
 |  \/  |       (_)(_)
 | .  . | _   _  _  _  _ __    __ _
@@ -53,15 +64,7 @@ The default Identity Provider configuration is as follows:
 * The signatureAlgorithm is "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
-* It has the following attributes. Attributes are always stored as lists. Even when they contain a single value.
-    * "urn:mace:dir:attribute-def:uid" is "john.doe"
-    * "urn:mace:dir:attribute-def:cn" is "John Doe"
-    * "urn:mace:dir:attribute-def:givenName" is "John"
-    * "urn:mace:dir:attribute-def:sn" is "Doe"
-    * "urn:mace:dir:attribute-def:displayName" is "John Doe"
-    * "urn:mace:dir:attribute-def:mail" is "j.doe@example.com"
-    * "urn:mace:terena.org:attribute-def:schacHomeOrganization" is "example.com"
-    * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
+* It has no default attributes. Attributes are always stored as lists. Even when they contain a single value.
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
   If the ACS endpoint is set using the IdP api this is not necessary. Use of the api overrides values set in AuthnRequests
