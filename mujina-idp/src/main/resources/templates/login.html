@@ -6,7 +6,7 @@
 <body>
 <h1>Mujina Identity Provider</h1>
 <p th:if="${param.error}" class="error">Wrong user or password</p>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/login}" id="loginData" method="post">
     <label for="username">Username</label>:
     <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
     <label for="password">Password</label>:
