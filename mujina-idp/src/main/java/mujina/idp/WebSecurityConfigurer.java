@@ -1,8 +1,9 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
+import mujina.idp.user.SamlUser;
+import mujina.idp.user.SamlUserAttributeStore;
 import mujina.saml.KeyStoreLocator;
-import mujina.saml.ProxiedSAMLContextProviderLB;
 import mujina.saml.UpgradedSAMLBootstrap;
 import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.common.binding.security.IssueInstantRule;
@@ -29,7 +30,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLBootstrap;
-import org.springframework.security.saml.context.SAMLContextProvider;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -37,15 +37,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 @Configuration
 @EnableWebSecurity
@@ -113,6 +111,23 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   public ServletContextInitializer servletContextInitializer() {
     //otherwise the two localhost instances override each other session
     return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
+  }
+
+  @Bean
+  public SamlUserAttributeStore samlUserAttributeStore() {
+    // todo use seed data to initialise the user data
+    List<SamlUser> samlUsers = Arrays.asList(createSamlUser("admin"), createSamlUser("user"));
+    return new SamlUserAttributeStore(samlUsers);
+  }
+
+  private SamlUser createSamlUser(String username) {
+    Map<String, List<String>> samlAttributes = new HashMap<>();
+    samlAttributes.put("attribute 1", Arrays.asList("att 1 : val 1", "att 1 : val 2"));
+    if (username.equals("admin")) {
+      samlAttributes.put("attribute 2", Collections.singletonList("att 2 : val 1"));
+    }
+
+    return new SamlUser(username, samlAttributes);
   }
 
   @Configuration
