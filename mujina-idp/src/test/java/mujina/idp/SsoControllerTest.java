@@ -47,8 +47,6 @@ public class SsoControllerTest extends AbstractIntegrationTest {
 
   private void doSingleSignOn(boolean post) throws Exception {
     CookieFilter cookieFilter = login("admin", "secret", SC_MOVED_TEMPORARILY);
-
-
     RequestSpecification requestSpecification = given();
     if (post) {
       formParams.forEach(param -> requestSpecification.formParam(param[0], param[1]));
@@ -69,8 +67,8 @@ public class SsoControllerTest extends AbstractIntegrationTest {
     Matcher matcher = Pattern.compile("name=\"SAMLResponse\" value=\"(.*?)\"").matcher(html);
     matcher.find();
     String samlResponse = new String(Base64.getDecoder().decode(matcher.group(1)));
-    assertThat(String.format("SAML response should contain the %s attribute", "attribute 1"), samlResponse.contains("attribute 1"));
-    assertThat(String.format("SAML response should contain the %s attribute value", "att 1 : val 1"), samlResponse.contains("att 1 : val 1"));
-    assertThat(String.format("SAML response should not contain the %s attribute", "test-attribute"), !samlResponse.contains("test-attribute"));
+    assertThat(String.format("SAML response should contain the '%s' attribute", "attribute 1"), samlResponse.contains("attribute 1"));
+    assertThat(String.format("SAML response should contain the '%s' attribute value", "admin attribute 1"), samlResponse.contains("admin attribute"));
+    assertThat(String.format("SAML response should not contain the '%s' attribute", "test-attribute"), !samlResponse.contains("test-attribute"));
   }
 }
