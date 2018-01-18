@@ -1,8 +1,6 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
-import mujina.idp.user.SamlUser;
-import mujina.idp.user.SamlUserAttributeStore;
 import mujina.saml.KeyStoreLocator;
 import mujina.saml.UpgradedSAMLBootstrap;
 import org.opensaml.common.binding.decoding.URIComparator;
@@ -43,7 +41,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -111,23 +110,6 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   public ServletContextInitializer servletContextInitializer() {
     //otherwise the two localhost instances override each other session
     return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
-  }
-
-  @Bean
-  public SamlUserAttributeStore samlUserAttributeStore() {
-    // todo use seed data to initialise the user data
-    List<SamlUser> samlUsers = Arrays.asList(createSamlUser("admin"), createSamlUser("user"));
-    return new SamlUserAttributeStore(samlUsers);
-  }
-
-  private SamlUser createSamlUser(String username) {
-    Map<String, List<String>> samlAttributes = new HashMap<>();
-    samlAttributes.put("attribute 1", Arrays.asList("att 1 : val 1", "att 1 : val 2"));
-    if (username.equals("admin")) {
-      samlAttributes.put("attribute 2", Collections.singletonList("att 2 : val 1"));
-    }
-
-    return new SamlUser(username, samlAttributes);
   }
 
   @Configuration

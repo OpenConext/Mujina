@@ -1,38 +1,44 @@
 package mujina.api;
 
 import mujina.AbstractIntegrationTest;
+import mujina.idp.user.SamlUser;
+import mujina.idp.user.SamlUserStore;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
+import static java.util.Collections.singletonMap;
 import static mujina.api.AuthenticationMethod.ALL;
 import static mujina.api.AuthenticationMethod.USER;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class IdpControllerTest extends AbstractIntegrationTest {
 
   private static final String NEW_ATTRIBUTE = "urn:mace:dir:attribute-def:new";
   private static final String UID_ATTRIBUTE = "urn:mace:dir:attribute-def:uid";
 
+  @Autowired
+  private SamlUserStore samlUserStore;
+
   @Before
   public void setup() {
+    samlUserStore.getSamlUsers().clear();
+    samlUserStore.getSamlUsers().add(
+      new SamlUser("test user", "test password", singletonMap("test attribute", "test value")));
+
     idpConfiguration.reset();
   }
 
   @Test
   public void setAttributes() throws Exception {
     List<String> values = Arrays.asList("value1", "value2");
-    Map<String, List<String>> attributes = Collections.singletonMap(NEW_ATTRIBUTE, values);
+    Map<String, List<String>> attributes = singletonMap(NEW_ATTRIBUTE, values);
 
     api(attributes, "/api/attributes/");
 
