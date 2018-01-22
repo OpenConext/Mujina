@@ -1,6 +1,6 @@
 samlUserStore:
   samlUsers:
-    - username: test user
+    - username: test-user
       password: test password
       samlAttributes:
         attribute 1: test attribute 1 value
