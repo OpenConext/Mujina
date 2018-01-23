@@ -18,6 +18,7 @@ import java.util.function.Predicate;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toList;
 
 @Getter
 @Setter
@@ -30,7 +31,6 @@ public class IdpConfiguration extends SharedConfiguration {
   private static final List<SimpleGrantedAuthority> USER_ROLES = unmodifiableList(singletonList(new SimpleGrantedAuthority(ROLE_USER)));
 
   private String defaultEntityId;
-  private Map<String, List<String>> attributes = new TreeMap<>();
   private List<UsernamePasswordAuthenticationToken> users = new ArrayList<>();
   private String acsEndpoint;
   private AuthenticationMethod authenticationMethod;
@@ -66,6 +66,40 @@ public class IdpConfiguration extends SharedConfiguration {
     setSignatureAlgorithm(getDefaultSignatureAlgorithm());
   }
 
+  Map<String, String> getUserAttributes(String username) {
+    return samlUserStore.getUserAttributes(username);
+  }
+
+  void setUserAttributes(String username, String attributeName, List<String> attributeValues) {
+    samlUserStore.setUserAttributes(username, attributeName, attributeValues);
+  }
+
+  void setUserAttributes(String username, Map<String, List<String>> attributes) {
+    samlUserStore.setUserAttributes(username, attributes);
+  }
+
+  void removeUserAttribute(String username, String attributeName) {
+    samlUserStore.removeUserAttribute(username, attributeName);
+  }
+
+  void addNewUser(User user) {
+    boolean usernameAvailable = users.stream()
+      .noneMatch(token -> token.getPrincipal().equals(user.getName()));
+
+    if (usernameAvailable) {
+      users.add(new UsernamePasswordAuthenticationToken(
+        user.getName(),
+        user.getPassword(),
+        user.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(toList())));
+
+      addUserToSamlUserStore(user.getName(), user.getPassword());
+    }
+  }
+
+  private void addUserToSamlUserStore(String username, String password) {
+    samlUserStore.addDynamicUser(username, password);
+  }
+
   private void resetUsers() {
     users.clear();
     users.add(createUser("admin", "secret", ADMIN_ROLES));
@@ -92,11 +126,7 @@ public class IdpConfiguration extends SharedConfiguration {
   }
 
   private void resetAttributes() {
-    attributes.clear();
+    samlUserStore.resetDynamicUsers();
+    samlUserStore.resetSeedDataUserAttributes();
   }
-
-  public void putAttribute(String key, String... values) {
-    this.attributes.put(key, asList(values));
-  }
-
 }

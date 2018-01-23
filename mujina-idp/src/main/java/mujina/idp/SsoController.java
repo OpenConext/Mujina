@@ -71,7 +71,7 @@ public class SsoController {
   }
 
   private List<SAMLAttribute> attributes(String username) {
-    return samlUserStore.getAttributesByUsername(username).entrySet().stream()
+    return samlUserStore.getUserAttributes(username).entrySet().stream()
       .map(entry -> new SAMLAttribute(entry.getKey(), singletonList(entry.getValue())))
       .collect(toList());
   }
