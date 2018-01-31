@@ -6,6 +6,9 @@
 * [Run the IDP](#run-the-idp)
 * [Run the SP](#run-the-sp)
 
+#### OneLogin Service Provider properties
+* [Sample OneLogin Service Provider properties](#sample-onelogin-service-provider-properties)
+
 ### Custom API call scripts
 * [View the custom API call scripts here](/api)
 
@@ -17,6 +20,47 @@
 * [Setting the Assertion Consumer Service (ACS) endpoint](#setting-the-assertion-consumer-service-acs-endpoint)
 
 ##### The original project can be found @ https://github.com/OpenConext/Mujina
+
+---
+
+Sample OneLogin Service Provider properties
+-------------------------------------------
+A sample properties file to be used in conjunction with OneLogin's SAML
+Java Toolkit can be found [here](/onelogin/onelogin.saml.properties).
+
+You can read more about the OneLogin SAML Java Toolkit @ https://github.com/onelogin/java-saml
+
+### Required Properties
+The following properties need to be supplied to the service provider web
+application, such as Tomcat Catalina properties, or Spring Boot
+application properties:
+
+##### Service Provider properties
+* saml.sp.entity.id
+* saml.sp.acs.url
+* saml.sp.x509cert
+* saml.sp.privatekey
+
+##### Identity Provider properties
+* saml.idp.entity.id
+* saml.idp.sso.url
+* saml.idp.x509cert
+
+##### Security settings
+* saml.encryption.assertions.enabled
+
+##### Service Provider contact properties
+* saml.sp.org.name
+* saml.sp.org.displayname
+* saml.sp.org.url
+* saml.sp.contact.technical.name
+* saml.sp.contact.technical.email
+* saml.sp.contact.support.name
+* saml.sp.contact.support.email
+
+### Optional Properties
+##### Service Provider contact properties
+* saml.sp.org.language
 
 ---
 
