@@ -38,6 +38,7 @@ public class IdpConfiguration extends SharedConfiguration {
   private final String idpPrivateKey;
   private final String idpCertificate;
   private final SamlUserStore samlUserStore;
+  private final boolean isConstructed;
 
   @Autowired
   public IdpConfiguration(JKSKeyManager keyManager,
@@ -53,6 +54,7 @@ public class IdpConfiguration extends SharedConfiguration {
     this.defaultAuthenticationMethod = AuthenticationMethod.valueOf(authMethod);
     this.samlUserStore = samlUserStore;
     reset();
+    isConstructed = true;
   }
 
   @Override
@@ -126,7 +128,9 @@ public class IdpConfiguration extends SharedConfiguration {
   }
 
   private void resetAttributes() {
-    samlUserStore.resetDynamicUsers();
-    samlUserStore.resetSeedDataUserAttributes();
+    if (isConstructed) {
+      samlUserStore.resetDynamicUsers();
+      samlUserStore.resetSeedDataUserAttributes();
+    }
   }
 }
