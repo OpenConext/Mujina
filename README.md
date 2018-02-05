@@ -1,13 +1,20 @@
 ## LAA customisation of the Mujina project
 
 #### Useful sections in this document
-
+* [Local development of the mock IdP/SP](#local-development-of-the-mock-idpsp)
+* [Configure Spring Boot applications to run in an AWS EC2 instance](#configure-spring-boot-applications-to-run-in-an-aws-ec2-instance)
+* [AWS EC2 installation instructions](/aws-ec2)
 * [Build Mujina](#build-mujina)
 * [Run the IDP](#run-the-idp)
 * [Run the SP](#run-the-sp)
 
+
+---
+
 #### OneLogin Service Provider properties
 * [Sample OneLogin Service Provider properties](#sample-onelogin-service-provider-properties)
+
+---
 
 ### Custom API call scripts
 * [View the custom API call scripts here](/api)
@@ -20,6 +27,128 @@
 * [Setting the Assertion Consumer Service (ACS) endpoint](#setting-the-assertion-consumer-service-acs-endpoint)
 
 ##### The original project can be found @ https://github.com/OpenConext/Mujina
+
+---
+
+### Local development of the mock IdP/SP
+All commands being run are assumed to be executed in a linux terminal (_e.g. OS X or Git Bash in Windows_)
+#### Clone the repository and run a Maven build
+[Maven 3](http://maven.apache.org) is needed to build and run Mujina.
+
+```
+cd ~
+git clone https://github.com/ministryofjustice/laa-saml-mock/
+cd laa-saml-mock
+mvn clean install
+```
+
+#### Custom Spring Boot application.yml
+You can specify a custom spring boot configuration file to inject values in to the application
+```
+java -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+
+For example:
+```
+vim laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+```
+idp:
+  base_url: http://10.0.1.1:8080
+
+samlUserStore:
+  samlUsers:
+    - username: test-user
+      password: test password
+      samlAttributes:
+        attribute 1: test attribute 1 value
+        attribute 2: test attribute 2 value
+```
+
+#### Start the IdP with the bash script
+```
+cd mujina-idp
+sh start-idp.sh
+```
+
+#### Stop the IdP with the bash script
+```
+cd mujina-idp
+sh stop-idp.sh
+```
+
+#### Start the SP with the bash script
+```
+cd mujina-sp
+sh start-sp.sh
+```
+
+#### Stop the SP with the bash script
+```
+cd mujina-sp
+sh stop-sp.sh
+```
+
+---
+
+### Configure Spring Boot applications to run in an AWS EC2 instance
+Get the code and run a maven build as described at [Clone the github repository](#clone-the-repository-and-run-a-maven-build)
+#### IdP
+##### Add Spring Boot configuration
+```
+vim /home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+```
+idp:
+  base_url: http://${EC2_PUBLIC_HOST}:8080
+
+samlUserStore:
+  samlUsers:
+    - username: test-user
+      password: test password
+      samlAttributes:
+        attribute 1: test attribute 1 value
+        attribute 2: test attribute 2 value
+```
+
+##### Start IdP app
+```
+#!/bin/bash
+export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+
+cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
+```
+
+##### Tail the log file
+```
+tail -f /home/ec2-user/laa-saml-mock/mujina-sp/target/nohup.out
+```
+
+#### SP
+###### Add Spring Boot configuration
+```
+vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
+```
+```
+sp:
+  base_url: http://${EC2_PUBLIC_HOST}:9090
+  entity_id: http://mock-sp
+  single_sign_on_service_location: http://${EC2_PUBLIC_HOST}:8080/SingleSignOnService
+  acs_location_path: /saml/SSO
+```
+
+##### Start SP app
+```
+#!/bin/bash
+export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+
+cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
+```
+
+##### Tail the log file
+```
+tail -f /home/ec2-user/laa-saml-mock/mujina-sp/target/nohup.out
+```
 
 ---
 
@@ -63,6 +192,7 @@ application properties:
 * saml.sp.org.language
 
 ---
+# Original project documentation
 
 <pre>___  ___        _  _
 |  \/  |       (_)(_)
