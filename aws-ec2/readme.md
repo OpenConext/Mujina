@@ -13,18 +13,18 @@ Create an EC2 instance and log in to via ssh and run the following steps:
 10. [Reboot your EC2 instance](#10-reboot-your-ec2-instance)
 
 ### 1. Update your OS
-```
+```bash
 sudo yum update -y
 ```
 
 ### 2. Install java 8
-```
+```bash
 sudo yum remove -y java-1.7.0-openjdk
 sudo yum install -y java-1.8.0-openjdk-devel.x86_64
 ```
 
 ### 3. Install & configure maven
-```
+```bash
 cd ~
 wget http://apache.mirrors.nublue.co.uk/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz
 tar -xvf apache-maven-3.5.2-bin.tar.gz
@@ -32,12 +32,12 @@ rm apache-maven-3.5.2-bin.tar.gz
 ```
 
 Add Maven to the environment
-```
+```bash
 vim ~/.bash_profile
 ```
 
 ... and insert this text:
-```
+```bash
 # .bash_profile
 
 # Get the aliases and functions
@@ -56,28 +56,28 @@ export PATH=${M2_HOME}/bin:${PATH}
 ```
 
 ### 4. Install git
-```
+```bash
 sudo yum install -y git
 ```
 
 ### 5. Clone the laa-sam-mock gihub repo
-```
+```bash
 git clone https://github.com/ministryofjustice/laa-saml-mock
 ```
 
 ### 6. Run mvn install
-```
+```bash
 cd laa-saml-mock
 mvn clean install
 ```
 
 ### 7. Configure spring boot application.yml files
-```
+```bash
 vim /home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
 ```
 
 ... and insert this text:
-```
+```bash
 idp:
   base_url: http://${EC2_PUBLIC_HOST}:8080
 
@@ -90,12 +90,12 @@ samlUserStore:
         attribute 2: test attribute 2 value
 ```
 
-```
+```bash
 vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
 ```
 
 ... and insert this text:
-```
+```bash
 sp:
   base_url: http://${EC2_PUBLIC_HOST}:9090
   entity_id: http://mock-sp
@@ -105,12 +105,12 @@ sp:
 ```
 
 ### 8. Create startup script for spring boot apps
-```
+```bash
 vim ~/start-laa-saml-mock-services.sh
 ```
 
 ... and insert this text:
-```
+```bash
 #!/bin/bash
 export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
 
@@ -123,12 +123,12 @@ cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -D
 ```
 
 ### 9. Create a service to start with the OS
-```
+```bash
 sudo vim /etc/rc.local
 ```
 
 ... and insert this text:
-```
+```bash
 #!/bin/sh
 #
 # This script will be executed *after* all the other init scripts.
