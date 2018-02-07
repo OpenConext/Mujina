@@ -133,6 +133,7 @@ vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
 sp:
   base_url: http://${EC2_PUBLIC_HOST}:9090
   entity_id: http://mock-sp
+  idp_metadata_url: http://${EC2_PUBLIC_HOST}:8080/metadata
   single_sign_on_service_location: http://${EC2_PUBLIC_HOST}:8080/SingleSignOnService
   acs_location_path: /saml/SSO
 ```
