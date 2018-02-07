@@ -8,11 +8,11 @@
 * [Run the IDP](#run-the-idp)
 * [Run the SP](#run-the-sp)
 
-
 ---
 
 #### OneLogin Service Provider properties
 * [Sample OneLogin Service Provider properties](#sample-onelogin-service-provider-properties)
+* The default version of the OneLogin Service Provider properties with supporting comments can be found [here](https://github.com/onelogin/java-saml/blob/master/samples/java-saml-tookit-jspsample/src/main/resources/onelogin.saml.properties)
 
 ---
 
