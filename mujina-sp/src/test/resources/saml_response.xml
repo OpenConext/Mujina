@@ -22,7 +22,7 @@
               <ec:InclusiveNamespaces xmlns:ec="http://www.w3.org/2001/10/xml-exc-c14n#" PrefixList="xs"/>
             </ds:Transform>
           </ds:Transforms>
-          <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+          <ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
           <ds:DigestValue>fffd7DnCfmYh878THSo8c+8zbdU=</ds:DigestValue>
         </ds:Reference>
       </ds:SignedInfo>

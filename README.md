@@ -371,7 +371,7 @@ This API is available on both the IDP and the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d "http://www.w3.org/2000/09/xmldsig#rsa-sha1" \
+        -X PUT -d "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" \
         http://localhost:9090/api/signatureAlgorithm
 ```        
 
