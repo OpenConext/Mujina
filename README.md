@@ -1,6 +1,7 @@
 ## LAA customisation of the Mujina project
 
 #### Useful sections in this document
+* [Mujina API Calls](#mujina-api-calls)
 * [Local development of the mock IdP/SP](#local-development-of-the-mock-idpsp)
 * [Configure Spring Boot applications to run in an AWS EC2 instance](#configure-spring-boot-applications-to-run-in-an-aws-ec2-instance)
 * [AWS EC2 installation instructions](/aws-ec2)
@@ -16,15 +17,29 @@
 
 ---
 
-### Custom API call scripts
-* [View the custom API call scripts here](/api)
-
 ### Mujina API Calls
+
+#### Disable the api
+All api calls can be disabled by overriding the following property in
+the IdP spring boot application configuration file
+
+> e.g. _laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml_
+
+```bash
+idp:
+  api_enabled: false
+```
+---
 * [Resetting the IDP](#resetting-the-idp)
 * [Changing the entityID](#changing-the-entityid)
 * [Setting attribute foo to bar for the testuser user](#setting-attribute-foo-to-bar-for-the-testuser-user)
 * [Adding a user](#adding-a-user)
 * [Setting the Assertion Consumer Service (ACS) endpoint](#setting-the-assertion-consumer-service-acs-endpoint)
+
+### Custom API call bash scripts
+* View the custom bash scripts that allow you to make API calls [here](/api)
+
+---
 
 ##### The original project can be found @ https://github.com/OpenConext/Mujina
 
@@ -100,7 +115,7 @@ vim /home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
 ```
 ```
 idp:
-  base_url: http://${EC2_PUBLIC_HOST}:8080
+  base_url: http://${SERVICE_HOST}:8080
 
 samlUserStore:
   samlUsers:
@@ -114,9 +129,9 @@ samlUserStore:
 ##### Start IdP app
 ```
 #!/bin/bash
-export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+export SERVICE_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
 
-cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
+cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
 ```
 
 ##### Tail the log file
@@ -131,19 +146,19 @@ vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
 ```
 ```
 sp:
-  base_url: http://${EC2_PUBLIC_HOST}:9090
+  base_url: http://${SERVICE_HOST}:9090
   entity_id: http://mock-sp
-  idp_metadata_url: http://${EC2_PUBLIC_HOST}:8080/metadata
-  single_sign_on_service_location: http://${EC2_PUBLIC_HOST}:8080/SingleSignOnService
+  idp_metadata_url: http://${SERVICE_HOST}:8080/metadata
+  single_sign_on_service_location: http://${SERVICE_HOST}:8080/SingleSignOnService
   acs_location_path: /saml/SSO
 ```
 
 ##### Start SP app
 ```
 #!/bin/bash
-export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+export SERVICE_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
 
-cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
+cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
 ```
 
 ##### Tail the log file

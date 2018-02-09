@@ -79,7 +79,7 @@ vim /home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
 ... and insert this text:
 ```bash
 idp:
-  base_url: http://${EC2_PUBLIC_HOST}:8080
+  base_url: http://${SERVICE_HOST}:8080
 
 samlUserStore:
   samlUsers:
@@ -97,10 +97,10 @@ vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
 ... and insert this text:
 ```bash
 sp:
-  base_url: http://${EC2_PUBLIC_HOST}:9090
+  base_url: http://${SERVICE_HOST}:9090
   entity_id: http://mock-sp
-  idp_metadata_url: http://${EC2_PUBLIC_HOST}:8080/metadata
-  single_sign_on_service_location: http://${EC2_PUBLIC_HOST}:8080/SingleSignOnService
+  idp_metadata_url: http://${SERVICE_HOST}:8080/metadata
+  single_sign_on_service_location: http://${SERVICE_HOST}:8080/SingleSignOnService
   acs_location_path: /saml/SSO
 ```
 
@@ -112,14 +112,14 @@ vim ~/start-laa-saml-mock-services.sh
 ... and insert this text:
 ```bash
 #!/bin/bash
-export EC2_PUBLIC_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+export SERVICE_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
 
-cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
+cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
 
 echo "Sleeping for 15 seconds to allow the IdP to start up..."
 sleep 20s
 
-cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DEC2_PUBLIC_HOST=${EC2_PUBLIC_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
+cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
 ```
 
 ### 9. Create a service to start with the OS
@@ -140,7 +140,7 @@ sh /home/ec2-user/start-laa-saml-mock-services.sh
 ```
 
 ### 10. Reboot your EC2 instance
-1. The Mock IdP can be contacted at http://${EC2_PUBLIC_HOST}:8080
+1. The Mock IdP can be contacted at http://${SERVICE_HOST}:8080
    * e.g. http://35.178.48.233:8080
-2. The Mock SP can be contacted at http://${EC2_PUBLIC_HOST}:9090
+2. The Mock SP can be contacted at http://${SERVICE_HOST}:9090
    * e.g. http://35.178.48.233:9090
