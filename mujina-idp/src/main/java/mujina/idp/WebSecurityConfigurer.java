@@ -112,6 +112,14 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
   }
 
+  @Value("${idp.api_enabled}")
+  private boolean apiEnabled;
+
+  @Bean
+  public PermittedUrlComposer permittedUrlComposer() {
+    return new PermittedUrlComposer(apiEnabled);
+  }
+
   @Configuration
   @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
   protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
@@ -119,23 +127,35 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Autowired
     private IdpConfiguration idpConfiguration;
 
+    @Autowired
+    private PermittedUrlComposer permittedUrlComposer;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/metadata", "/favicon.ico", "/laa_logo.png", "/api/**", "/*.css").permitAll()
-        .antMatchers("/admin/**").hasRole("ADMIN")
-        .anyRequest().hasRole("USER")
-        .and()
+          .antMatchers(getDeniedUrls()).denyAll()
+          .antMatchers(getPermittedUrls()).permitAll()
+          .antMatchers("/admin/**").hasRole("ADMIN")
+          .anyRequest().hasRole("USER")
+          .and()
         .formLogin()
-        .loginPage("/login")
-        .permitAll()
-        .failureUrl("/login?error=true")
-        .permitAll()
-        .and()
+          .loginPage("/login")
+            .permitAll()
+          .failureUrl("/login?error=true")
+            .permitAll()
+          .and()
         .logout()
-        .logoutSuccessUrl("/");
+          .logoutSuccessUrl("/");
+    }
+
+    private String[] getDeniedUrls() {
+      return permittedUrlComposer.getDeniedUrls();
+    }
+
+    private String[] getPermittedUrls() {
+      return permittedUrlComposer.getPermittedUrls();
     }
 
     @Override

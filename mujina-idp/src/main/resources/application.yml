@@ -32,6 +32,8 @@ idp:
   auth_method: USER
   # Are endpoints compared. If so then pay notice to the base_url when behind a load balancer
   compare_endpoints: true
+  # Are the API endpoints enabled?
+  api_enabled: true
 
 spring:
   mvc:
