@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+      - echo Starting maven build on `date`...
+      - mvn install
+artifacts:
+  files:
+      - mujina-idp/target/laa-saml-mock-idp-1.0.0.jar
+  discard-paths: yes
