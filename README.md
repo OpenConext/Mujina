@@ -1,5 +1,7 @@
 ## LAA customisation of the Mujina project
 
+[![Build Status](https://codebuild.eu-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoieEx5dk9UQUVuUHNHUGl2bDBiMGZNNGRpZHAySE42dUpjNHFrV3BGNkQ4clhxVVNVOHVYTzFIZWo1VXpvakFQSjVHRTdnRnJNTXI4YUJPTXRZTHNBUCt3PSIsIml2UGFyYW1ldGVyU3BlYyI6IkY0eVNYZWE3a29MZTMra0oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://codebuild.eu-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoieEx5dk9UQUVuUHNHUGl2bDBiMGZNNGRpZHAySE42dUpjNHFrV3BGNkQ4clhxVVNVOHVYTzFIZWo1VXpvakFQSjVHRTdnRnJNTXI4YUJPTXRZTHNBUCt3PSIsIml2UGFyYW1ldGVyU3BlYyI6IkY0eVNYZWE3a29MZTMra0oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
 #### Useful sections in this document
 * [Mujina API Calls](#mujina-api-calls)
 * [Local development of the mock IdP/SP](#local-development-of-the-mock-idpsp)
