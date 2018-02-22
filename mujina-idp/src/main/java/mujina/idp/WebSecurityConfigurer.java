@@ -2,7 +2,6 @@ package mujina.idp;
 
 import mujina.api.IdpConfiguration;
 import mujina.saml.KeyStoreLocator;
-import mujina.saml.ProxiedSAMLContextProviderLB;
 import mujina.saml.UpgradedSAMLBootstrap;
 import org.opensaml.common.binding.decoding.URIComparator;
 import org.opensaml.common.binding.security.IssueInstantRule;
@@ -29,7 +28,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.saml.SAMLBootstrap;
-import org.springframework.security.saml.context.SAMLContextProvider;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -37,7 +35,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -115,6 +112,14 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
   }
 
+  @Value("${idp.api_enabled}")
+  private boolean apiEnabled;
+
+  @Bean
+  public PermittedUrlComposer permittedUrlComposer() {
+    return new PermittedUrlComposer(apiEnabled);
+  }
+
   @Configuration
   @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
   protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
@@ -122,23 +127,35 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Autowired
     private IdpConfiguration idpConfiguration;
 
+    @Autowired
+    private PermittedUrlComposer permittedUrlComposer;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
         .csrf().disable()
         .authorizeRequests()
-        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css").permitAll()
-        .antMatchers("/admin/**").hasRole("ADMIN")
-        .anyRequest().hasRole("USER")
-        .and()
+          .antMatchers(getDeniedUrls()).denyAll()
+          .antMatchers(getPermittedUrls()).permitAll()
+          .antMatchers("/admin/**").hasRole("ADMIN")
+          .anyRequest().hasRole("USER")
+          .and()
         .formLogin()
-        .loginPage("/login")
-        .permitAll()
-        .failureUrl("/login?error=true")
-        .permitAll()
-        .and()
+          .loginPage("/login")
+            .permitAll()
+          .failureUrl("/login?error=true")
+            .permitAll()
+          .and()
         .logout()
-        .logoutSuccessUrl("/");
+          .logoutSuccessUrl("/");
+    }
+
+    private String[] getDeniedUrls() {
+      return permittedUrlComposer.getDeniedUrls();
+    }
+
+    private String[] getPermittedUrls() {
+      return permittedUrlComposer.getPermittedUrls();
     }
 
     @Override

@@ -1,0 +1,47 @@
+version: 0.2
+env:
+  variables:
+    APPNAME: "laa-saml-mock-idp"
+    ACCOUNT: "Account Number"
+phases:
+  install:
+    commands:
+      - apt-get update -y
+      - apt-get install -y software-properties-common
+      - add-apt-repository ppa:openjdk-r/ppa
+      - apt-get update -y
+      - apt-get install -y openjdk-8-jdk
+      - echo Installing maven...
+      - wget http://apache.mirror.anlx.net/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz
+      - tar -zxvf apache-maven-3.5.2-bin.tar.gz
+      - echo $PWD
+      - export MAVEN_HOME=$PWD/apache-maven-3.5.2
+      - echo Maven home set to $MAVEN_HOME
+      - export PATH=$PATH:$MAVEN_HOME/bin
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --region eu-west-2)
+  build:
+    commands:
+      - export DOCKER_TAG=$APPNAME:`date -u "+%Y%m%d%H%M"`
+      - echo Created docker tag $DOCKER_TAG
+      - export DOCKER_TARGET=$ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/$DOCKER_TAG
+      - echo Created docker target $DOCKER_TARGET
+      - echo Starting maven build on `date`...
+      - mvn install
+      - echo Building the Docker image...
+      - docker build mujina-idp/ -t $DOCKER_TAG
+      - docker tag $DOCKER_TAG $DOCKER_TARGET
+  post_build:
+    commands:
+      - echo Using docker image tag $DOCKER_TAG
+      - echo Build completed on `date`
+      - echo Pushing the Docker image to... $DOCKER_TARGET
+      - docker push $DOCKER_TARGET
+      - aws cloudformation package --template-file ./aws/application/app-main.template --s3-bucket $ARTIFACT_BUCKET --output-template-file app-main-packaged.template
+
+artifacts:
+  files:
+      - mujina-idp/target/laa-saml-mock-idp-1.0.0.jar
+  discard-paths: yes

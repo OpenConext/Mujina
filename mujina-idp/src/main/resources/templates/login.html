@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login page</title>
+    <title>Login page : LAA Portal Mock Identity Provider</title>
+    <link rel="stylesheet" type="text/css" media="all" href="../public/main.css" th:href="@{/main.css}" />
 </head>
 <body>
-<h1>Mujina Identity Provider</h1>
+<div class="laa-logo">&nbsp;</div>
+<h1>LAA Portal Mock Identity Provider</h1>
 <p th:if="${param.error}" class="error">Wrong user or password</p>
-<form th:action="@{/login}" method="post">
+<form th:action="@{/login}" id="loginData" method="post">
     <label for="username">Username</label>:
     <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
     <label for="password">Password</label>:

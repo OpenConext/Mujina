@@ -1,6 +1,7 @@
 package mujina.idp;
 
 import mujina.api.IdpConfiguration;
+import mujina.idp.user.SamlUserStore;
 import mujina.saml.SAMLAttribute;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -37,6 +36,9 @@ public class SsoController {
 
   @Autowired
   private IdpConfiguration idpConfiguration;
+
+  @Autowired
+  private SamlUserStore samlUserStore;
 
   @GetMapping("/SingleSignOnService")
   public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -68,12 +70,9 @@ public class SsoController {
     samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
-  private List<SAMLAttribute> attributes(String uid) {
-    return idpConfiguration.getAttributes().entrySet().stream()
-      .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
-        new SAMLAttribute(entry.getKey(), singletonList(uid)) :
-        new SAMLAttribute(entry.getKey(), entry.getValue()))
+  private List<SAMLAttribute> attributes(String username) {
+    return samlUserStore.getUserAttributes(username).entrySet().stream()
+      .map(entry -> new SAMLAttribute(entry.getKey(), singletonList(entry.getValue())))
       .collect(toList());
   }
-
 }

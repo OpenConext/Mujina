@@ -1,0 +1,7 @@
+samlUserStore:
+  samlUsers:
+    - username: test-user
+      password: test password
+      samlAttributes:
+        attribute 1: test attribute 1 value
+        attribute 2: test attribute 2 value

@@ -1,3 +1,217 @@
+## LAA customisation of the Mujina project
+
+[![Build Status](https://codebuild.eu-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoieEx5dk9UQUVuUHNHUGl2bDBiMGZNNGRpZHAySE42dUpjNHFrV3BGNkQ4clhxVVNVOHVYTzFIZWo1VXpvakFQSjVHRTdnRnJNTXI4YUJPTXRZTHNBUCt3PSIsIml2UGFyYW1ldGVyU3BlYyI6IkY0eVNYZWE3a29MZTMra0oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://codebuild.eu-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoieEx5dk9UQUVuUHNHUGl2bDBiMGZNNGRpZHAySE42dUpjNHFrV3BGNkQ4clhxVVNVOHVYTzFIZWo1VXpvakFQSjVHRTdnRnJNTXI4YUJPTXRZTHNBUCt3PSIsIml2UGFyYW1ldGVyU3BlYyI6IkY0eVNYZWE3a29MZTMra0oiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+
+#### Useful sections in this document
+* [Mujina API Calls](#mujina-api-calls)
+* [Local development of the mock IdP/SP](#local-development-of-the-mock-idpsp)
+* [Configure Spring Boot applications to run in an AWS EC2 instance](#configure-spring-boot-applications-to-run-in-an-aws-ec2-instance)
+* [AWS EC2 installation instructions](/aws-ec2)
+* [Build Mujina](#build-mujina)
+* [Run the IDP](#run-the-idp)
+* [Run the SP](#run-the-sp)
+
+---
+
+#### OneLogin Service Provider properties
+* [Sample OneLogin Service Provider properties](#sample-onelogin-service-provider-properties)
+* The default version of the OneLogin Service Provider properties with supporting comments can be found [here](https://github.com/onelogin/java-saml/blob/master/samples/java-saml-tookit-jspsample/src/main/resources/onelogin.saml.properties)
+
+---
+
+### Mujina API Calls
+
+#### Disable the api
+All api calls can be disabled by overriding the following property in
+the IdP spring boot application configuration file
+
+> e.g. _laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml_
+
+```bash
+idp:
+  api_enabled: false
+```
+---
+* [Resetting the IDP](#resetting-the-idp)
+* [Changing the entityID](#changing-the-entityid)
+* [Setting attribute foo to bar for the testuser user](#setting-attribute-foo-to-bar-for-the-testuser-user)
+* [Adding a user](#adding-a-user)
+* [Setting the Assertion Consumer Service (ACS) endpoint](#setting-the-assertion-consumer-service-acs-endpoint)
+
+### Custom API call bash scripts
+* View the custom bash scripts that allow you to make API calls [here](/api)
+
+---
+
+##### The original project can be found @ https://github.com/OpenConext/Mujina
+
+---
+
+### Local development of the mock IdP/SP
+All commands being run are assumed to be executed in a linux terminal (_e.g. OS X or Git Bash in Windows_)
+#### Clone the repository and run a Maven build
+[Maven 3](http://maven.apache.org) is needed to build and run Mujina.
+
+```
+cd ~
+git clone https://github.com/ministryofjustice/laa-saml-mock/
+cd laa-saml-mock
+mvn clean install
+```
+
+#### Custom Spring Boot application.yml
+You can specify a custom spring boot configuration file to inject values in to the application
+```
+java -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+
+For example:
+```
+vim laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+```
+idp:
+  base_url: http://10.0.1.1:8080
+
+samlUserStore:
+  samlUsers:
+    - username: test-user
+      password: test password
+      samlAttributes:
+        attribute 1: test attribute 1 value
+        attribute 2: test attribute 2 value
+```
+
+#### Start the IdP with the bash script
+```
+cd mujina-idp
+sh start-idp.sh
+```
+
+#### Stop the IdP with the bash script
+```
+cd mujina-idp
+sh stop-idp.sh
+```
+
+#### Start the SP with the bash script
+```
+cd mujina-sp
+sh start-sp.sh
+```
+
+#### Stop the SP with the bash script
+```
+cd mujina-sp
+sh stop-sp.sh
+```
+
+---
+
+### Configure Spring Boot applications to run in an AWS EC2 instance
+Get the code and run a maven build as described at [Clone the github repository](#clone-the-repository-and-run-a-maven-build)
+#### IdP
+##### Add Spring Boot configuration
+```
+vim /home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml
+```
+```
+idp:
+  base_url: http://${SERVICE_HOST}:8080
+
+samlUserStore:
+  samlUsers:
+    - username: test-user
+      password: test password
+      samlAttributes:
+        attribute 1: test attribute 1 value
+        attribute 2: test attribute 2 value
+```
+
+##### Start IdP app
+```
+#!/bin/bash
+export SERVICE_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+
+cd /home/ec2-user/laa-saml-mock/mujina-idp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-idp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-idp/laa-saml-mock-idp-application.yml &
+```
+
+##### Tail the log file
+```
+tail -f /home/ec2-user/laa-saml-mock/mujina-sp/target/nohup.out
+```
+
+#### SP
+###### Add Spring Boot configuration
+```
+vim /home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml
+```
+```
+sp:
+  base_url: http://${SERVICE_HOST}:9090
+  entity_id: http://mock-sp
+  idp_metadata_url: http://${SERVICE_HOST}:8080/metadata
+  single_sign_on_service_location: http://${SERVICE_HOST}:8080/SingleSignOnService
+  acs_location_path: /saml/SSO
+```
+
+##### Start SP app
+```
+#!/bin/bash
+export SERVICE_HOST=`curl http://169.254.169.254/latest/meta-data/public-ipv4`;
+
+cd /home/ec2-user/laa-saml-mock/mujina-sp/target; sudo -u ec2-user nohup java -DSERVICE_HOST=${SERVICE_HOST} -jar laa-saml-mock-sp-1.0.0.jar --spring.config.location=/home/ec2-user/laa-saml-mock/mujina-sp/laa-saml-mock-sp-application.yml &
+```
+
+##### Tail the log file
+```
+tail -f /home/ec2-user/laa-saml-mock/mujina-sp/target/nohup.out
+```
+
+---
+
+Sample OneLogin Service Provider properties
+-------------------------------------------
+A sample properties file to be used in conjunction with OneLogin's SAML
+Java Toolkit can be found [here](/onelogin/onelogin.saml.properties).
+
+You can read more about the OneLogin SAML Java Toolkit @ https://github.com/onelogin/java-saml
+
+### Required Properties
+The following properties need to be supplied to the service provider web
+application, such as Tomcat Catalina properties, or Spring Boot
+application properties:
+
+##### Service Provider properties
+* saml.sp.entity.id
+* saml.sp.acs.url
+* saml.sp.x509cert
+* saml.sp.privatekey
+
+##### Identity Provider properties
+* saml.idp.entity.id
+* saml.idp.sso.url
+* saml.idp.x509cert
+
+##### Security settings
+* saml.encryption.assertions.enabled
+
+##### Service Provider contact properties
+* saml.sp.org.name
+* saml.sp.org.displayname
+* saml.sp.org.url
+* saml.sp.contact.technical.name
+* saml.sp.contact.technical.email
+* saml.sp.contact.support.name
+* saml.sp.contact.support.email
+
+### Optional Properties
+##### Service Provider contact properties
+* saml.sp.org.language
+
+---
+# Original project documentation
+
 <pre>___  ___        _  _
 |  \/  |       (_)(_)
 | .  . | _   _  _  _  _ __    __ _
@@ -13,8 +227,8 @@
 Mujina
 ======
 
-[![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
-[![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
+[![Build Status](https://travis-ci.org/ministryofjustice/laa-saml-mock.svg)](https://travis-ci.org/ministryofjustice/laa-saml-mock)
+[![codecov.io](https://codecov.io/github/ministryofjustice/laa-saml-mock/coverage.svg)](https://codecov.io/github/ministryofjustice/laa-saml-mock)
 
 Mujina is a SAML2 Identity and Service Provider (IdP & SP).
 
@@ -53,15 +267,7 @@ The default Identity Provider configuration is as follows:
 * The signatureAlgorithm is "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 * It has a user with login "admin" and password "secret" with roles ROLE_USER and ROLE_ADMIN
 * It has a user with login "user" and password "secret" with role ROLE_USER
-* It has the following attributes. Attributes are always stored as lists. Even when they contain a single value.
-    * "urn:mace:dir:attribute-def:uid" is "john.doe"
-    * "urn:mace:dir:attribute-def:cn" is "John Doe"
-    * "urn:mace:dir:attribute-def:givenName" is "John"
-    * "urn:mace:dir:attribute-def:sn" is "Doe"
-    * "urn:mace:dir:attribute-def:displayName" is "John Doe"
-    * "urn:mace:dir:attribute-def:mail" is "j.doe@example.com"
-    * "urn:mace:terena.org:attribute-def:schacHomeOrganization" is "example.com"
-    * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
+* It has no default attributes. Attributes are always stored as lists. Even when they contain a single value.
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
   If the ACS endpoint is set using the IdP api this is not necessary. Use of the api overrides values set in AuthnRequests
@@ -182,7 +388,7 @@ This API is available on both the IDP and the SP.
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d "http://www.w3.org/2000/09/xmldsig#rsa-sha1" \
+        -X PUT -d "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" \
         http://localhost:9090/api/signatureAlgorithm
 ```        
 
@@ -224,8 +430,9 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/signing-credential
 ```
 
-Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
--------------------------------------------------------
+Setting attribute foo to bar for the __testuser__ user
+----------------------------
+(e.g. urn:mace:dir:attribute-def:foo to bar)
 
 This API is only available on the IDP. **Note:** An attribute is always a list.
 
@@ -233,15 +440,15 @@ This API is only available on the IDP. **Note:** An attribute is always a list.
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '["bar"]' \
-        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
+        http://localhost:8080/api/attributes/testuser/urn:mace:dir:attribute-def:foo
 ```
 Or to test the UTF-8 encoding:
 ```bash
 curl -v -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '["髙橋 大輔"]' https://mujina-idp.test2.surfconext.nl/api/attributes/urn:mace:dir:attribute-def:cn
 ```
 
-Removing an attribute
----------------------
+Removing an attribute from the __testuser__ user
+------------------------------------------------
 
 This API is only available on the IDP.
 
@@ -249,7 +456,7 @@ This API is only available on the IDP.
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X DELETE \
-        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
+        http://localhost:8080/api/attributes/testuser/urn:mace:dir:attribute-def:foo
 ```
 
 Adding a user
