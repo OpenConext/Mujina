@@ -16,15 +16,15 @@ Mujina
 [![Build Status](https://travis-ci.org/OpenConext/Mujina.svg)](https://travis-ci.org/OpenConext/Mujina)
 [![codecov.io](https://codecov.io/github/OpenConext/Mujina/coverage.svg)](https://codecov.io/github/OpenConext/Mujina)
 
-Mujina is a SAML2 Identity and Service Provider (IdP & SP). 
+Mujina is a SAML2 Identity and Service Provider (IdP & SP).
 
-Note that backward incompatibilities were introduced in version 5.0.0. If you want to migrate from pre-5 versions to the post-5 versions 
+Note that backward incompatibilities were introduced in version 5.0.0. If you want to migrate from pre-5 versions to the post-5 versions
 then the following has changed:
- 
+
 * We no longer use Tomcat, but standalone Spring boot applications
 * The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
- 
-Characteristics of both the IdP or SP can be runtime changed with the REST API. 
+
+Characteristics of both the IdP or SP can be runtime changed with the REST API.
 
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.
 
@@ -83,7 +83,7 @@ Build Mujina
 The build dependencies are hosted on https://build.openconext.org/repository/public/
 (and will be fetched automatically by Maven).
 
-Run the IDP 
+Run the IDP
 -----------------------
 
 ```bash
@@ -121,7 +121,7 @@ The Java KeyStore expects a pkcs8 DER format for RSA private keys so we have to 
 ```bash
 openssl pkcs8 -nocrypt  -in mujina.pem -topk8 -out mujina.der
 ```
- 
+
 Remove the whitespace, heading and footer from the mujina.crt and mujina.der:
 
 ```bash
@@ -234,6 +234,10 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d '["bar"]' \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
+```
+Or to test the UTF-8 encoding:
+```bash
+curl -v -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '["髙橋 大輔"]' https://mujina-idp.test2.surfconext.nl/api/attributes/urn:mace:dir:attribute-def:cn
 ```
 
 Removing an attribute
