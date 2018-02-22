@@ -1,8 +1,4 @@
 version: 0.2
-env:
-  variables:
-    APPNAME: "laa-saml-mock-idp"
-    ACCOUNT: "Account Number"
 phases:
   install:
     commands:
@@ -15,19 +11,17 @@ phases:
       - wget http://apache.mirror.anlx.net/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz
       - tar -zxvf apache-maven-3.5.2-bin.tar.gz
       - echo $PWD
-      - export MAVEN_HOME=$PWD/apache-maven-3.5.2
+      - MAVEN_HOME=$PWD/apache-maven-3.5.2
       - echo Maven home set to $MAVEN_HOME
-      - export PATH=$PATH:$MAVEN_HOME/bin
+      - PATH=$PATH:$MAVEN_HOME/bin
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --region eu-west-2)
+      - $(aws ecr get-login)
+      - DOCKER_TAG={$APPLICATION_NAME}:`date -u "+%Y%m%d%H%M"`
+      - echo Created docker tag $DOCKER_TAG
   build:
     commands:
-      - export DOCKER_TAG=$APPNAME:`date -u "+%Y%m%d%H%M"`
-      - echo Created docker tag $DOCKER_TAG
-      - export DOCKER_TARGET=$ACCOUNT.dkr.ecr.eu-west-2.amazonaws.com/$DOCKER_TAG
-      - echo Created docker target $DOCKER_TARGET
       - echo Starting maven build on `date`...
       - mvn install
       - echo Building the Docker image...
@@ -40,8 +34,12 @@ phases:
       - echo Pushing the Docker image to... $DOCKER_TARGET
       - docker push $DOCKER_TARGET
       - aws cloudformation package --template-file ./aws/application/app-main.template --s3-bucket $ARTIFACT_BUCKET --output-template-file app-main-packaged.template
+      - echo '{ "tag":"'$TAG'" }' >> build_tag.json
+      - cat build_tag.json
+      - cp ./aws/application/parameters/development-${APPLICATION_NAME}-pipeline.json development.json
 
 artifacts:
   files:
       - mujina-idp/target/laa-saml-mock-idp-1.0.0.jar
+      - build_tag.json
   discard-paths: yes
