@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -69,7 +71,10 @@ public class SsoController {
   }
 
   private List<SAMLAttribute> attributes(String uid) {
-    return idpConfiguration.getAttributes().entrySet().stream()
+    Map<String, List<String>> attributes = idpConfiguration.getUsers().stream().filter(user -> user.getPrincipal()
+      .equals(uid)).findAny().map(user -> user.getAttributes()).orElse(new HashMap<>());
+    attributes.putAll(idpConfiguration.getAttributes());
+    return attributes.entrySet().stream()
       .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
         new SAMLAttribute(entry.getKey(), singletonList(uid)) :
         new SAMLAttribute(entry.getKey(), entry.getValue()))

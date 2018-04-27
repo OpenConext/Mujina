@@ -1,7 +1,7 @@
 package mujina.api;
 
+import mujina.idp.FederatedUserAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +36,15 @@ public class IdpController extends SharedController {
     configuration().getAttributes().put(name, values);
   }
 
+  @PutMapping("/attributes/{name:.+}/{userName:.+}")
+  public void setAttributeForUser(@PathVariable String name, @PathVariable String userName,
+                                  @RequestBody List<String> values) {
+    LOG.debug("Request to set attribute {} to {}", name, values);
+    configuration().getUsers().stream().filter(userAuthenticationToken -> userAuthenticationToken.getName().equals
+      (userName)).findFirst().orElseThrow(() -> new IllegalArgumentException(String.format("User %s first " +
+      "must be created", userName))).getAttributes().put(name, values);
+  }
+
   @DeleteMapping("/attributes/{name:.+}")
   public void removeAttribute(@PathVariable String name) {
     LOG.debug("Request to remove attribute {}", name);
@@ -45,10 +54,12 @@ public class IdpController extends SharedController {
   @PutMapping("/users")
   public void addUser(@RequestBody User user) {
     LOG.debug("Request to add user {}", user);
-    configuration().getUsers().add(new UsernamePasswordAuthenticationToken(
+    FederatedUserAuthenticationToken userAuthenticationToken = new FederatedUserAuthenticationToken(
       user.getName(),
       user.getPassword(),
-      user.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(toList())));
+      user.getAuthorities().stream().map(SimpleGrantedAuthority::new).collect(toList()));
+    userAuthenticationToken.setAttributes(configuration().getAttributes());
+    configuration().getUsers().add(userAuthenticationToken);
   }
 
   @PutMapping("authmethod")

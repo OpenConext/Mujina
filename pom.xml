@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.openconext</groupId>
   <artifactId>mujina</artifactId>
-  <version>5.0.7</version>
+  <version>6.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -35,7 +36,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>1.5.2.RELEASE</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <modules>
@@ -117,9 +118,13 @@
     </plugins>
     <extensions>
       <extension>
+        <!--<groupId>org.apache.maven.wagon</groupId>-->
+        <!--<artifactId>wagon-webdav</artifactId>-->
+        <!--<version>1.0-beta-2</version>-->
+        <!-- https://mvnrepository.com/artifact/org.apache.maven.wagon/wagon-webdav-jackrabbit -->
         <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-webdav</artifactId>
-        <version>1.0-beta-2</version>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>3.0.0</version>
       </extension>
     </extensions>
   </build>
