@@ -224,8 +224,20 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/signing-credential
 ```
 
+Adding a user
+-------------
+
+This API is only available on the IDP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
+        http://localhost:8080/api/users
+```
+
 Setting attribute foo to bar (e.g. urn:mace:dir:attribute-def:foo to bar)
--------------------------------------------------------
+-------------------------------------------------------------------------
 
 This API is only available on the IDP. **Note:** An attribute is always a list.
 
@@ -240,6 +252,20 @@ Or to test the UTF-8 encoding:
 curl -v -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '["髙橋 大輔"]' https://mujina-idp.test2.surfconext.nl/api/attributes/urn:mace:dir:attribute-def:cn
 ```
 
+Setting attribute for specific user
+-----------------------------------
+
+The call to set an attribute is global for all users. With this call you set an attribute for a specific user.
+This API is only available on the IDP. **Note:** The user must exists and will NOT be provisioned on the fly.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '["bar"]' \
+        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo/user
+```
+
+
 Removing an attribute
 ---------------------
 
@@ -252,16 +278,16 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo
 ```
 
-Adding a user
--------------
+Removing an attribute for a user
+--------------------------------
 
 This API is only available on the IDP.
 
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
-        -X PUT -d '{"name": "hacker", "password": "iamgod", "authorities": ["ROLE_USER", "ROLE_ADMIN"]}' \
-        http://localhost:8080/api/users
+        -X DELETE \
+        http://localhost:8080/api/attributes/urn:mace:dir:attribute-def:foo/user
 ```
 
 Setting the authentication method

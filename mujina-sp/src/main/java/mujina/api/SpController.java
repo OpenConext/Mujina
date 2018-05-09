@@ -17,19 +17,19 @@ public class SpController extends SharedController {
 
   @PutMapping(value = {"/ssoServiceURL"})
   public void setSsoServiceURL(@RequestBody String ssoServiceURL) {
-    LOG.debug("Request to set ssoServiceURL to {}", ssoServiceURL);
+    LOG.info("Request to set ssoServiceURL to {}", ssoServiceURL);
     configuration().setIdpSSOServiceURL(ssoServiceURL);
   }
 
   @PutMapping("/protocolBinding")
   public void setProtocolBinding(@RequestBody String protocolBinding) {
-    LOG.debug("Request to set protocolBinding to {}", protocolBinding);
+    LOG.info("Request to set protocolBinding to {}", protocolBinding);
     configuration().setProtocolBinding(protocolBinding);
   }
 
   @PutMapping("/assertionConsumerServiceURL")
   public void setAssertionConsumerServiceURL(@RequestBody String assertionConsumerServiceURL) {
-    LOG.debug("Request to set assertionConsumerServiceURL to {}", assertionConsumerServiceURL);
+    LOG.info("Request to set assertionConsumerServiceURL to {}", assertionConsumerServiceURL);
     configuration().setAssertionConsumerServiceURL(assertionConsumerServiceURL);
   }
 
