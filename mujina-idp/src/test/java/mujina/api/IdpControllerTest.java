@@ -12,7 +12,6 @@ import static io.restassured.RestAssured.given;
 import static mujina.api.AuthenticationMethod.ALL;
 import static mujina.api.AuthenticationMethod.USER;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -24,7 +23,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   private static final String UID_ATTRIBUTE = "urn:mace:dir:attribute-def:uid";
 
   @Test
-  public void setAttributes() throws Exception {
+  public void setAttributes() {
     List<String> values = Arrays.asList("value1", "value2");
     Map<String, List<String>> attributes = Collections.singletonMap(NEW_ATTRIBUTE, values);
 
@@ -34,7 +33,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void setAttribute() throws Exception {
+  public void setAttribute() {
     List<String> values = Arrays.asList("value1", "value2");
 
     api(values, "/api/attributes/" + NEW_ATTRIBUTE);
@@ -43,7 +42,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void removeAttribute() throws Exception {
+  public void removeAttribute() {
     assertEquals(Arrays.asList("john.doe"), idpConfiguration.getAttributes().get(UID_ATTRIBUTE));
 
     given()
@@ -56,7 +55,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void addUser() throws Exception {
+  public void addUser() {
     User user = new User("Bob", "secret", Arrays.asList("USER", "ADMIN"));
     api(user, "/api/users");
 
@@ -75,13 +74,42 @@ public class IdpControllerTest extends AbstractIntegrationTest {
   }
 
   @Test
-  public void setAcsEndpoint() throws Exception {
+  public void setAcsEndpoint() {
     assertNull(idpConfiguration.getAcsEndpoint());
 
     String acs = "https://localhost:8080/acs";
     api(acs, "/api/acsendpoint");
 
     assertEquals(acs, idpConfiguration.getAcsEndpoint());
+  }
+
+  @Test
+  public void setAttributeForUser() {
+    User user = new User("hacker", "secret", Arrays.asList("USER"));
+    api(user, "/api/users");
+
+    List<String> values = Arrays.asList("value1", "value2");
+
+    api(values, "/api/attributes/" + NEW_ATTRIBUTE + "/hacker");
+
+    assertEquals(values, idpConfiguration.getUsers().stream()
+      .filter(userAuthenticationToken -> userAuthenticationToken.getPrincipal().equals("hacker")).findFirst().get()
+      .getAttributes().get(NEW_ATTRIBUTE));
+  }
+
+  @Test
+  public void removeAttributeForUser() {
+    this.setAttributeForUser();
+
+    given()
+      .header("Content-Type", "application/json")
+      .delete("/api/attributes/" + NEW_ATTRIBUTE + "/hacker")
+      .then()
+      .statusCode(SC_OK);
+
+    assertFalse(idpConfiguration.getUsers().stream()
+      .filter(userAuthenticationToken -> userAuthenticationToken.getPrincipal().equals("hacker")).findFirst().get()
+      .getAttributes().containsKey(NEW_ATTRIBUTE));
   }
 
   private void api(Object body, String path) {
