@@ -59,10 +59,13 @@ public class SsoController {
 
     String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
 
+    List<SAMLAttribute> attributes = attributes(authentication.getName());
+
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
-      NameIDType.UNSPECIFIED,
-      attributes(authentication.getName()),
+      attributes.stream().filter(attr -> "urn:oasis:names:tc:SAML:1.1:nameid-format".equals(attr.getName()))
+          .findFirst().map(attr -> attr.getValue()).orElse(NameIDType.UNSPECIFIED),
+      attributes,
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
       assertionConsumerServiceURL,
