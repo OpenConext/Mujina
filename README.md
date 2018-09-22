@@ -78,7 +78,7 @@ After you override configuration you can go back to the default using the reset 
 Build Mujina
 ---------------
 
-[Maven 3](http://maven.apache.org) is needed to build and run Mujina.
+[Maven 3](http://maven.apache.org) in combination with Java 8 is needed to build and run Mujina.
 
 The build dependencies are hosted on https://build.openconext.org/repository/public/
 (and will be fetched automatically by Maven).
