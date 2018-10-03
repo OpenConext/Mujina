@@ -59,7 +59,7 @@ public class SsoController {
 
     String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
 
-    List<SAMLAttribute> attributes = attributes(authentication.getName());
+    List<SAMLAttribute> attributes = attributes(authentication);
 
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
@@ -74,14 +74,23 @@ public class SsoController {
     samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
-  private List<SAMLAttribute> attributes(String uid) {
-    Map<String, List<String>> result = new HashMap<>();
+  private List<SAMLAttribute> attributes(Authentication authentication) {
+    String uid = authentication.getName();
+    final Map<String, List<String>> result = new HashMap<>();
     result.putAll(idpConfiguration.getAttributes());
+
 
     Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream().filter(user -> user
       .getPrincipal()
       .equals(uid)).findAny().map(user -> user.getAttributes());
     optionalMap.ifPresent(map -> result.putAll(map));
+
+    //See SAMLAttributeAuthenticationFilter#setDetails
+    Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
+    parameterMap.forEach((key, values) -> {
+      result.put(key,Arrays.asList(values));
+    });
+
     return result.entrySet().stream()
       .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
         new SAMLAttribute(entry.getKey(), singletonList(uid)) :

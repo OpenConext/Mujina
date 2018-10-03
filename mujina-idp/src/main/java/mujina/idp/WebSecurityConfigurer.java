@@ -32,6 +32,7 @@ import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.context.SAMLContextProvider;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -56,7 +57,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
 
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
-    registry.addViewController("/login").setViewName("login");
+//    registry.addViewController("/login").setViewName("login");
   }
 
   @Bean
@@ -67,7 +68,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
                                                @Value("${idp.compare_endpoints}") boolean compareEndpoints,
                                                IdpConfiguration idpConfiguration,
                                                JKSKeyManager keyManager)
-    throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException, XMLParserException, URISyntaxException {
+    throws XMLParserException, URISyntaxException {
     StaticBasicParserPool parserPool = new StaticBasicParserPool();
     BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
     securityPolicy.getPolicyRules().addAll(Arrays.asList(new IssueInstantRule(clockSkew, expires),
@@ -122,12 +123,19 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Autowired
     private IdpConfiguration idpConfiguration;
 
+    private SAMLAttributeAuthenticationFilter authenticationFilter() throws Exception {
+      SAMLAttributeAuthenticationFilter filter = new SAMLAttributeAuthenticationFilter();
+      filter.setAuthenticationManager(authenticationManagerBean());
+      return filter;
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
       http
         .csrf().disable()
+        .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
         .authorizeRequests()
-        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css").permitAll()
+        .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css", "/*.js").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().hasRole("USER")
         .and()

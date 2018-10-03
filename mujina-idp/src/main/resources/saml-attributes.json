@@ -1,0 +1,87 @@
+[
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonPrincipalName",
+    "id": "eduPersonPrincipalName",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonTargetedID",
+    "id": "eduPersonTargetedID",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:displayName",
+    "id": "displayName",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:cn",
+    "id": "cn",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:givenName",
+    "id": "givenName",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:sn",
+    "id": "sn",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:mail",
+    "id": "mail",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
+    "id": "schacHomeOrganization",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:terena.org:attribute-def:schacHomeOrganizationType",
+    "id": "schacHomeOrganizationType",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:schac:attribute-def:schacPersonalUniqueCode",
+    "id": "schacPersonalUniqueCode",
+    "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonAffiliation",
+    "id": "eduPersonAffiliation",
+    "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation",
+    "id": "eduPersonScopedAffiliation",
+    "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonEntitlement",
+    "id": "eduPersonEntitlement",
+    "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:eduPersonOrcid",
+    "id": "eduPersonOrcid",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:isMemberOf",
+    "id": "isMemberOf",
+    "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:uid",
+    "id": "uid",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:preferredLanguage",
+    "id": "preferredLanguage",
+    "multiplicity": false
+  }
+]

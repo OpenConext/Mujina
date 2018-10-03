@@ -2,16 +2,49 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login page</title>
+    <link rel="stylesheet" type="text/css" href="/main.css"/>
+    <script th:src="@{/main.js}"></script>
 </head>
 <body>
-<h1>Mujina Identity Provider</h1>
-<p th:if="${param.error}" class="error">Wrong user or password</p>
-<form th:action="@{/login}" method="post">
-    <label for="username">Username</label>:
-    <input type="text" id="username" name="username" autofocus="autofocus" /> <br />
-    <label for="password">Password</label>:
-    <input type="password" id="password" name="password" /> <br />
-    <input type="submit" value="Log in" />
-</form>
+<section id="explanation" class="explain hide">
+    <section class="container">
+        <section class="title">
+            <p>SAML Attribute Manipulation</p>
+            <a href="/close" id="close" class="close">&#9747;</a>
+        </section>
+        <section class="explanation-content"><p>
+            When the Mujina IDP sends a SAML assertion back to the service provider, all the attributes will be added as
+            SAML AttributeStatement elements.
+        </p>
+            <p>
+                Based on the Attribute Release Policy of the service provider they will be included in the authenticated
+                user identity.
+            </p>
+            <p>If you want to add multiple values for one attribute - for example isMemberOf - then add them multiple times.</p></section>
+    </section>
+</section>
+
+<section class="login-container">
+    <section class="login">
+        <h1>Mujina Identity Provider</h1>
+        <p th:if="${param.error}" class="error">Wrong user or password</p>
+        <form class="login-form" th:action="@{/login}" method="post">
+            <input type="text" id="username" name="username" autofocus="autofocus" placeholder="Username"/>
+            <input type="password" id="password" name="password" placeholder="Password"/>
+            <input class="button" type="submit" value="Log in"/>
+            <section class="add-attribute">
+                <select class="attribute-select" id="add-attribute">
+                    <option value="Add attribute...">Add attribute...</option>
+                    <option th:each="attr : ${samlAttributes}" th:value="${attr.get('name')}" th:text="${attr.get('id')}"
+                        th:attr="data-multiplicity=${attr.get('multiplicity')}"></option>
+                </select>
+                <div class="help"><span class="explain-link">?</span></div>
+            </section>
+            <section id="attribute-list" class="attribute-list"></section>
+
+        </form>
+    </section>
+    <a class="powered-by" href="https://openconext.org/" target="_blank">Copyright © 2018 OpenConext</a>
+</section>
 </body>
 </html>

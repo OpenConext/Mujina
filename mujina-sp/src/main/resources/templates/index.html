@@ -2,9 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Mujina Service Provider</title>
+    <link rel="stylesheet" type="text/css" href="/main.css"/>
 </head>
 <body>
-<h1>Mujina Service Provider</h1>
-<a th:href="@{/user.html}">Login</a>
+<section class="login-container">
+    <section class="login">
+        <h1>Mujina Service Provider</h1>
+        <a class="button" th:href="@{/user.html}">Login</a>
+    </section>
+    <a class="powered-by" href="https://openconext.org/" target="_blank">Copyright © 2018 OpenConext</a>
+</section>
 </body>
 </html>
