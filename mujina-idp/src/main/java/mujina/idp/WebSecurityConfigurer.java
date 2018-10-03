@@ -32,6 +32,7 @@ import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.context.SAMLContextProvider;
 import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.security.saml.util.VelocityFactory;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -126,6 +127,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     private SAMLAttributeAuthenticationFilter authenticationFilter() throws Exception {
       SAMLAttributeAuthenticationFilter filter = new SAMLAttributeAuthenticationFilter();
       filter.setAuthenticationManager(authenticationManagerBean());
+      filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error=true"));
       return filter;
     }
 
