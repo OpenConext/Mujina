@@ -5,6 +5,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 
@@ -20,6 +21,9 @@ public class AuthenticationProvider implements org.springframework.security.auth
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    if (StringUtils.isEmpty(authentication.getPrincipal())) {
+      throw new InvalidAuthenticationException("Principal may not be empty");
+    }
     if (idpConfiguration.getAuthenticationMethod().equals(ALL)) {
       return new FederatedUserAuthenticationToken(
         authentication.getPrincipal(),
@@ -33,7 +37,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
         .findFirst().map(userAuthenticationToken ->
           //need to copy or else credentials are erased for future logins
           userAuthenticationToken.clone())
-        .orElseThrow(() -> new AuthenticationException("User not found or bad credentials") {
+        .orElseThrow(() -> new InvalidAuthenticationException("User not found or bad credentials") {
         });
     }
   }
