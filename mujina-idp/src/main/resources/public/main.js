@@ -4,9 +4,8 @@ function guid() {
             .toString(16)
             .substring(1);
     }
-
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-};
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     [].forEach.call(document.querySelectorAll(".help,.close"), function (el) {
@@ -18,13 +17,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!explanation.classList.contains("hide")) {
                 setTimeout(function () {
                     document.getElementById("close").focus();
-                }, 150);
+                }, 25);
             }
         });
     });
+
     document.getElementById("close").addEventListener("blur", function () {
-        document.getElementById("explanation").classList.toggle("hide");
+        document.getElementById("explanation").classList.add("hide");
     });
+
     document.querySelector(".attribute-select").addEventListener("change", function (e) {
         var selectedOption = e.target.selectedOptions[0];
         var val = selectedOption.value;
@@ -57,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         select.value = "Add attribute...";
         setTimeout(function () {
-            document.getElementById(inputId).focus()
+            document.getElementById(inputId).focus();
         }, 25);
     });
 });
