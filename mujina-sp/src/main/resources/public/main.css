@@ -42,12 +42,15 @@ a.button {
     color: #fff;
     background-color: #4DB3CF;
     text-align: center;
-    padding: 13px 0;
+    padding: 12px 0;
     border-radius: 3px;
     width: 100%;
     cursor: pointer;
     display: inline-block;
     transition: all 0.1s linear;
+}
+.button:hover {
+    background-color: #4fa9c5;
 }
 a.powered-by {
     position: absolute;
