@@ -75,11 +75,6 @@
     "multiplicity": true
   },
   {
-    "name": "urn:mace:dir:attribute-def:uid",
-    "id": "uid",
-    "multiplicity": false
-  },
-  {
     "name": "urn:mace:dir:attribute-def:preferredLanguage",
     "id": "preferredLanguage",
     "multiplicity": false

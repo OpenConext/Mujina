@@ -136,7 +136,7 @@ public class SAMLBuilder {
 
   public static Optional<String> getStringValueFromXMLObject(XMLObject xmlObj) {
     if (xmlObj instanceof XSString) {
-      return Optional.of(((XSString) xmlObj).getValue());
+      return Optional.ofNullable(((XSString) xmlObj).getValue());
     } else if (xmlObj instanceof XSAny) {
       XSAny xsAny = (XSAny) xmlObj;
       String textContent = xsAny.getTextContent();
