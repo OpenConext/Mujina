@@ -139,7 +139,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
     SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler =
       new SavedRequestAwareAuthenticationSuccessHandler();
-    successRedirectHandler.setDefaultTargetUrl("/user");
+    successRedirectHandler.setDefaultTargetUrl("/user.html");
     return successRedirectHandler;
   }
 

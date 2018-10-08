@@ -14,7 +14,7 @@ public class UserController {
     return authentication == null ? "index" : "redirect:/user.html";
   }
 
-  @GetMapping("/user.html")
+  @GetMapping({"user", "/user.html"})
   public String user(Authentication authentication, ModelMap modelMap) {
     modelMap.addAttribute("user", authentication.getPrincipal());
     return "user";
