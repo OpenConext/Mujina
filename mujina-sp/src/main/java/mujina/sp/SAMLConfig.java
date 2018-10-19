@@ -156,7 +156,7 @@ public class SAMLConfig {
   @Bean
   @Autowired
   public WebSSOProfile webSSOprofile(SAMLProcessor samlProcessor) {
-    WebSSOProfileImpl webSSOProfile = new WebSSOProfileImpl();
+    WebSSOProfileImpl webSSOProfile = new WebSSOProfileExtensions();
     webSSOProfile.setProcessor(samlProcessor);
     return webSSOProfile;
   }
