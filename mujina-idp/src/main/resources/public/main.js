@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var spanId = guid();
         var inputId = guid();
         newElement.innerHTML = "<label>" + val + "</label>" +
-            "<input type='text' id='" + inputId + "' name='" + val + "'></input>" +
+            "<input class='input-attribute-value' type='text' id='" + inputId + "' name='" + val + "'></input>" +
             "<span id='" + spanId + "' class='remove-attribute-value'>🗑</span>";
         document.getElementById("attribute-list").appendChild(newElement);
         document.getElementById(spanId).addEventListener("click", function () {
@@ -58,7 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         select.value = "Add attribute...";
         setTimeout(function () {
-            document.getElementById(inputId).focus();
+            var inputElement = document.getElementById(inputId);
+            inputElement.focus();
+            inputElement.addEventListener("keypress", function(e){
+                if (e.code === "Enter") {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    select.focus();
+                }
+            });
         }, 25);
     });
 });
