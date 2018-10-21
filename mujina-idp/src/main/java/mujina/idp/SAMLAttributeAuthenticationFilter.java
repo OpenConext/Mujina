@@ -13,7 +13,7 @@ public class SAMLAttributeAuthenticationFilter extends UsernamePasswordAuthentic
   protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
     Map<String, String[]> parameterMap = request.getParameterMap().entrySet().stream()
       .filter(e -> !getPasswordParameter().equals(e.getKey()) && !getUsernameParameter().equals(e.getKey()))
-      .collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue()));
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     authRequest.setDetails(parameterMap);
   }
 }

@@ -16,6 +16,7 @@ import org.opensaml.xml.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -64,7 +65,7 @@ public class SsoController {
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
       attributes.stream().filter(attr -> "urn:oasis:names:tc:SAML:1.1:nameid-format".equals(attr.getName()))
-          .findFirst().map(attr -> attr.getValue()).orElse(NameIDType.UNSPECIFIED),
+        .findFirst().map(attr -> attr.getValue()).orElse(NameIDType.UNSPECIFIED),
       attributes,
       authnRequest.getIssuer().getValue(),
       authnRequest.getID(),
@@ -88,11 +89,13 @@ public class SsoController {
     //See SAMLAttributeAuthenticationFilter#setDetails
     Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
     parameterMap.forEach((key, values) -> {
-      result.put(key,Arrays.asList(values));
+      result.put(key, Arrays.asList(values));
     });
 
+    //Provide the ability to limit the list attributes returned to the SP
     return result.entrySet().stream()
-      .map(entry ->  entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
+      .filter(entry -> !entry.getValue().stream().allMatch(StringUtils::isEmpty))
+      .map(entry -> entry.getKey().equals("urn:mace:dir:attribute-def:uid") ?
         new SAMLAttribute(entry.getKey(), singletonList(uid)) :
         new SAMLAttribute(entry.getKey(), entry.getValue()))
       .collect(toList());
