@@ -54,6 +54,10 @@ a.button {
     display: inline-block;
     transition: all 0.1s linear;
 }
+section.force-authn {
+    margin-top: 25px;
+    margin-left: -100px;
+}
 .button:hover {
     background-color: #4fa9c5;
 }

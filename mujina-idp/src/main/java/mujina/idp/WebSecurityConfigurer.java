@@ -12,6 +12,7 @@ import org.opensaml.saml2.binding.decoding.HTTPRedirectDeflateDecoder;
 import org.opensaml.saml2.binding.encoding.HTTPPostSimpleSignEncoder;
 import org.opensaml.util.storage.MapBasedStorageService;
 import org.opensaml.util.storage.ReplayCache;
+import org.opensaml.util.storage.StorageService;
 import org.opensaml.ws.security.provider.BasicSecurityPolicy;
 import org.opensaml.ws.security.provider.StaticSecurityPolicyResolver;
 import org.opensaml.xml.parse.StaticBasicParserPool;
@@ -56,11 +57,6 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
   @Autowired
   private Environment environment;
 
-  @Override
-  public void addViewControllers(ViewControllerRegistry registry) {
-//    registry.addViewController("/login").setViewName("login");
-  }
-
   @Bean
   @Autowired
   public SAMLMessageHandler samlMessageHandler(@Value("${idp.clock_skew}") int clockSkew,
@@ -72,8 +68,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     throws XMLParserException, URISyntaxException {
     StaticBasicParserPool parserPool = new StaticBasicParserPool();
     BasicSecurityPolicy securityPolicy = new BasicSecurityPolicy();
-    securityPolicy.getPolicyRules().addAll(Arrays.asList(new IssueInstantRule(clockSkew, expires),
-      new MessageReplayRule(new ReplayCache(new MapBasedStorageService(), 14400000))));
+    securityPolicy.getPolicyRules().addAll(Arrays.asList(new IssueInstantRule(clockSkew, expires)));
 
     HTTPRedirectDeflateDecoder httpRedirectDeflateDecoder = new HTTPRedirectDeflateDecoder(parserPool);
     HTTPPostDecoder httpPostDecoder = new HTTPPostDecoder(parserPool);
@@ -124,6 +119,9 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
     @Autowired
     private IdpConfiguration idpConfiguration;
 
+    @Autowired
+    private SAMLMessageHandler samlMessageHandler;
+
     private SAMLAttributeAuthenticationFilter authenticationFilter() throws Exception {
       SAMLAttributeAuthenticationFilter filter = new SAMLAttributeAuthenticationFilter();
       filter.setAuthenticationManager(authenticationManagerBean());
@@ -136,6 +134,7 @@ public class WebSecurityConfigurer extends WebMvcConfigurerAdapter {
       http
         .csrf().disable()
         .addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new ForceAuthnFilter(samlMessageHandler), SAMLAttributeAuthenticationFilter.class)
         .authorizeRequests()
         .antMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css", "/*.js").permitAll()
         .antMatchers("/admin/**").hasRole("ADMIN")
