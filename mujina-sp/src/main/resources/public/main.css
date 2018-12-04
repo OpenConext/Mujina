@@ -1,12 +1,18 @@
 ul {
     list-style: none;
 }
-
+.login-container-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 .login-container, .user-container {
     font-family: Helvetica, Verdana, serif;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    min-height: 100%;
     width: 100%;
     background: linear-gradient(135deg, #fff 0%, #f3f6f8 100%);
 }
@@ -35,7 +41,9 @@ ul {
     justify-content: center;
     flex-direction: column;
     align-self: center;
-    margin: auto;
+    margin: auto auto 20%;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 h1 {
     font-size: 24px;

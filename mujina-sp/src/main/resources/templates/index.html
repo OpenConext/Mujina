@@ -6,16 +6,18 @@
     <script th:src="@{/sp.js}"></script>
 </head>
 <body>
-<section class="login-container">
-    <section class="login">
-        <h1>Mujina Service Provider</h1>
-        <a id="user-link" class="button" th:href="@{/user.html?force-authn=false}">Login</a>
-        <section class="force-authn">
-            <input type="checkbox" id="force-authn" name="force-authn"/>
-            <label for="force-authn">Force Authn request?</label>
+<section class="login-container-wrapper">
+    <section class="login-container">
+        <section class="login">
+            <h1>Mujina Service Provider</h1>
+            <a id="user-link" class="button" th:href="@{/user.html?force-authn=false}">Login</a>
+            <section class="force-authn">
+                <input type="checkbox" id="force-authn" name="force-authn"/>
+                <label for="force-authn">Force Authn request?</label>
+            </section>
         </section>
+        <a class="powered-by" href="https://openconext.org/" target="_blank">Copyright © 2018 OpenConext</a>
     </section>
-    <a class="powered-by" href="https://openconext.org/" target="_blank">Copyright © 2018 OpenConext</a>
 </section>
 </body>
 </html>
