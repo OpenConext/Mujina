@@ -2,6 +2,7 @@ package mujina.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 @Getter
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
 
   private String name;

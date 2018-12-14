@@ -20,6 +20,7 @@ public class UserController {
   private List<Map<String, String>> samlAttributes;
 
   @Autowired
+  @SuppressWarnings("unchecked")
   public UserController(ObjectMapper objectMapper) throws IOException {
     this.samlAttributes = objectMapper.readValue(new ClassPathResource("saml-attributes.json").getInputStream(), List.class);
   }

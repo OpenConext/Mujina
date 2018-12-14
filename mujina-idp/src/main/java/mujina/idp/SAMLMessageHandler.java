@@ -106,6 +106,7 @@ public class SAMLMessageHandler {
         SAMLConstants.SAML2_POST_BINDING_URI)));
   }
 
+  @SuppressWarnings("unchecked")
   public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
     Status status = buildStatus(StatusCode.SUCCESS_URI);
 

@@ -57,6 +57,7 @@ public class SsoController {
     doSSO(request, response, authentication, true);
   }
 
+  @SuppressWarnings("unchecked")
   private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MarshallingException, SignatureException, MessageEncodingException, MetadataProviderException, IOException, ServletException {
     SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, response, postRequest);
     AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
@@ -77,16 +78,16 @@ public class SsoController {
     samlMessageHandler.sendAuthnResponse(principal, response);
   }
 
+  @SuppressWarnings("unchecked")
   private List<SAMLAttribute> attributes(Authentication authentication) {
     String uid = authentication.getName();
-    final Map<String, List<String>> result = new HashMap<>();
-    result.putAll(idpConfiguration.getAttributes());
+    Map<String, List<String>> result = new HashMap<>(idpConfiguration.getAttributes());
 
 
     Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream().filter(user -> user
       .getPrincipal()
-      .equals(uid)).findAny().map(user -> user.getAttributes());
-    optionalMap.ifPresent(map -> result.putAll(map));
+      .equals(uid)).findAny().map(FederatedUserAuthenticationToken::getAttributes);
+    optionalMap.ifPresent(result::putAll);
 
     //See SAMLAttributeAuthenticationFilter#setDetails
     Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();

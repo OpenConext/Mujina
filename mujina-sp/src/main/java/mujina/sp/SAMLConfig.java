@@ -139,6 +139,7 @@ public class SAMLConfig {
     WebSSOProfileConsumerImpl webSSOProfileConsumer = environment.acceptsProfiles("test") ?
       new WebSSOProfileConsumerImpl() {
         @Override
+        @SuppressWarnings("unchecked")
         protected void verifyAssertion(Assertion assertion, AuthnRequest request, SAMLMessageContext context) throws AuthenticationException, SAMLException, org.opensaml.xml.security.SecurityException, ValidationException, DecryptionException {
           //nope
           context.setSubjectNameIdentifier(assertion.getSubject().getNameID());
