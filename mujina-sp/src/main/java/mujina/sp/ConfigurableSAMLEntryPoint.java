@@ -17,7 +17,7 @@ public class ConfigurableSAMLEntryPoint extends SAMLEntryPoint {
     if (inboundMessageTransport instanceof HttpServletRequestAdapter) {
       HttpServletRequestAdapter messageTransport = (HttpServletRequestAdapter) inboundMessageTransport;
       String forceAuthn = messageTransport.getParameterValue("force-authn");
-      if (forceAuthn != null && "true".equals(forceAuthn)) {
+      if ("true".equals(forceAuthn)) {
         profileOptions.setForceAuthN(true);
       }
     }
