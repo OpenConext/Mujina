@@ -33,8 +33,7 @@
     <saml2:Subject>
       <saml2:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified">admin</saml2:NameID>
       <saml2:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
-        <saml2:SubjectConfirmationData Address="http://localhost:9090/saml/SSO"
-                                       InResponseTo="a1fef459164dc0ge323e4564ic56g1"
+        <saml2:SubjectConfirmationData InResponseTo="a1fef459164dc0ge323e4564ic56g1"
                                        NotOnOrAfter="2017-03-29T15:45:32.879Z"
                                        Recipient="http://localhost:9090/saml/SSO"/>
       </saml2:SubjectConfirmation>
