@@ -103,6 +103,8 @@ public class SAMLBuilder {
     audienceRestriction.getAudiences().add(audience);
 
     Conditions conditions = buildSAMLObject(Conditions.class, Conditions.DEFAULT_ELEMENT_NAME);
+    conditions.setNotBefore(new DateTime().minusMinutes(3));
+    conditions.setNotOnOrAfter(new DateTime().plusMinutes(3));
     conditions.getAudienceRestrictions().add(audienceRestriction);
     assertion.setConditions(conditions);
 
