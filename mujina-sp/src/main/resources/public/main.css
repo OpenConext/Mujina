@@ -1,11 +1,13 @@
 ul {
     list-style: none;
 }
+
 .login-container-wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
 }
+
 .login-container, .user-container {
     font-family: Helvetica, Verdana, serif;
     display: flex;
@@ -16,12 +18,15 @@ ul {
     width: 100%;
     background: linear-gradient(135deg, #fff 0%, #f3f6f8 100%);
 }
+
 .login-container {
     height: 100vh;
 }
+
 .user-container {
     height: 100%;
 }
+
 .login-container::before, .user-container::before {
     content: "";
     position: fixed;
@@ -45,10 +50,12 @@ ul {
     box-sizing: border-box;
     max-width: 100%;
 }
+
 h1 {
     font-size: 24px;
     text-align: center;
 }
+
 a.button {
     font-size: 22px;
     text-decoration: none;
@@ -62,13 +69,16 @@ a.button {
     display: inline-block;
     transition: all 0.1s linear;
 }
+
 section.force-authn {
     margin-top: 25px;
     margin-left: -100px;
 }
+
 .button:hover {
     background-color: #4fa9c5;
 }
+
 a.powered-by {
     position: absolute;
     margin: 10px;
@@ -78,10 +88,12 @@ a.powered-by {
     bottom: 10px;
     right: 10px;
 }
+
 a.powered-by:visited {
     text-decoration: none;
     color: #4DB3CF;
 }
+
 .attributes {
     z-index: 99;
 }

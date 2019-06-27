@@ -20,7 +20,8 @@
                 Based on the Attribute Release Policy of the service provider they will be included in the authenticated
                 user identity.
             </p>
-            <p>If you want to add multiple values for one attribute - for example isMemberOf - then add them multiple times.</p></section>
+            <p>If you want to add multiple values for one attribute - for example isMemberOf - then add them multiple
+                times.</p></section>
     </section>
 </section>
 
@@ -35,8 +36,9 @@
             <section class="add-attribute">
                 <select class="attribute-select" id="add-attribute">
                     <option value="Add attribute...">Add attribute...</option>
-                    <option th:each="attr : ${samlAttributes}" th:value="${attr.get('name')}" th:text="${attr.get('id')}"
-                        th:attr="data-multiplicity=${attr.get('multiplicity')}"></option>
+                    <option th:each="attr : ${samlAttributes}" th:value="${attr.get('name')}"
+                            th:text="${attr.get('id')}"
+                            th:attr="data-multiplicity=${attr.get('multiplicity')}"></option>
                 </select>
                 <div class="help"><span class="explain-link">?</span></div>
             </section>

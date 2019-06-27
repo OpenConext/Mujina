@@ -34,7 +34,6 @@ import org.w3c.dom.Element;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.util.UUID;
 
 import static mujina.saml.SAMLBuilder.buildSAMLObject;
 
@@ -78,7 +77,7 @@ public class MetadataController {
     idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
 
     String localPort = environment.getProperty("local.server.port");
-    
+
     SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
     singleSignOnService.setLocation("http://localhost:" + localPort + "/SingleSignOnService");
     singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);

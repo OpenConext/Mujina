@@ -5,7 +5,6 @@ import org.junit.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 
 public class SpControllerTest extends AbstractIntegrationTest {

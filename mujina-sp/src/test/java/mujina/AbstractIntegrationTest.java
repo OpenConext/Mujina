@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +78,7 @@ public abstract class AbstractIntegrationTest {
 
     ZonedDateTime date = ZonedDateTime.now();
     String now = date.format(DateTimeFormatter.ISO_INSTANT);
-    String samlResponse = IOUtils.toString(new ClassPathResource("saml_response.xml").getInputStream(),Charset.defaultCharset());
+    String samlResponse = IOUtils.toString(new ClassPathResource("saml_response.xml").getInputStream(), Charset.defaultCharset());
 
     samlResponse = samlResponse
       .replaceAll("@@IssueInstant@@", now)

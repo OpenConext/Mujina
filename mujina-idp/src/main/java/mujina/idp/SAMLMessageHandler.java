@@ -22,7 +22,6 @@ import org.opensaml.saml2.metadata.provider.MetadataProviderException;
 import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.ws.security.SecurityPolicyResolver;
-import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.CriteriaSet;
@@ -41,7 +40,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static mujina.saml.SAMLBuilder.buildAssertion;

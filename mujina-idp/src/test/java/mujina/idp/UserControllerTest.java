@@ -3,7 +3,6 @@ package mujina.idp;
 import io.restassured.filter.cookie.CookieFilter;
 import mujina.AbstractIntegrationTest;
 import org.junit.Test;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static io.restassured.RestAssured.given;

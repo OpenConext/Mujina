@@ -61,9 +61,11 @@ p.error {
     display: inline-block;
     transition: all 0.1s linear;
 }
+
 .button:hover {
     background-color: #4fa9c5;
 }
+
 a.powered-by {
     position: absolute;
     margin: 10px;
@@ -134,13 +136,16 @@ span.remove-attribute-value {
     right: 0;
     font-size: 16px;
 }
+
 div.attribute-value label {
     font-size: 13px;
 }
+
 div.attribute-value input {
     margin-top: 2px;
     font-size: 16px;
 }
+
 .explain {
     position: fixed;
     top: 0;
@@ -170,9 +175,11 @@ span.explain-link {
     color: white;
     padding: 5px 13px;
 }
+
 span.explain-link:hover {
     background-color: #4fa9c5;
 }
+
 .container {
     overflow-y: scroll;
     height: 99%;
