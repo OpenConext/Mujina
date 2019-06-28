@@ -5,13 +5,14 @@ logging:
 server:
   # The port to where this Spring Boot application listens to. e.g. http://localhost:{{ springapp_tcpport }}
   port: 9090
-  # The context path of the server. You can skip this value in the overriding application.yml on the classpath
-  contextPath:
-  session:
-    # 8 hours before we time-out
-    timeout: 28800
-    cookie:
-      secure: false
+  servlet:
+    # The context path of the server. You can skip this value in the overriding application.yml on the classpath
+    context-path:
+    session:
+      # 8 hours before we time-out
+      timeout: 28800
+      cookie:
+        secure: false
 
 sp:
   # base url
@@ -42,18 +43,21 @@ spring:
   velocity:
     check-template-location: False
 
-# We disable all endpoints except health for the load-balancer and info for git information.
-endpoints:
-  enabled: false
-  jmx:
-    enabled: false
-  health:
-    enabled: true
-  info:
-    enabled: true
-
 # used by the git plugin
 info:
   build:
     artifact: "@project.artifactId@"
     version: "@project.version@"
+    
+# We disable all endpoints except health for the load-balancer and info for git information.
+management:
+  endpoints:
+    enabled-by-default: false
+    jmx:
+      exposure:
+        exclude: '*'
+  endpoint:
+    health:
+      enabled: true
+    info:
+      enabled: true
