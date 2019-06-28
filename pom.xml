@@ -27,13 +27,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <httpclient.version>4.5.6</httpclient.version>
-    <spring-security-saml2-core.version>1.0.4.RELEASE</spring-security-saml2-core.version>
+    <spring-security-saml2-core.version>1.0.9.RELEASE</spring-security-saml2-core.version>
   </properties>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.18.RELEASE</version>
+    <version>2.1.6.RELEASE</version>
     <relativePath/>
   </parent>
 
