@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.context.SAMLMessageContext;
@@ -131,7 +132,7 @@ public class SAMLConfig {
 
   @Bean
   public WebSSOProfileConsumer webSSOprofileConsumer() {
-    WebSSOProfileConsumerImpl webSSOProfileConsumer = environment.acceptsProfiles("test") ?
+    WebSSOProfileConsumerImpl webSSOProfileConsumer = environment.acceptsProfiles(Profiles.of("test")) ?
       new WebSSOProfileConsumerImpl() {
         @Override
         @SuppressWarnings("unchecked")
