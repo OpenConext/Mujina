@@ -78,5 +78,17 @@
     "name": "urn:mace:dir:attribute-def:preferredLanguage",
     "id": "preferredLanguage",
     "multiplicity": false
+  },
+  {
+    "name": "urn:mace:surf.nl:attribute-def:eckid",
+    "id": "eckid",
+    "multiplicity": false
+  },
+  {
+    "name": "urn:mace:surf.nl:attribute-def:surf-crm-id",
+    "id": "surf-crm-id",
+    "multiplicity": false
   }
+
+
 ]
