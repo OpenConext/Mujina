@@ -45,6 +45,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.Filter;
+import javax.servlet.SessionCookieConfig;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.net.URI;
@@ -84,6 +85,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Value("${sp.acs_location_path}")
   private String assertionConsumerServiceURLPath;
 
+  @Value("${secure_cookie}")
+  private boolean secureCookie;
+
   private DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
 
   @Bean
@@ -109,7 +113,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
   @Bean
   public ServletContextInitializer servletContextInitializer() {
     //otherwise the two localhost instances override each other session
-    return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaSpSessionId");
+    return servletContext -> {
+      SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
+      sessionCookieConfig.setName("mujinaSpSessionId");
+      sessionCookieConfig.setSecure(this.secureCookie);
+      sessionCookieConfig.setHttpOnly(true);
+    };
   }
 
   @Override

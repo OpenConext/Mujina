@@ -11,8 +11,8 @@ server:
     session:
       # 8 hours before we time-out
       timeout: 28800
-      cookie:
-        secure: false
+
+secure_cookie: false
 
 sp:
   # base url
@@ -48,7 +48,7 @@ info:
   build:
     artifact: "@project.artifactId@"
     version: "@project.version@"
-    
+
 # We disable all endpoints except health for the load-balancer and info for git information.
 management:
   endpoints:

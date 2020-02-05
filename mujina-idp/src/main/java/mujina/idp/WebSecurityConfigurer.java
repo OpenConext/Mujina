@@ -29,6 +29,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.SessionCookieConfig;
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -43,6 +44,9 @@ import java.util.Collections;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigurer implements WebMvcConfigurer {
+
+  @Value("${secure_cookie}")
+  private boolean secureCookie;
 
   @Bean
   @Autowired
@@ -96,7 +100,12 @@ public class WebSecurityConfigurer implements WebMvcConfigurer {
   @Bean
   public ServletContextInitializer servletContextInitializer() {
     //otherwise the two localhost instances override each other session
-    return servletContext -> servletContext.getSessionCookieConfig().setName("mujinaIdpSessionId");
+    return servletContext -> {
+      SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
+      sessionCookieConfig.setName("mujinaIdpSessionId");
+      sessionCookieConfig.setSecure(this.secureCookie);
+      sessionCookieConfig.setHttpOnly(true);
+    };
   }
 
   @Configuration
