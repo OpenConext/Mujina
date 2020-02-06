@@ -106,9 +106,13 @@ a.powered-by:visited {
     margin-bottom: 15px;
 }
 
+label.persist-me {
+    font-size: 14px;
+}
+
 section.add-attribute {
     display: flex;
-    margin: 15px 0;
+    margin-bottom: 10px;
     align-items: center;
 }
 

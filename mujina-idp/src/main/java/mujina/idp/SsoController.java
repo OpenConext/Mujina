@@ -15,6 +15,7 @@ import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,7 +65,8 @@ public class SsoController {
 
     SAMLPrincipal principal = new SAMLPrincipal(
       authentication.getName(),
-      attributes.stream().filter(attr -> "urn:oasis:names:tc:SAML:1.1:nameid-format".equals(attr.getName()))
+      attributes.stream()
+        .filter(attr -> "urn:oasis:names:tc:SAML:1.1:nameid-format".equals(attr.getName()))
         .findFirst().map(attr -> attr.getValue()).orElse(NameIDType.UNSPECIFIED),
       attributes,
       authnRequest.getIssuer().getValue(),
@@ -81,9 +83,10 @@ public class SsoController {
     Map<String, List<String>> result = new HashMap<>(idpConfiguration.getAttributes());
 
 
-    Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream().filter(user -> user
-      .getPrincipal()
-      .equals(uid)).findAny().map(FederatedUserAuthenticationToken::getAttributes);
+    Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream()
+      .filter(user -> user.getPrincipal().equals(uid))
+      .findAny()
+      .map(FederatedUserAuthenticationToken::getAttributes);
     optionalMap.ifPresent(result::putAll);
 
     //See SAMLAttributeAuthenticationFilter#setDetails
@@ -91,6 +94,18 @@ public class SsoController {
     parameterMap.forEach((key, values) -> {
       result.put(key, Arrays.asList(values));
     });
+
+    //Check if the user wants to be persisted
+    if (parameterMap.containsKey("persist-me") && "on".equalsIgnoreCase(parameterMap.get("persist-me")[0])) {
+      result.remove("persist-me");
+      FederatedUserAuthenticationToken token = new FederatedUserAuthenticationToken(
+        uid,
+        authentication.getCredentials(),
+        Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+      token.setAttributes(result);
+      idpConfiguration.getUsers().removeIf(existingUser -> existingUser.getPrincipal().equals(uid));
+      idpConfiguration.getUsers().add(token);
+    }
 
     //Provide the ability to limit the list attributes returned to the SP
     return result.entrySet().stream()

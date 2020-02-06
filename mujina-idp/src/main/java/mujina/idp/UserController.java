@@ -14,6 +14,7 @@ import java.util.Map;
 
 @Controller
 public class UserController {
+
   private List<Map<String, String>> samlAttributes;
 
   @Autowired
