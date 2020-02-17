@@ -184,6 +184,10 @@ span.explain-link:hover {
     background-color: #4fa9c5;
 }
 
+.code {
+    font-family: Courier, serif;
+}
+
 .container {
     overflow-y: scroll;
     height: 99%;
