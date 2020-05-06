@@ -36,10 +36,6 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-
 import static mujina.saml.SAMLBuilder.buildSAMLObject;
 
 @RestController
