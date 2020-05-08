@@ -25,6 +25,7 @@ import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
 import org.opensaml.xml.util.XMLHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.security.saml.key.KeyManager;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,8 +50,9 @@ public class MetadataController {
   @Autowired
   Environment environment;
 
+  @Autowired
   @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
-  public String metadata() throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
+  public String metadata(@Value("${idp.base_url}") String idpBaseUrl) throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
     EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
     entityDescriptor.setEntityID(idpConfiguration.getEntityId());
     entityDescriptor.setID(SAMLBuilder.randomSAMLId());
@@ -76,10 +78,8 @@ public class MetadataController {
 
     idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
 
-    String localPort = environment.getProperty("local.server.port");
-
     SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
-    singleSignOnService.setLocation("http://localhost:" + localPort + "/SingleSignOnService");
+    singleSignOnService.setLocation(idpBaseUrl + "/SingleSignOnService");
     singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 
     idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);

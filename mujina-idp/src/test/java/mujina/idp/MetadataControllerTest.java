@@ -2,6 +2,7 @@ package mujina.idp;
 
 import mujina.AbstractIntegrationTest;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Value;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.RestAssuredConfig.newConfig;
@@ -10,6 +11,9 @@ import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.equalTo;
 
 public class MetadataControllerTest extends AbstractIntegrationTest {
+
+  @Value("${idp.base_url}")
+  private String idpBaseUrl;
 
   @Test
   public void metadata() throws Exception {
@@ -22,7 +26,7 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
       .statusCode(SC_OK)
       .body(
         "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
-        equalTo("http://localhost:" + serverPort + "/SingleSignOnService"));
+        equalTo(idpBaseUrl + "/SingleSignOnService"));
   }
 
 }
