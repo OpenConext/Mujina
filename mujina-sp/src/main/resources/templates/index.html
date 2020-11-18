@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Mujina Service Provider</title>
+    <title>Service Provider</title>
     <link rel="stylesheet" type="text/css" href="/main.css"/>
-    <script th:src="@{/sp.js}"></script>
+    <!--    <script th:src="@{/sp.js}"></script>-->
 </head>
 <body>
 <section class="login-container-wrapper">
     <section class="login-container">
         <section class="login">
-            <h1>Mujina Service Provider</h1>
-            <a id="user-link" class="button" th:href="@{/user.html?force-authn=false}">Login</a>
+            <h1>Service Provider</h1>
+            <select id="idps" >
+            </select>
+            <a id="user-link" onclick="user_link()" class="button" >Login</a>
             <section class="force-authn">
                 <input type="checkbox" id="force-authn" name="force-authn"/>
                 <label for="force-authn">Force Authn request?</label>
@@ -21,3 +23,53 @@
 </section>
 </body>
 </html>
+
+<script type="text/javascript" th:inline="javascript">
+
+    var basePath = /*[[${#httpServletRequest.getScheme() + "://" + #httpServletRequest.getServerName() + ":" + #httpServletRequest.getServerPort() + #httpServletRequest.getContextPath()}]]*/;
+
+    function user_link(){
+
+        var selectNodesObj = document.getElementById('idps');
+        var selIndex = selectNodesObj.selectedIndex;
+        var selValue = selectNodesObj.options[selIndex].value;
+
+        if (!selValue) {
+            alert("idp is null")
+            return;
+        }
+
+        location.href = basePath + "/user.html?force-authn=" + document.getElementById("force-authn").checked + "&idp=" + encodeURIComponent(selValue);
+    }
+
+
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', basePath +  '/discovery')
+    xhr.send()
+
+    xhr.onreadystatechange = function () {
+        //判断服务端 返回的所有的结果
+        if (xhr.readyState === 4) {
+            //状态码 200~300之间都是成功
+            if (xhr.status >= 200 && xhr.status < 300) {
+                //success
+                //处理结果 报文（行 头 空行 体）
+                let status = xhr.status //状态码
+                let statusText = xhr.statusText //状态字符串
+                let arh = xhr.getAllResponseHeaders() //所有响应头
+                let response = xhr.response //响应体
+
+                let responseArray = JSON.parse(response);
+                let options = "";
+                for (let i = 0; i < responseArray.length; i++) {
+                    options = options + "<option>" + responseArray[i] + "</option>";
+                }
+                document.getElementById("idps").innerHTML = options;
+            } else {
+                console.log('server error')
+            }
+        }
+    }
+
+
+</script>

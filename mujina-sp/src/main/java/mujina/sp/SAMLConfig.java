@@ -23,21 +23,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.saml.SAMLBootstrap;
 import org.springframework.security.saml.context.SAMLMessageContext;
 import org.springframework.security.saml.log.SAMLDefaultLogger;
-import org.springframework.security.saml.processor.HTTPArtifactBinding;
-import org.springframework.security.saml.processor.HTTPPAOS11Binding;
-import org.springframework.security.saml.processor.HTTPPostBinding;
-import org.springframework.security.saml.processor.HTTPRedirectDeflateBinding;
-import org.springframework.security.saml.processor.HTTPSOAP11Binding;
-import org.springframework.security.saml.processor.SAMLBinding;
-import org.springframework.security.saml.processor.SAMLProcessor;
-import org.springframework.security.saml.websso.ArtifactResolutionProfile;
-import org.springframework.security.saml.websso.ArtifactResolutionProfileImpl;
-import org.springframework.security.saml.websso.WebSSOProfile;
-import org.springframework.security.saml.websso.WebSSOProfileConsumer;
-import org.springframework.security.saml.websso.WebSSOProfileConsumerHoKImpl;
-import org.springframework.security.saml.websso.WebSSOProfileConsumerImpl;
-import org.springframework.security.saml.websso.WebSSOProfileECPImpl;
-import org.springframework.security.saml.websso.WebSSOProfileImpl;
+import org.springframework.security.saml.processor.*;
+import org.springframework.security.saml.websso.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -117,7 +104,11 @@ public class SAMLConfig {
     bindings.add(artifactBinding(parserPool, velocityEngine, artifactResolutionProfile));
     bindings.add(httpSOAP11Binding(parserPool));
     bindings.add(httpPAOS11Binding(parserPool));
-    return new ConfigurableSAMLProcessor(bindings, spConfiguration);
+    // return new ConfigurableSAMLProcessor(bindings, spConfiguration);
+
+    // Support multiple idp
+    return new SAMLProcessorImpl(bindings);
+
   }
 
   @Bean
