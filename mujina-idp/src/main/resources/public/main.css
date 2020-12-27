@@ -92,6 +92,12 @@ a.powered-by:visited {
     flex-direction: column;
 }
 
+@media screen and (max-width: 420px) {
+    .login-form {
+        width: 90vw;
+    }
+}
+
 .login-form input[type="text"], .login-form input[type="password"] {
     padding: 8px;
     border-radius: 3px;
