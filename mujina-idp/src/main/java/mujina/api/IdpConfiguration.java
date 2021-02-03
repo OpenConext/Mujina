@@ -34,8 +34,9 @@ public class IdpConfiguration extends SharedConfiguration {
                           @Value("${idp.entity_id}") String defaultEntityId,
                           @Value("${idp.private_key}") String idpPrivateKey,
                           @Value("${idp.certificate}") String idpCertificate,
+                          @Value("${idp.passphrase}") String keyStorePassword,
                           @Value("${idp.auth_method}") String authMethod) {
-    super(keyManager);
+    super(keyManager, keyStorePassword);
     this.defaultEntityId = defaultEntityId;
     this.idpPrivateKey = idpPrivateKey;
     this.idpCertificate = idpCertificate;
@@ -45,7 +46,8 @@ public class IdpConfiguration extends SharedConfiguration {
 
   @Override
   public void reset() {
-    setEntityId(defaultEntityId);
+    // addTokenToStore can be false as key store is reset shortly after anyway
+    setEntityId(defaultEntityId, false);
     resetAttributes();
     resetKeyStore(defaultEntityId, idpPrivateKey, idpCertificate);
     resetUsers();
@@ -72,6 +74,11 @@ public class IdpConfiguration extends SharedConfiguration {
     putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
     putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
     putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+  }
+
+  @Override
+  public void setEntityId(String entityId) {
+    super.setEntityId(entityId, true);
   }
 
   private void putAttribute(String key, String... values) {

@@ -39,7 +39,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -94,7 +98,7 @@ public class WebSecurityConfigurer implements WebMvcConfigurer {
                                   @Value("${idp.passphrase}") String idpPassphrase) throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
     KeyStore keyStore = KeyStoreLocator.createKeyStore(idpPassphrase);
     KeyStoreLocator.addPrivateKey(keyStore, idpEntityId, idpPrivateKey, idpCertificate, idpPassphrase);
-    return new JKSKeyManager(keyStore, Collections.singletonMap(idpEntityId, idpPassphrase), idpEntityId);
+    return new JKSKeyManager(keyStore, new FakePasswordMap(idpPassphrase), idpEntityId);
   }
 
   @Bean
@@ -153,6 +157,94 @@ public class WebSecurityConfigurer implements WebMvcConfigurer {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
       return super.authenticationManagerBean();
+    }
+  }
+
+  static class FakePasswordMap implements Map<String, String> {
+
+    private final String value;
+
+    FakePasswordMap(String value) {
+      this.value = value;
+    }
+
+    @Override
+    public int size() {
+      return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+      return false;
+    }
+
+    @Override
+    public boolean containsKey(Object o) {
+      return true;
+    }
+
+    @Override
+    public boolean containsValue(Object o) {
+      return Objects.equals(o, value);
+    }
+
+    @Override
+    public String get(Object o) {
+      return value;
+    }
+
+    @Override
+    public String put(String s, String s2) {
+      throw readOnly();
+    }
+
+    private IllegalStateException readOnly() {
+      return new IllegalStateException("Map is read-only");
+    }
+
+    @Override
+    public String remove(Object o) {
+      throw readOnly();
+    }
+
+    @Override
+    public void putAll(Map<? extends String, ? extends String> map) {
+      throw readOnly();
+    }
+
+    @Override
+    public void clear() {
+      throw readOnly();
+    }
+
+    @Override
+    public Set<String> keySet() {
+      return Collections.singleton("");
+    }
+
+    @Override
+    public Collection<String> values() {
+      return Collections.singleton(value);
+    }
+
+    @Override
+    public Set<Entry<String, String>> entrySet() {
+      return Collections.singleton(new Map.Entry<String, String>() {
+        @Override
+        public String getKey() {
+          return "";
+        }
+
+        @Override
+        public String getValue() {
+          return value;
+        }
+
+        @Override
+        public String setValue(String s) {
+          throw readOnly();
+        }
+      });
     }
   }
 
