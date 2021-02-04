@@ -11,11 +11,12 @@ import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
 import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
 import org.opensaml.common.xml.SAMLConstants;
 import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.Issuer;
+import org.opensaml.saml2.core.LogoutResponse;
 import org.opensaml.saml2.core.Response;
 import org.opensaml.saml2.core.Status;
 import org.opensaml.saml2.core.StatusCode;
+import org.opensaml.saml2.core.StatusResponseType;
 import org.opensaml.saml2.metadata.Endpoint;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
@@ -86,10 +87,9 @@ public class SAMLMessageHandler {
 
     SAMLObject inboundSAMLMessage = messageContext.getInboundSAMLMessage();
 
-    AuthnRequest authnRequest = (AuthnRequest) inboundSAMLMessage;
     //lambda is poor with Exceptions
     for (ValidatorSuite validatorSuite : validatorSuites) {
-      validatorSuite.validate(authnRequest);
+      validatorSuite.validate(inboundSAMLMessage);
     }
     return messageContext;
   }
@@ -105,27 +105,23 @@ public class SAMLMessageHandler {
   }
 
   @SuppressWarnings("unchecked")
-  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
-    Status status = buildStatus(StatusCode.SUCCESS_URI);
+  private void sendResponseCommon(StatusResponseType responseObject, SAMLPrincipal principal, String statusCode, HttpServletResponse response) throws MessageEncodingException {
+
+    Status status = buildStatus(statusCode);
 
     String entityId = idpConfiguration.getEntityId();
     Credential signingCredential = resolveCredential(entityId);
 
-    Response authResponse = buildSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
     Issuer issuer = buildIssuer(entityId);
 
-    authResponse.setIssuer(issuer);
-    authResponse.setID(SAMLBuilder.randomSAMLId());
-    authResponse.setIssueInstant(new DateTime());
-    authResponse.setInResponseTo(principal.getRequestID());
+    responseObject.setIssuer(issuer);
+    responseObject.setID(SAMLBuilder.randomSAMLId());
+    responseObject.setIssueInstant(new DateTime());
+    responseObject.setInResponseTo(principal.getRequestID());
 
-    Assertion assertion = buildAssertion(principal, status, entityId);
-    signAssertion(assertion, signingCredential);
+    responseObject.setDestination(principal.getAssertionConsumerServiceURL());
 
-    authResponse.getAssertions().add(assertion);
-    authResponse.setDestination(principal.getAssertionConsumerServiceURL());
-
-    authResponse.setStatus(status);
+    responseObject.setStatus(status);
 
     Endpoint endpoint = buildSAMLObject(Endpoint.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
     endpoint.setLocation(principal.getAssertionConsumerServiceURL());
@@ -136,13 +132,36 @@ public class SAMLMessageHandler {
 
     messageContext.setOutboundMessageTransport(outTransport);
     messageContext.setPeerEntityEndpoint(endpoint);
-    messageContext.setOutboundSAMLMessage(authResponse);
+    messageContext.setOutboundSAMLMessage(responseObject);
     messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
 
     messageContext.setOutboundMessageIssuer(entityId);
     messageContext.setRelayState(principal.getRelayState());
 
     encoder.encode(messageContext);
+
+  }
+
+  public void sendLogoutResponse(SAMLPrincipal principal, HttpServletResponse response, String statusCode) throws MessageEncodingException {
+
+    LogoutResponse logoutResponse = buildSAMLObject(LogoutResponse.class, LogoutResponse.DEFAULT_ELEMENT_NAME);
+    sendResponseCommon(logoutResponse, principal, statusCode, response);
+
+  }
+
+  public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
+
+    String entityId = idpConfiguration.getEntityId();
+    Credential signingCredential = resolveCredential(entityId);
+
+    Response authResponse = buildSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
+
+    Assertion assertion = buildAssertion(principal, buildStatus(StatusCode.SUCCESS_URI), entityId);
+    signAssertion(assertion, signingCredential);
+
+    authResponse.getAssertions().add(assertion);
+
+    sendResponseCommon(authResponse, principal, StatusCode.SUCCESS_URI, response);
 
   }
 

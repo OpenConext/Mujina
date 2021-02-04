@@ -20,13 +20,16 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
     given()
       .config(newConfig()
         .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
-      .header("Content-Type", "application/xml")
       .get("/metadata")
       .then()
+      .contentType("application/xml")
       .statusCode(SC_OK)
       .body(
         "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
-        equalTo(idpBaseUrl + "/SingleSignOnService"));
+        equalTo(idpBaseUrl + "/SingleSignOnService"))
+      .body(
+        "EntityDescriptor.IDPSSODescriptor.SingleLogoutService.@Location",
+        equalTo(idpBaseUrl + "/SingleLogoutService"));
   }
 
 }
