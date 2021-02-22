@@ -10,6 +10,7 @@ import org.opensaml.common.binding.BasicSAMLMessageContext;
 import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
 import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
 import org.opensaml.common.xml.SAMLConstants;
+import org.opensaml.saml2.binding.encoding.HTTPRedirectDeflateEncoder;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.saml2.core.Issuer;
 import org.opensaml.saml2.core.LogoutResponse;
@@ -55,6 +56,7 @@ public class SAMLMessageHandler {
   private final KeyManager keyManager;
   private final Collection<SAMLMessageDecoder> decoders;
   private final SAMLMessageEncoder encoder;
+  private final SAMLMessageEncoder logoutEncoder;
   private final SecurityPolicyResolver resolver;
   private final IdpConfiguration idpConfiguration;
 
@@ -73,6 +75,7 @@ public class SAMLMessageHandler {
       getValidatorSuite("saml2-core-schema-validator"),
       getValidatorSuite("saml2-core-spec-validator"));
     this.proxiedSAMLContextProviderLB = new ProxiedSAMLContextProviderLB(new URI(idpBaseUrl));
+    logoutEncoder = new HTTPRedirectDeflateEncoder();
   }
 
   public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request, HttpServletResponse response, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MetadataProviderException {
@@ -105,7 +108,9 @@ public class SAMLMessageHandler {
   }
 
   @SuppressWarnings("unchecked")
-  private void sendResponseCommon(StatusResponseType responseObject, SAMLPrincipal principal, String statusCode, HttpServletResponse response) throws MessageEncodingException {
+  private void sendResponseCommon(SAMLMessageEncoder encoder, StatusResponseType responseObject,
+                                  SAMLPrincipal principal, String statusCode,
+                                  HttpServletResponse response) throws MessageEncodingException {
 
     Status status = buildStatus(statusCode);
 
@@ -145,7 +150,7 @@ public class SAMLMessageHandler {
   public void sendLogoutResponse(SAMLPrincipal principal, HttpServletResponse response, String statusCode) throws MessageEncodingException {
 
     LogoutResponse logoutResponse = buildSAMLObject(LogoutResponse.class, LogoutResponse.DEFAULT_ELEMENT_NAME);
-    sendResponseCommon(logoutResponse, principal, statusCode, response);
+    sendResponseCommon(logoutEncoder, logoutResponse, principal, statusCode, response);
 
   }
 
@@ -161,7 +166,7 @@ public class SAMLMessageHandler {
 
     authResponse.getAssertions().add(assertion);
 
-    sendResponseCommon(authResponse, principal, StatusCode.SUCCESS_URI, response);
+    sendResponseCommon(encoder, authResponse, principal, StatusCode.SUCCESS_URI, response);
 
   }
 
