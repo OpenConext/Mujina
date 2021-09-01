@@ -1,5 +1,6 @@
 body {
     font-family: Helvetica, Verdana, serif;
+    font-size: 100%;
 }
 
 ul {
@@ -27,12 +28,18 @@ ul {
     transform: rotate(15deg);
 }
 
+_:-ms-fullscreen, .login-container, .user-container {
+    justify-content: space-around;
+}
+
+
 .login {
     display: flex;
     position: relative;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    -ms-flex-direction: column;
     align-self: center;
     margin: auto;
 }
@@ -116,7 +123,7 @@ label.persist-me {
     font-size: 14px;
 }
 
-section.add-attribute {
+div.add-attribute {
     display: flex;
     margin-bottom: 10px;
     align-items: center;
@@ -199,7 +206,7 @@ span.explain-link:hover {
     height: 99%;
 }
 
-section.title {
+.title {
     position: relative;
     padding: 20px 10px;
     background-color: #4DB3CF;
@@ -208,11 +215,12 @@ section.title {
     font-size: larger;
 }
 
-section.title p {
+.title h2 {
     margin: 0;
+    font-size: 1.2rem
 }
 
-section.explanation-content {
+div.explanation-content {
     padding: 0 10px;
 }
 
@@ -229,4 +237,13 @@ a.close {
 a.close:focus {
     border: none;
     outline: none;
+}
+
+.sr-only {
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
 }
