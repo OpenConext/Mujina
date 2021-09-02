@@ -7,6 +7,11 @@ ul {
     list-style: none;
 }
 
+ul.attribute-list {
+    margin: 10px 0 0 0;
+    padding: 0;
+}
+
 .login-container, .user-container {
     display: flex;
     align-items: center;
@@ -73,17 +78,19 @@ p.error {
     background-color: #4fa9c5;
 }
 
-a.powered-by {
-    position: absolute;
-    margin: 10px;
+section.powered-by {
+    display: flex;
+    margin-top: 25px;
+}
+
+section.powered-by a {
+    margin-left: auto;
     font-size: 12px;
     text-decoration: none;
     color: #4DB3CF;
-    bottom: 10px;
-    right: 10px;
 }
 
-a.powered-by:visited {
+section.powered-by a.powered-by:visited {
     text-decoration: none;
     color: #4DB3CF;
 }
@@ -140,7 +147,7 @@ select.attribute-select {
     height: 40px;
 }
 
-div.attribute-value {
+li.attribute-value {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -154,11 +161,11 @@ span.remove-attribute-value {
     font-size: 16px;
 }
 
-div.attribute-value label {
+li.attribute-value label {
     font-size: 13px;
 }
 
-div.attribute-value input {
+li.attribute-value input {
     margin-top: 2px;
     font-size: 16px;
 }
