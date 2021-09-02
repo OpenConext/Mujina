@@ -32,14 +32,14 @@ document.addEventListener("DOMContentLoaded", function () {
     var val = selectedOption.value;
     var text = selectedOption.text;
     var multiplicity = selectedOption.dataset.multiplicity === "true";
-    var newElement = document.createElement("div");
+    var newElement = document.createElement("li");
     newElement.setAttribute("class", "attribute-value");
     var mainId = guid();
     newElement.setAttribute("id", mainId);
     var spanId = guid();
     var inputId = guid();
     newElement.innerHTML = "<label>" + val + "</label>" +
-      "<input class='input-attribute-value' type='text' id='" + inputId + "' name='" + val + "'></input>" +
+      "<input class='input-attribute-value' type='text' id='" + inputId + "' name='" + val + "'>" +
       "<span id='" + spanId + "' class='remove-attribute-value'>🗑</span>";
     document.getElementById("attribute-list").appendChild(newElement);
     document.getElementById(spanId).addEventListener("click", function () {
