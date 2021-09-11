@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   document.querySelector(".attribute-select").addEventListener("change", function (e) {
-    var selectedOption = e.target.selectedOptions[0];
-    var val = selectedOption.value;
+    var val = e.target.value;
+    var selectedOption = document.querySelector('option[value="' + val + '"]');
     var text = selectedOption.text;
     var multiplicity = selectedOption.dataset.multiplicity === "true";
     var newElement = document.createElement("li");
