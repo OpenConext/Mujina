@@ -35,6 +35,11 @@
     "multiplicity": false
   },
   {
+    "name": "urn:mace:dir:attribute-def:ou",
+    "id": "ou",
+    "multiplicity": true
+  },
+  {
     "name": "urn:mace:terena.org:attribute-def:schacHomeOrganization",
     "id": "schacHomeOrganization",
     "multiplicity": false
