@@ -37,6 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import static mujina.saml.SAMLBuilder.buildSAMLObject;
+import static mujina.saml.SAMLBuilder.signAssertion;
 
 @RestController
 public class MetadataController {
@@ -65,10 +66,7 @@ public class MetadataController {
     signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
     signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
-    entityDescriptor.setSignature(signature);
-
     Configuration.getMarshallerFactory().getMarshaller(entityDescriptor).marshall(entityDescriptor);
-    Signer.signObject(signature);
 
     IDPSSODescriptor idpssoDescriptor = buildSAMLObject(IDPSSODescriptor.class, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
 
@@ -96,6 +94,8 @@ public class MetadataController {
     idpssoDescriptor.getKeyDescriptors().add(encKeyDescriptor);
 
     entityDescriptor.getRoleDescriptors().add(idpssoDescriptor);
+
+    signAssertion(entityDescriptor, credential);
 
     return writeEntityDescriptor(entityDescriptor);
   }
