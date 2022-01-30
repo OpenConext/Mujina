@@ -24,6 +24,8 @@ then the following has changed:
 * We no longer use Tomcat, but standalone Spring boot applications
 * The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
 
+As of version 8.0.0 we run with Java 11.
+
 Characteristics of both the IdP or SP can be runtime changed with the REST API.
 
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.

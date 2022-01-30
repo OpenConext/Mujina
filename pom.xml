@@ -20,36 +20,25 @@
 
   <groupId>org.openconext</groupId>
   <artifactId>mujina</artifactId>
-  <version>7.4.4</version>
+  <version>8.0.0</version>
   <packaging>pom</packaging>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
-    <httpclient.version>4.5.6</httpclient.version>
-    <spring-security-saml2-core.version>1.0.9.RELEASE</spring-security-saml2-core.version>
-  </properties>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.6.RELEASE</version>
-    <relativePath/>
+    <version>2.6.3</version>
   </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>11</java.version>
+  </properties>
 
   <modules>
     <module>mujina-common</module>
     <module>mujina-sp</module>
     <module>mujina-idp</module>
   </modules>
-
-
-  <scm>
-    <connection>scm:git:git://github.com/OpenConext/Mujina.git</connection>
-    <developerConnection>scm:git:git@github.com:OpenConext/Mujina.git</developerConnection>
-    <url>scm:git:git@github.com:OpenConext/Mujina.git</url>
-    <tag>HEAD</tag>
-  </scm>
 
   <repositories>
     <repository>
@@ -69,39 +58,21 @@
       <plugin>
         <groupId>pl.project13.maven</groupId>
         <artifactId>git-commit-id-plugin</artifactId>
+        <version>4.9.10</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-            <id>enforce-versions</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>3.2.5</version>
-                </requireMavenVersion>
-                <requireJavaVersion>
-                  <version>1.8</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.7</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.9.0</version>
+        <configuration>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <release>11</release>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.2</version>
+        <version>0.8.7</version>
         <executions>
           <execution>
             <goals>
@@ -119,22 +90,37 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.5.3</version>
-        <configuration>
-          <tagNameFormat>v@{project.version}</tagNameFormat>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-        </configuration>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.8.4</version>
+                </requireMavenVersion>
+                <requireJavaVersion>
+                  <version>11</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-webdav-jackrabbit</artifactId>
-        <version>3.2.0</version>
+        <version>3.5.1</version>
       </extension>
     </extensions>
   </build>
+
   <distributionManagement>
     <repository>
       <id>openconext-releases</id>

@@ -1,5 +1,6 @@
 package mujina.api;
 
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,15 +22,10 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
     this.errorAttributes = errorAttributes;
   }
 
-  @Override
-  public String getErrorPath() {
-    return "/error";
-  }
-
   @RequestMapping
   public ResponseEntity<Map<String, Object>> error(HttpServletRequest aRequest) {
     ServletWebRequest webRequest = new ServletWebRequest(aRequest);
-    Map<String, Object> result = this.errorAttributes.getErrorAttributes(webRequest, false);
+    Map<String, Object> result = this.errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
     HttpStatus statusCode = INTERNAL_SERVER_ERROR;
     Object status = result.get("status");
