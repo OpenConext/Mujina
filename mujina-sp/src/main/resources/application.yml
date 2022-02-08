@@ -51,13 +51,17 @@ info:
 
 # We disable all endpoints except health for the load-balancer and info for git information.
 management:
+  health:
+    mail:
+      enabled: false
   endpoints:
-    enabled-by-default: false
-    jmx:
+    web:
       exposure:
-        exclude: '*'
+        include: "health,info"
+      base-path: "/internal"
   endpoint:
-    health:
-      enabled: true
     info:
       enabled: true
+  info:
+    git:
+      mode: full
