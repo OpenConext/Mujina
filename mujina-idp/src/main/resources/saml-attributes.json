@@ -5,6 +5,11 @@
     "multiplicity": false
   },
   {
+    "name": "urn:oasis:names:tc:SAML:attribute:subject-id",
+    "id": "subjectId",
+    "multiplicity": false
+  },
+  {
     "name": "urn:mace:dir:attribute-def:eduPersonTargetedID",
     "id": "eduPersonTargetedID",
     "multiplicity": false
