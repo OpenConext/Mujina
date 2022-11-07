@@ -3,6 +3,7 @@ package mujina.api;
 import lombok.Getter;
 import lombok.Setter;
 import mujina.idp.FederatedUserAuthenticationToken;
+import mujina.config.StandardAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,18 +29,22 @@ public class IdpConfiguration extends SharedConfiguration {
   private AuthenticationMethod defaultAuthenticationMethod;
   private final String idpPrivateKey;
   private final String idpCertificate;
+  private final StandardAttributes standardAttributes;
 
   @Autowired
   public IdpConfiguration(JKSKeyManager keyManager,
                           @Value("${idp.entity_id}") String defaultEntityId,
                           @Value("${idp.private_key}") String idpPrivateKey,
                           @Value("${idp.certificate}") String idpCertificate,
-                          @Value("${idp.auth_method}") String authMethod) {
+                          @Value("${idp.auth_method}") String authMethod,
+                          StandardAttributes standardAttributes) {
+
     super(keyManager);
     this.defaultEntityId = defaultEntityId;
     this.idpPrivateKey = idpPrivateKey;
     this.idpCertificate = idpCertificate;
     this.defaultAuthenticationMethod = AuthenticationMethod.valueOf(authMethod);
+    this.standardAttributes = standardAttributes;
     reset();
   }
 
@@ -63,15 +68,13 @@ public class IdpConfiguration extends SharedConfiguration {
   }
 
   private void resetAttributes() {
+    Map<String, String> configuredAttributes = standardAttributes.getAttributes();
+
     attributes.clear();
-    putAttribute("urn:mace:dir:attribute-def:uid", "john.doe");
-    putAttribute("urn:mace:dir:attribute-def:cn", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:givenName", "John");
-    putAttribute("urn:mace:dir:attribute-def:sn", "Doe");
-    putAttribute("urn:mace:dir:attribute-def:displayName", "John Doe");
-    putAttribute("urn:mace:dir:attribute-def:mail", "j.doe@example.com");
-    putAttribute("urn:mace:terena.org:attribute-def:schacHomeOrganization", "example.com");
-    putAttribute("urn:mace:dir:attribute-def:eduPersonPrincipalName", "j.doe@example.com");
+    for (Map.Entry<String, String> attribute : configuredAttributes.entrySet()) {
+      putAttribute(attribute.getKey(), attribute.getValue());
+    }
+
   }
 
   private void putAttribute(String key, String... values) {
