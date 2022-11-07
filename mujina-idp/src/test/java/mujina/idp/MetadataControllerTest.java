@@ -1,6 +1,7 @@
 package mujina.idp;
 
 import mujina.AbstractIntegrationTest;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -16,7 +17,22 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
   private String idpBaseUrl;
 
   @Test
-  public void metadata() throws Exception {
+  public void metadata() {
+
+    checkMetadata();
+
+    given()
+      .header("content-type", "application/json")
+      .body("x")
+      .put("/api/entityid")
+      .then()
+      .statusCode(SC_OK);
+
+    checkMetadata();
+
+  }
+
+  private void checkMetadata() {
     given()
       .config(newConfig()
         .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
@@ -28,6 +44,16 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
         "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
         equalTo(idpBaseUrl + "/SingleSignOnService"));
   }
+
+  @AfterClass
+  public static void reset() {
+    given()
+      .header("Content-type", "application/json")
+      .post("/api/reset")
+      .then()
+      .statusCode(SC_OK);
+  }
+
 
 }
 

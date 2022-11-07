@@ -35,6 +35,11 @@ public abstract class SharedConfiguration {
     this.keyManager = keyManager;
   }
 
+  public SharedConfiguration(JKSKeyManager keyManager, String password) {
+    this.keyManager = keyManager;
+    this.keystorePassword = password;
+  }
+
   public abstract void reset();
 
   public void setEntityId(String newEntityId, boolean addTokenToStore) {
