@@ -2,7 +2,8 @@ package mujina.idp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,12 +16,16 @@ import java.util.Map;
 @Controller
 public class UserController {
 
-  private List<Map<String, String>> samlAttributes;
+  private final List<Map<String, String>> samlAttributes;
 
   @Autowired
   @SuppressWarnings("unchecked")
-  public UserController(ObjectMapper objectMapper) throws IOException {
-    this.samlAttributes = objectMapper.readValue(new ClassPathResource("saml-attributes.json").getInputStream(), List.class);
+  public UserController(ObjectMapper objectMapper,
+                      @Value("${idp.saml_attributes_config_file}") String samlAttributesConfigFile) throws IOException {
+
+    DefaultResourceLoader loader = new DefaultResourceLoader();
+    this.samlAttributes = objectMapper.readValue(
+            loader.getResource(samlAttributesConfigFile).getInputStream(), List.class);
   }
 
   @GetMapping("/")
