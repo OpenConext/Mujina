@@ -80,7 +80,13 @@ After you override configuration you can go back to the default using the reset 
 Build Mujina
 ---------------
 
-[Maven 3](http://maven.apache.org) in combination with Java 8 is needed to build and run Mujina.
+[Maven 3](http://maven.apache.org) in combination with Java 11 is needed to build and run Mujina.
+
+```bash
+git clone git@github.com:OpenConext/Mujina.git
+cd Mujina
+mvn clean install
+```
 
 The build dependencies are hosted on https://build.openconext.org/repository/public/
 (and will be fetched automatically by Maven).
@@ -89,7 +95,6 @@ Run the IDP
 -----------------------
 
 ```bash
-mvn clean install
 cd mujina-idp
 mvn spring-boot:run
 ```
@@ -97,11 +102,10 @@ mvn spring-boot:run
 Then, go to http://localhost:8080/. If you want the application to run over https, please refer
 to the [spring boots docs](https://docs.spring.io/spring-boot/docs/current/reference/html/howto-embedded-servlet-containers.html#howto-configure-ssl).
 
-Run the SP
+Run the SP (in a new terminal session)
 ----------------------
 
 ```bash
-mvn clean install
 cd mujina-sp
 mvn spring-boot:run
 ```
