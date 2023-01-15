@@ -25,6 +25,7 @@ public class IdpConfiguration extends SharedConfiguration {
   private Map<String, List<String>> attributes = new TreeMap<>();
   private List<FederatedUserAuthenticationToken> users = new ArrayList<>();
   private String acsEndpoint;
+  private String slsEndpoint;
   private AuthenticationMethod authenticationMethod;
   private AuthenticationMethod defaultAuthenticationMethod;
   private final String idpPrivateKey;

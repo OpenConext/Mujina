@@ -9,6 +9,7 @@ import org.opensaml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml2.metadata.NameIDFormat;
+import org.opensaml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml2.metadata.SingleSignOnService;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
@@ -81,6 +82,12 @@ public class MetadataController {
     singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
 
     idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
+
+    SingleLogoutService singleLogoutService = buildSAMLObject(SingleLogoutService.class, SingleLogoutService.DEFAULT_ELEMENT_NAME);
+    singleLogoutService.setLocation(idpBaseUrl + "/SingleLogoutService");
+    singleLogoutService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+
+    idpssoDescriptor.getSingleLogoutServices().add(singleLogoutService);
 
     X509KeyInfoGeneratorFactory keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
     keyInfoGeneratorFactory.setEmitEntityCertificate(true);

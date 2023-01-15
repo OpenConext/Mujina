@@ -82,6 +82,12 @@ public class IdpController extends SharedController {
     configuration().setAcsEndpoint(acsEndpoint);
   }
 
+  @PutMapping("/slsendpoint")
+  public void setSlsEndpoint(@RequestBody String slsEndpoint) {
+    LOG.info("Request to set Single Logout Service Endpoint to {}", slsEndpoint);
+    configuration().setSlsEndpoint(slsEndpoint);
+  }
+
   private IdpConfiguration configuration() {
     return IdpConfiguration.class.cast(super.configuration);
   }
