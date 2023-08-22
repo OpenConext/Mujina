@@ -107,7 +107,9 @@ public class SsoController {
         Map<String, List<String>> replacements = new HashMap<>();
         String mail = String.format("%s@%s",
                 uid.replaceAll("[^a-zA-Z0-9]", ""),
-                "example.com");
+                "example.com")
+                .toLowerCase();
+        String givenName = uid.substring(0, 1).toUpperCase() + uid.substring(1);
         result.keySet().forEach(key -> {
             String standardValue = standardAttributes.get(key);
             List<String> resultValues = result.get(key);
@@ -117,10 +119,10 @@ public class SsoController {
                 switch (key) {
                     case "urn:mace:dir:attribute-def:cn":
                     case "urn:mace:dir:attribute-def:displayName":
-                        replacements.put(key, List.of(uid + " Doe"));
+                        replacements.put(key, List.of(givenName + " Doe"));
                         break;
                     case "urn:mace:dir:attribute-def:givenName":
-                        replacements.put(key, List.of(uid));
+                        replacements.put(key, List.of(givenName));
                         break;
                     case "urn:mace:dir:attribute-def:mail":
                     case "urn:mace:dir:attribute-def:eduPersonPrincipalName":
