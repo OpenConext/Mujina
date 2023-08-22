@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class User implements Serializable {
 
-  private String name;
-  private String password;
-  private List<String> authorities;
+    private String name;
+    private String password;
+    private List<String> authorities;
 }

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/error")
 public class IdpErrorController extends ErrorController {
 
-  @Autowired
-  public IdpErrorController(ErrorAttributes errorAttributes) {
-    super(errorAttributes);
-  }
+    @Autowired
+    public IdpErrorController(ErrorAttributes errorAttributes) {
+        super(errorAttributes);
+    }
 }

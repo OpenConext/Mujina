@@ -2,26 +2,7 @@ package mujina.saml;
 
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
-import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.Attribute;
-import org.opensaml.saml2.core.AttributeStatement;
-import org.opensaml.saml2.core.AttributeValue;
-import org.opensaml.saml2.core.Audience;
-import org.opensaml.saml2.core.AudienceRestriction;
-import org.opensaml.saml2.core.AuthenticatingAuthority;
-import org.opensaml.saml2.core.AuthnContext;
-import org.opensaml.saml2.core.AuthnContextClassRef;
-import org.opensaml.saml2.core.AuthnStatement;
-import org.opensaml.saml2.core.Conditions;
-import org.opensaml.saml2.core.Issuer;
-import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.core.NameIDType;
-import org.opensaml.saml2.core.Status;
-import org.opensaml.saml2.core.StatusCode;
-import org.opensaml.saml2.core.StatusMessage;
-import org.opensaml.saml2.core.Subject;
-import org.opensaml.saml2.core.SubjectConfirmation;
-import org.opensaml.saml2.core.SubjectConfirmationData;
+import org.opensaml.saml2.core.*;
 import org.opensaml.xml.XMLObject;
 import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.io.MarshallingException;
@@ -29,11 +10,7 @@ import org.opensaml.xml.schema.XSAny;
 import org.opensaml.xml.schema.XSString;
 import org.opensaml.xml.schema.impl.XSStringBuilder;
 import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.signature.SignableXMLObject;
-import org.opensaml.xml.signature.Signature;
-import org.opensaml.xml.signature.SignatureConstants;
-import org.opensaml.xml.signature.SignatureException;
-import org.opensaml.xml.signature.Signer;
+import org.opensaml.xml.signature.*;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -46,186 +23,186 @@ import static java.util.stream.Collectors.toList;
 
 public class SAMLBuilder {
 
-  private static final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+    private static final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
 
-  @SuppressWarnings({"unused", "unchecked"})
-  public static <T> T buildSAMLObject(final Class<T> objectClass, QName qName) {
-    return (T) builderFactory.getBuilder(qName).buildObject(qName);
-  }
-
-  public static Issuer buildIssuer(String issuingEntityName) {
-    Issuer issuer = buildSAMLObject(Issuer.class, Issuer.DEFAULT_ELEMENT_NAME);
-    issuer.setValue(issuingEntityName);
-    issuer.setFormat(NameIDType.ENTITY);
-    return issuer;
-  }
-
-  private static Subject buildSubject(String subjectNameId, String subjectNameIdType, String recipient, String inResponseTo) {
-    NameID nameID = buildSAMLObject(NameID.class, NameID.DEFAULT_ELEMENT_NAME);
-    nameID.setValue(subjectNameId);
-    nameID.setFormat(subjectNameIdType);
-
-    Subject subject = buildSAMLObject(Subject.class, Subject.DEFAULT_ELEMENT_NAME);
-    subject.setNameID(nameID);
-
-    SubjectConfirmation subjectConfirmation = buildSAMLObject(SubjectConfirmation.class, SubjectConfirmation.DEFAULT_ELEMENT_NAME);
-    subjectConfirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
-
-    SubjectConfirmationData subjectConfirmationData = buildSAMLObject(SubjectConfirmationData.class, SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
-
-    subjectConfirmationData.setRecipient(recipient);
-    subjectConfirmationData.setInResponseTo(inResponseTo);
-    subjectConfirmationData.setNotOnOrAfter(new DateTime().plusMinutes(8 * 60));
-
-    subjectConfirmation.setSubjectConfirmationData(subjectConfirmationData);
-
-    subject.getSubjectConfirmations().add(subjectConfirmation);
-
-    return subject;
-  }
-
-  public static Status buildStatus(String value) {
-    Status status = buildSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);
-    StatusCode statusCode = buildSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
-    statusCode.setValue(value);
-    status.setStatusCode(statusCode);
-    return status;
-  }
-
-  public static Status buildStatus(String value, String subStatus, String message) {
-    Status status = buildStatus(value);
-
-    StatusCode subStatusCode = buildSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
-    subStatusCode.setValue(subStatus);
-    status.getStatusCode().setStatusCode(subStatusCode);
-
-    StatusMessage statusMessage = buildSAMLObject(StatusMessage.class, StatusMessage.DEFAULT_ELEMENT_NAME);
-    statusMessage.setMessage(message);
-    status.setStatusMessage(statusMessage);
-
-    return status;
-  }
-
-  public static Assertion buildAssertion(SAMLPrincipal principal, Status status, String entityId) {
-    Assertion assertion = buildSAMLObject(Assertion.class, Assertion.DEFAULT_ELEMENT_NAME);
-
-    if (status.getStatusCode().getValue().equals(StatusCode.SUCCESS_URI)) {
-      Subject subject = buildSubject(principal.getNameID(), principal.getNameIDType(), principal.getAssertionConsumerServiceURL(), principal.getRequestID());
-      assertion.setSubject(subject);
+    @SuppressWarnings({"unused", "unchecked"})
+    public static <T> T buildSAMLObject(final Class<T> objectClass, QName qName) {
+        return (T) builderFactory.getBuilder(qName).buildObject(qName);
     }
 
-    Issuer issuer = buildIssuer(entityId);
+    public static Issuer buildIssuer(String issuingEntityName) {
+        Issuer issuer = buildSAMLObject(Issuer.class, Issuer.DEFAULT_ELEMENT_NAME);
+        issuer.setValue(issuingEntityName);
+        issuer.setFormat(NameIDType.ENTITY);
+        return issuer;
+    }
 
-    Audience audience = buildSAMLObject(Audience.class, Audience.DEFAULT_ELEMENT_NAME);
-    audience.setAudienceURI(principal.getServiceProviderEntityID());
-    AudienceRestriction audienceRestriction = buildSAMLObject(AudienceRestriction.class, AudienceRestriction.DEFAULT_ELEMENT_NAME);
-    audienceRestriction.getAudiences().add(audience);
+    private static Subject buildSubject(String subjectNameId, String subjectNameIdType, String recipient, String inResponseTo) {
+        NameID nameID = buildSAMLObject(NameID.class, NameID.DEFAULT_ELEMENT_NAME);
+        nameID.setValue(subjectNameId);
+        nameID.setFormat(subjectNameIdType);
 
-    Conditions conditions = buildSAMLObject(Conditions.class, Conditions.DEFAULT_ELEMENT_NAME);
-    conditions.setNotBefore(new DateTime().minusMinutes(3));
-    conditions.setNotOnOrAfter(new DateTime().plusMinutes(3));
-    conditions.getAudienceRestrictions().add(audienceRestriction);
-    assertion.setConditions(conditions);
+        Subject subject = buildSAMLObject(Subject.class, Subject.DEFAULT_ELEMENT_NAME);
+        subject.setNameID(nameID);
 
-    AuthnStatement authnStatement = buildAuthnStatement(new DateTime(), entityId);
+        SubjectConfirmation subjectConfirmation = buildSAMLObject(SubjectConfirmation.class, SubjectConfirmation.DEFAULT_ELEMENT_NAME);
+        subjectConfirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
 
-    assertion.setIssuer(issuer);
-    assertion.getAuthnStatements().add(authnStatement);
+        SubjectConfirmationData subjectConfirmationData = buildSAMLObject(SubjectConfirmationData.class, SubjectConfirmationData.DEFAULT_ELEMENT_NAME);
 
-    assertion.getAttributeStatements().add(buildAttributeStatement(principal.getAttributes()));
+        subjectConfirmationData.setRecipient(recipient);
+        subjectConfirmationData.setInResponseTo(inResponseTo);
+        subjectConfirmationData.setNotOnOrAfter(new DateTime().plusMinutes(8 * 60));
 
-    assertion.setID(randomSAMLId());
-    assertion.setIssueInstant(new DateTime());
+        subjectConfirmation.setSubjectConfirmationData(subjectConfirmationData);
 
-    return assertion;
-  }
+        subject.getSubjectConfirmations().add(subjectConfirmation);
 
-  public static void signAssertion(SignableXMLObject signableXMLObject, Credential signingCredential) throws MarshallingException, SignatureException {
-    Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
+        return subject;
+    }
 
-    signature.setSigningCredential(signingCredential);
-    signature.setSignatureAlgorithm(Configuration.getGlobalSecurityConfiguration().getSignatureAlgorithmURI(signingCredential));
-    signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+    public static Status buildStatus(String value) {
+        Status status = buildSAMLObject(Status.class, Status.DEFAULT_ELEMENT_NAME);
+        StatusCode statusCode = buildSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
+        statusCode.setValue(value);
+        status.setStatusCode(statusCode);
+        return status;
+    }
 
-    signableXMLObject.setSignature(signature);
+    public static Status buildStatus(String value, String subStatus, String message) {
+        Status status = buildStatus(value);
 
-    Configuration.getMarshallerFactory().getMarshaller(signableXMLObject).marshall(signableXMLObject);
-    Signer.signObject(signature);
-  }
+        StatusCode subStatusCode = buildSAMLObject(StatusCode.class, StatusCode.DEFAULT_ELEMENT_NAME);
+        subStatusCode.setValue(subStatus);
+        status.getStatusCode().setStatusCode(subStatusCode);
 
+        StatusMessage statusMessage = buildSAMLObject(StatusMessage.class, StatusMessage.DEFAULT_ELEMENT_NAME);
+        statusMessage.setMessage(message);
+        status.setStatusMessage(statusMessage);
 
-  public static Optional<String> getStringValueFromXMLObject(XMLObject xmlObj) {
-    if (xmlObj instanceof XSString) {
-      return Optional.ofNullable(((XSString) xmlObj).getValue());
-    } else if (xmlObj instanceof XSAny) {
-      XSAny xsAny = (XSAny) xmlObj;
-      String textContent = xsAny.getTextContent();
-      if (StringUtils.hasText(textContent)) {
-        return Optional.of(textContent);
-      }
-      List<XMLObject> unknownXMLObjects = xsAny.getUnknownXMLObjects();
-      if (!CollectionUtils.isEmpty(unknownXMLObjects)) {
-        XMLObject xmlObject = unknownXMLObjects.get(0);
-        if (xmlObject instanceof NameID) {
-          NameID nameID = (NameID) xmlObject;
-          return Optional.of(nameID.getValue());
+        return status;
+    }
+
+    public static Assertion buildAssertion(SAMLPrincipal principal, Status status, String entityId) {
+        Assertion assertion = buildSAMLObject(Assertion.class, Assertion.DEFAULT_ELEMENT_NAME);
+
+        if (status.getStatusCode().getValue().equals(StatusCode.SUCCESS_URI)) {
+            Subject subject = buildSubject(principal.getNameID(), principal.getNameIDType(), principal.getAssertionConsumerServiceURL(), principal.getRequestID());
+            assertion.setSubject(subject);
         }
-      }
+
+        Issuer issuer = buildIssuer(entityId);
+
+        Audience audience = buildSAMLObject(Audience.class, Audience.DEFAULT_ELEMENT_NAME);
+        audience.setAudienceURI(principal.getServiceProviderEntityID());
+        AudienceRestriction audienceRestriction = buildSAMLObject(AudienceRestriction.class, AudienceRestriction.DEFAULT_ELEMENT_NAME);
+        audienceRestriction.getAudiences().add(audience);
+
+        Conditions conditions = buildSAMLObject(Conditions.class, Conditions.DEFAULT_ELEMENT_NAME);
+        conditions.setNotBefore(new DateTime().minusMinutes(3));
+        conditions.setNotOnOrAfter(new DateTime().plusMinutes(3));
+        conditions.getAudienceRestrictions().add(audienceRestriction);
+        assertion.setConditions(conditions);
+
+        AuthnStatement authnStatement = buildAuthnStatement(new DateTime(), entityId);
+
+        assertion.setIssuer(issuer);
+        assertion.getAuthnStatements().add(authnStatement);
+
+        assertion.getAttributeStatements().add(buildAttributeStatement(principal.getAttributes()));
+
+        assertion.setID(randomSAMLId());
+        assertion.setIssueInstant(new DateTime());
+
+        return assertion;
     }
-    return Optional.empty();
-  }
 
-  public static String randomSAMLId() {
-    return "_" + UUID.randomUUID().toString();
-  }
+    public static void signAssertion(SignableXMLObject signableXMLObject, Credential signingCredential) throws MarshallingException, SignatureException {
+        Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 
-  private static AuthnStatement buildAuthnStatement(DateTime authnInstant, String entityID) {
-    AuthnContextClassRef authnContextClassRef = buildSAMLObject(AuthnContextClassRef.class, AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-    authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
+        signature.setSigningCredential(signingCredential);
+        signature.setSignatureAlgorithm(Configuration.getGlobalSecurityConfiguration().getSignatureAlgorithmURI(signingCredential));
+        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
-    AuthenticatingAuthority authenticatingAuthority = buildSAMLObject(AuthenticatingAuthority.class, AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
-    authenticatingAuthority.setURI(entityID);
+        signableXMLObject.setSignature(signature);
 
-    AuthnContext authnContext = buildSAMLObject(AuthnContext.class, AuthnContext.DEFAULT_ELEMENT_NAME);
-    authnContext.setAuthnContextClassRef(authnContextClassRef);
-    authnContext.getAuthenticatingAuthorities().add(authenticatingAuthority);
+        Configuration.getMarshallerFactory().getMarshaller(signableXMLObject).marshall(signableXMLObject);
+        Signer.signObject(signature);
+    }
 
-    AuthnStatement authnStatement = buildSAMLObject(AuthnStatement.class, AuthnStatement.DEFAULT_ELEMENT_NAME);
-    authnStatement.setAuthnContext(authnContext);
 
-    authnStatement.setAuthnInstant(authnInstant);
+    public static Optional<String> getStringValueFromXMLObject(XMLObject xmlObj) {
+        if (xmlObj instanceof XSString) {
+            return Optional.ofNullable(((XSString) xmlObj).getValue());
+        } else if (xmlObj instanceof XSAny) {
+            XSAny xsAny = (XSAny) xmlObj;
+            String textContent = xsAny.getTextContent();
+            if (StringUtils.hasText(textContent)) {
+                return Optional.of(textContent);
+            }
+            List<XMLObject> unknownXMLObjects = xsAny.getUnknownXMLObjects();
+            if (!CollectionUtils.isEmpty(unknownXMLObjects)) {
+                XMLObject xmlObject = unknownXMLObjects.get(0);
+                if (xmlObject instanceof NameID) {
+                    NameID nameID = (NameID) xmlObject;
+                    return Optional.of(nameID.getValue());
+                }
+            }
+        }
+        return Optional.empty();
+    }
 
-    return authnStatement;
+    public static String randomSAMLId() {
+        return "_" + UUID.randomUUID().toString();
+    }
 
-  }
+    private static AuthnStatement buildAuthnStatement(DateTime authnInstant, String entityID) {
+        AuthnContextClassRef authnContextClassRef = buildSAMLObject(AuthnContextClassRef.class, AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
+        authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
 
-  private static AttributeStatement buildAttributeStatement(List<SAMLAttribute> attributes) {
-    AttributeStatement attributeStatement = buildSAMLObject(AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
+        AuthenticatingAuthority authenticatingAuthority = buildSAMLObject(AuthenticatingAuthority.class, AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
+        authenticatingAuthority.setURI(entityID);
 
-    attributes.forEach(entry ->
-      attributeStatement.getAttributes().add(
-        buildAttribute(
-          entry.getName(),
-          entry.getValues())));
+        AuthnContext authnContext = buildSAMLObject(AuthnContext.class, AuthnContext.DEFAULT_ELEMENT_NAME);
+        authnContext.setAuthnContextClassRef(authnContextClassRef);
+        authnContext.getAuthenticatingAuthorities().add(authenticatingAuthority);
 
-    return attributeStatement;
-  }
+        AuthnStatement authnStatement = buildSAMLObject(AuthnStatement.class, AuthnStatement.DEFAULT_ELEMENT_NAME);
+        authnStatement.setAuthnContext(authnContext);
 
-  private static Attribute buildAttribute(String name, List<String> values) {
-    XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+        authnStatement.setAuthnInstant(authnInstant);
 
-    Attribute attribute = buildSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
-    attribute.setName(name);
-    attribute.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
-    List<XSString> xsStringList = values.stream().map(value -> {
-      XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
-      stringValue.setValue(value);
-      return stringValue;
-    }).collect(toList());
+        return authnStatement;
 
-    attribute.getAttributeValues().addAll(xsStringList);
-    return attribute;
-  }
+    }
+
+    private static AttributeStatement buildAttributeStatement(List<SAMLAttribute> attributes) {
+        AttributeStatement attributeStatement = buildSAMLObject(AttributeStatement.class, AttributeStatement.DEFAULT_ELEMENT_NAME);
+
+        attributes.forEach(entry ->
+                attributeStatement.getAttributes().add(
+                        buildAttribute(
+                                entry.getName(),
+                                entry.getValues())));
+
+        return attributeStatement;
+    }
+
+    private static Attribute buildAttribute(String name, List<String> values) {
+        XSStringBuilder stringBuilder = (XSStringBuilder) Configuration.getBuilderFactory().getBuilder(XSString.TYPE_NAME);
+
+        Attribute attribute = buildSAMLObject(Attribute.class, Attribute.DEFAULT_ELEMENT_NAME);
+        attribute.setName(name);
+        attribute.setNameFormat("urn:oasis:names:tc:SAML:2.0:attrname-format:uri");
+        List<XSString> xsStringList = values.stream().map(value -> {
+            XSString stringValue = stringBuilder.buildObject(AttributeValue.DEFAULT_ELEMENT_NAME, XSString.TYPE_NAME);
+            stringValue.setValue(value);
+            return stringValue;
+        }).collect(toList());
+
+        attribute.getAttributeValues().addAll(xsStringList);
+        return attribute;
+    }
 
 
 }

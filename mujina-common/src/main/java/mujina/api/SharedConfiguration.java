@@ -21,63 +21,63 @@ import java.util.Enumeration;
 @Setter
 public abstract class SharedConfiguration {
 
-  @JsonIgnore
-  protected static final Logger LOG = LoggerFactory.getLogger(SharedConfiguration.class);
-  @JsonIgnore
-  private JKSKeyManager keyManager;
-  private String keystorePassword = "secret";
-  private boolean needsSigning;
-  private String defaultSignatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
-  private String signatureAlgorithm;
-  private String entityId;
+    @JsonIgnore
+    protected static final Logger LOG = LoggerFactory.getLogger(SharedConfiguration.class);
+    @JsonIgnore
+    private JKSKeyManager keyManager;
+    private String keystorePassword = "secret";
+    private boolean needsSigning;
+    private String defaultSignatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
+    private String signatureAlgorithm;
+    private String entityId;
 
-  public SharedConfiguration(JKSKeyManager keyManager) {
-    this.keyManager = keyManager;
-  }
-
-  public abstract void reset();
-
-  public void setEntityId(String newEntityId, boolean addTokenToStore) {
-    if (addTokenToStore) {
-      try {
-        KeyStore keyStore = keyManager.getKeyStore();
-        KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
-        KeyStore.Entry keyStoreEntry = keyStore.getEntry(this.entityId, passwordProtection);
-        keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
-      } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
-        throw new RuntimeException(e);
-      }
+    public SharedConfiguration(JKSKeyManager keyManager) {
+        this.keyManager = keyManager;
     }
-    this.entityId = newEntityId;
-  }
 
-  public void injectCredential(final String certificate, final String pemKey) {
-    try {
-      KeyStore keyStore = keyManager.getKeyStore();
-      if (keyStore.containsAlias(entityId)) {
-        keyStore.deleteEntry(entityId);
-      }
-      KeyStoreLocator.addPrivateKey(keyStore, entityId, pemKey, certificate, keystorePassword);
-    } catch (Exception e) {
-      throw new RuntimeException("Unable to append signing credential", e);
+    public abstract void reset();
+
+    public void setEntityId(String newEntityId, boolean addTokenToStore) {
+        if (addTokenToStore) {
+            try {
+                KeyStore keyStore = keyManager.getKeyStore();
+                KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
+                KeyStore.Entry keyStoreEntry = keyStore.getEntry(this.entityId, passwordProtection);
+                keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
+            } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableEntryException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        this.entityId = newEntityId;
     }
-  }
 
-  protected void resetKeyStore(String alias, String privateKey, String certificate) {
-    try {
-      KeyStore keyStore = keyManager.getKeyStore();
-      Enumeration<String> aliases = keyStore.aliases();
-      while (aliases.hasMoreElements()) {
-        keyStore.deleteEntry(aliases.nextElement());
-      }
-      KeyStoreLocator.addPrivateKey(keyStore, alias, privateKey, certificate, getKeystorePassword());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    public void injectCredential(final String certificate, final String pemKey) {
+        try {
+            KeyStore keyStore = keyManager.getKeyStore();
+            if (keyStore.containsAlias(entityId)) {
+                keyStore.deleteEntry(entityId);
+            }
+            KeyStoreLocator.addPrivateKey(keyStore, entityId, pemKey, certificate, keystorePassword);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to append signing credential", e);
+        }
     }
-  }
 
-  public void setSignatureAlgorithm(String signatureAlgorithm) {
-    this.signatureAlgorithm = signatureAlgorithm;
-    BasicSecurityConfiguration.class.cast(Configuration.getGlobalSecurityConfiguration()).registerSignatureAlgorithmURI("RSA", signatureAlgorithm);
-  }
+    protected void resetKeyStore(String alias, String privateKey, String certificate) {
+        try {
+            KeyStore keyStore = keyManager.getKeyStore();
+            Enumeration<String> aliases = keyStore.aliases();
+            while (aliases.hasMoreElements()) {
+                keyStore.deleteEntry(aliases.nextElement());
+            }
+            KeyStoreLocator.addPrivateKey(keyStore, alias, privateKey, certificate, getKeystorePassword());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setSignatureAlgorithm(String signatureAlgorithm) {
+        this.signatureAlgorithm = signatureAlgorithm;
+        BasicSecurityConfiguration.class.cast(Configuration.getGlobalSecurityConfiguration()).registerSignatureAlgorithmURI("RSA", signatureAlgorithm);
+    }
 }

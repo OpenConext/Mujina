@@ -17,20 +17,20 @@ import static java.util.stream.Collectors.toList;
 
 public class DefaultSAMLUserDetailsService implements SAMLUserDetailsService {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DefaultSAMLUserDetailsService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSAMLUserDetailsService.class);
 
-  @Override
-  public Principal loadUserBySAML(SAMLCredential credential) {
-    LOG.debug("loadUserBySAML {}", credential);
+    @Override
+    public Principal loadUserBySAML(SAMLCredential credential) {
+        LOG.debug("loadUserBySAML {}", credential);
 
-    List<SAMLAttribute> attributes = credential.getAttributes().stream().map(attribute ->
-      new SAMLAttribute(
-        attribute.getName(),
-        attribute.getAttributeValues().stream().map(SAMLBuilder::getStringValueFromXMLObject)
-          .filter(Optional::isPresent).map(Optional::get).collect(toList()))).collect(toList());
+        List<SAMLAttribute> attributes = credential.getAttributes().stream().map(attribute ->
+                new SAMLAttribute(
+                        attribute.getName(),
+                        attribute.getAttributeValues().stream().map(SAMLBuilder::getStringValueFromXMLObject)
+                                .filter(Optional::isPresent).map(Optional::get).collect(toList()))).collect(toList());
 
-    NameID nameID = credential.getNameID();
-    return new SAMLPrincipal(nameID.getValue(), nameID.getFormat(), attributes);
-  }
+        NameID nameID = credential.getNameID();
+        return new SAMLPrincipal(nameID.getValue(), nameID.getFormat(), attributes);
+    }
 
 }

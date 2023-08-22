@@ -12,22 +12,22 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class MetadataControllerTest extends AbstractIntegrationTest {
 
-  @Value("${idp.base_url}")
-  private String idpBaseUrl;
+    @Value("${idp.base_url}")
+    private String idpBaseUrl;
 
-  @Test
-  public void metadata() throws Exception {
-    given()
-      .config(newConfig()
-        .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
-      .header("Content-Type", "application/xml")
-      .get("/metadata")
-      .then()
-      .statusCode(SC_OK)
-      .body(
-        "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
-        equalTo(idpBaseUrl + "/SingleSignOnService"));
-  }
+    @Test
+    public void metadata() throws Exception {
+        given()
+                .config(newConfig()
+                        .xmlConfig(xmlConfig().declareNamespace("md", "urn:oasis:names:tc:SAML:2.0:metadata")))
+                .header("Content-Type", "application/xml")
+                .get("/metadata")
+                .then()
+                .statusCode(SC_OK)
+                .body(
+                        "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
+                        equalTo(idpBaseUrl + "/SingleSignOnService"));
+    }
 
 }
 

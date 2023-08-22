@@ -8,11 +8,11 @@ import org.springframework.security.saml.SAMLBootstrap;
 
 public class UpgradedSAMLBootstrap extends SAMLBootstrap {
 
-  @Override
-  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-    super.postProcessBeanFactory(beanFactory);
-    BasicSecurityConfiguration config = (BasicSecurityConfiguration) Configuration.getGlobalSecurityConfiguration();
-    config.registerSignatureAlgorithmURI("RSA", SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
-    config.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
-  }
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+        super.postProcessBeanFactory(beanFactory);
+        BasicSecurityConfiguration config = (BasicSecurityConfiguration) Configuration.getGlobalSecurityConfiguration();
+        config.registerSignatureAlgorithmURI("RSA", SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+        config.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
+    }
 }
