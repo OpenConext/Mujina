@@ -10,18 +10,18 @@ import java.io.IOException;
 
 public class ResourceMetadataProvider extends AbstractMetadataProvider {
 
-  private final Resource resource;
+    private final Resource resource;
 
-  public ResourceMetadataProvider(Resource resource) {
-    this.resource = resource;
-  }
-
-  @Override
-  protected XMLObject doGetMetadata() throws MetadataProviderException {
-    try {
-      return super.unmarshallMetadata(resource.getInputStream());
-    } catch (UnmarshallingException | IOException e) {
-      throw new MetadataProviderException(e);
+    public ResourceMetadataProvider(Resource resource) {
+        this.resource = resource;
     }
-  }
+
+    @Override
+    protected XMLObject doGetMetadata() throws MetadataProviderException {
+        try {
+            return super.unmarshallMetadata(resource.getInputStream());
+        } catch (UnmarshallingException | IOException e) {
+            throw new MetadataProviderException(e);
+        }
+    }
 }

@@ -29,61 +29,61 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public abstract class AbstractIntegrationTest {
 
-  @Autowired
-  protected SpConfiguration spConfiguration;
+    @Autowired
+    protected SpConfiguration spConfiguration;
 
-  @LocalServerPort
-  protected int serverPort;
+    @LocalServerPort
+    protected int serverPort;
 
-  @Before
-  public void before() throws Exception {
-    RestAssured.port = serverPort;
-    given()
-      .header("Content-Type", "application/json")
-      .post("/api/reset")
-      .then()
-      .statusCode(SC_OK);
-  }
+    @Before
+    public void before() throws Exception {
+        RestAssured.port = serverPort;
+        given()
+                .header("Content-Type", "application/json")
+                .post("/api/reset")
+                .then()
+                .statusCode(SC_OK);
+    }
 
-  protected CookieFilter login() throws IOException {
-    CookieFilter cookieFilter = new CookieFilter();
+    protected CookieFilter login() throws IOException {
+        CookieFilter cookieFilter = new CookieFilter();
 
-    String html = given()
-      .filter(cookieFilter)
-      .get("/login")
-      .getBody().asString();
+        String html = given()
+                .filter(cookieFilter)
+                .get("/login")
+                .getBody().asString();
 
-    Matcher matcher = Pattern.compile("name=\"SAMLRequest\" value=\"(.*?)\"").matcher(html);
-    matcher.find();
-    String samlRequest = new String(Base64.getDecoder().decode(matcher.group(1)));
+        Matcher matcher = Pattern.compile("name=\"SAMLRequest\" value=\"(.*?)\"").matcher(html);
+        matcher.find();
+        String samlRequest = new String(Base64.getDecoder().decode(matcher.group(1)));
 
-    //Now mimic a response message
-    String samlResponse = getIdPSAMLResponse(samlRequest);
-    given()
-      .formParam("SAMLResponse", Base64.getEncoder().encodeToString(samlResponse.getBytes()))
-      .filter(cookieFilter)
-      .post("/saml/SSO")
-      .then()
-      .statusCode(SC_MOVED_TEMPORARILY);
+        //Now mimic a response message
+        String samlResponse = getIdPSAMLResponse(samlRequest);
+        given()
+                .formParam("SAMLResponse", Base64.getEncoder().encodeToString(samlResponse.getBytes()))
+                .filter(cookieFilter)
+                .post("/saml/SSO")
+                .then()
+                .statusCode(SC_MOVED_TEMPORARILY);
 
-    return cookieFilter;
-  }
+        return cookieFilter;
+    }
 
-  private String getIdPSAMLResponse(String saml) throws IOException {
-    Matcher matcher = Pattern.compile("ID=\"(.*?)\"").matcher(saml);
-    assertTrue(matcher.find());
+    private String getIdPSAMLResponse(String saml) throws IOException {
+        Matcher matcher = Pattern.compile("ID=\"(.*?)\"").matcher(saml);
+        assertTrue(matcher.find());
 
-    //We need the ID of the original request to mimic the real IdP authnResponse
-    String inResponseTo = matcher.group(1);
+        //We need the ID of the original request to mimic the real IdP authnResponse
+        String inResponseTo = matcher.group(1);
 
-    ZonedDateTime date = ZonedDateTime.now();
-    String now = date.format(DateTimeFormatter.ISO_INSTANT);
-    String samlResponse = IOUtils.toString(new ClassPathResource("saml_response.xml").getInputStream(), Charset.defaultCharset());
+        ZonedDateTime date = ZonedDateTime.now();
+        String now = date.format(DateTimeFormatter.ISO_INSTANT);
+        String samlResponse = IOUtils.toString(new ClassPathResource("saml_response.xml").getInputStream(), Charset.defaultCharset());
 
-    samlResponse = samlResponse
-      .replaceAll("@@IssueInstant@@", now)
-      .replaceAll("@@InResponseTo@@", inResponseTo);
-    return samlResponse;
-  }
+        samlResponse = samlResponse
+                .replaceAll("@@IssueInstant@@", now)
+                .replaceAll("@@InResponseTo@@", inResponseTo);
+        return samlResponse;
+    }
 
 }

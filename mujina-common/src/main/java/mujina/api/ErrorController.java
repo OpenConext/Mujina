@@ -15,25 +15,25 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 public class ErrorController implements org.springframework.boot.web.servlet.error.ErrorController {
 
-  private final ErrorAttributes errorAttributes;
+    private final ErrorAttributes errorAttributes;
 
-  public ErrorController(ErrorAttributes errorAttributes) {
-    Assert.notNull(errorAttributes, "ErrorAttributes must not be null");
-    this.errorAttributes = errorAttributes;
-  }
-
-  @RequestMapping
-  public ResponseEntity<Map<String, Object>> error(HttpServletRequest aRequest) {
-    ServletWebRequest webRequest = new ServletWebRequest(aRequest);
-    Map<String, Object> result = this.errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
-
-    HttpStatus statusCode = INTERNAL_SERVER_ERROR;
-    Object status = result.get("status");
-    if (status != null && status instanceof Integer) {
-      statusCode = HttpStatus.valueOf(((Integer) status).intValue());
+    public ErrorController(ErrorAttributes errorAttributes) {
+        Assert.notNull(errorAttributes, "ErrorAttributes must not be null");
+        this.errorAttributes = errorAttributes;
     }
-    return new ResponseEntity<>(result, statusCode);
 
-  }
+    @RequestMapping
+    public ResponseEntity<Map<String, Object>> error(HttpServletRequest aRequest) {
+        ServletWebRequest webRequest = new ServletWebRequest(aRequest);
+        Map<String, Object> result = this.errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
+
+        HttpStatus statusCode = INTERNAL_SERVER_ERROR;
+        Object status = result.get("status");
+        if (status != null && status instanceof Integer) {
+            statusCode = HttpStatus.valueOf(((Integer) status).intValue());
+        }
+        return new ResponseEntity<>(result, statusCode);
+
+    }
 
 }

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @ToString
 public class Credential implements Serializable {
 
-  private String certificate;
-  private String key;
+    private String certificate;
+    private String key;
 
 }

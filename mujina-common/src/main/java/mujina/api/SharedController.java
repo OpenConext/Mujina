@@ -8,42 +8,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public class SharedController {
 
-  protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-  protected SharedConfiguration configuration;
+    protected SharedConfiguration configuration;
 
-  public SharedController(SharedConfiguration configuration) {
-    this.configuration = configuration;
-  }
+    public SharedController(SharedConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-  @PostMapping("/reset")
-  public void reset() {
-    LOG.info("Resetting to default configuration");
-    configuration.reset();
-  }
+    @PostMapping("/reset")
+    public void reset() {
+        LOG.info("Resetting to default configuration");
+        configuration.reset();
+    }
 
-  @PutMapping("/entityid")
-  public void setEntityID(@RequestBody String entityID) {
-    LOG.info("Request to set entityID {}", entityID);
-    configuration.setEntityId(entityID);
-  }
+    @PutMapping("/entityid")
+    public void setEntityID(@RequestBody String entityID) {
+        LOG.info("Request to set entityID {}", entityID);
+        configuration.setEntityId(entityID);
+    }
 
-  @PostMapping("/signing-credential")
-  public void setSigningCredential(@RequestBody Credential credential) {
-    LOG.info("Request to set signing credential {}", credential);
-    configuration.injectCredential(credential.getCertificate(), credential.getKey());
-  }
+    @PostMapping("/signing-credential")
+    public void setSigningCredential(@RequestBody Credential credential) {
+        LOG.info("Request to set signing credential {}", credential);
+        configuration.injectCredential(credential.getCertificate(), credential.getKey());
+    }
 
-  @PutMapping("/needs-signing")
-  public void setSigningNeeded(@RequestBody boolean needsSigning) {
-    LOG.info("Request to set signing needed {}", needsSigning);
-    configuration.setNeedsSigning(needsSigning);
-  }
+    @PutMapping("/needs-signing")
+    public void setSigningNeeded(@RequestBody boolean needsSigning) {
+        LOG.info("Request to set signing needed {}", needsSigning);
+        configuration.setNeedsSigning(needsSigning);
+    }
 
-  @PutMapping("/signatureAlgorithm")
-  public void setSignatureAlgorithm(@RequestBody String signatureAlgorithm) {
-    LOG.info("Request to set signatureAlgorithm to {}", signatureAlgorithm);
-    configuration.setSignatureAlgorithm(signatureAlgorithm);
-  }
+    @PutMapping("/signatureAlgorithm")
+    public void setSignatureAlgorithm(@RequestBody String signatureAlgorithm) {
+        LOG.info("Request to set signatureAlgorithm to {}", signatureAlgorithm);
+        configuration.setSignatureAlgorithm(signatureAlgorithm);
+    }
 
 }

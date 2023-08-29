@@ -9,8 +9,8 @@ import java.util.Collection;
 
 public class RoleSAMLAuthenticationProvider extends SAMLAuthenticationProvider {
 
-  @Override
-  protected Collection<? extends GrantedAuthority> getEntitlements(SAMLCredential credential, Object userDetail) {
-    return AuthorityUtils.createAuthorityList("ROLE_USER");
-  }
+    @Override
+    protected Collection<? extends GrantedAuthority> getEntitlements(SAMLCredential credential, Object userDetail) {
+        return AuthorityUtils.createAuthorityList("ROLE_USER");
+    }
 }

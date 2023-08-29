@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/error")
 public class SpErrorController extends ErrorController {
 
-  @Autowired
-  public SpErrorController(ErrorAttributes errorAttributes) {
-    super(errorAttributes);
-  }
+    @Autowired
+    public SpErrorController(ErrorAttributes errorAttributes) {
+        super(errorAttributes);
+    }
 }

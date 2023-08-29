@@ -11,15 +11,15 @@ import java.io.IOException;
 
 public class DefaultMetadataDisplayFilter extends MetadataDisplayFilter {
 
-  @Override
-  protected void processMetadataDisplay(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-    try {
-      SAMLMessageContext context = contextProvider.getLocalEntity(request, response);
-      String entityId = context.getLocalEntityId();
-      response.setContentType("application/xml");
-      displayMetadata(entityId, response.getWriter());
-    } catch (MetadataProviderException e) {
-      throw new ServletException("Error initializing metadata", e);
+    @Override
+    protected void processMetadataDisplay(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        try {
+            SAMLMessageContext context = contextProvider.getLocalEntity(request, response);
+            String entityId = context.getLocalEntityId();
+            response.setContentType("application/xml");
+            displayMetadata(entityId, response.getWriter());
+        } catch (MetadataProviderException e) {
+            throw new ServletException("Error initializing metadata", e);
+        }
     }
-  }
 }

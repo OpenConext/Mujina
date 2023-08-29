@@ -20,46 +20,46 @@ import java.util.Base64;
 
 public class KeyStoreLocator {
 
-  private static CertificateFactory certificateFactory;
+    private static CertificateFactory certificateFactory;
 
-  static {
-    try {
-      certificateFactory = CertificateFactory.getInstance("X.509");
-    } catch (CertificateException e) {
-      throw new RuntimeException(e);
+    static {
+        try {
+            certificateFactory = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 
-  public static KeyStore createKeyStore(String pemPassPhrase) {
-    try {
-      KeyStore keyStore = KeyStore.getInstance("JKS");
-      keyStore.load(null, pemPassPhrase.toCharArray());
-      return keyStore;
-    } catch (Exception e) {
-      //too many exceptions we can't handle, so brute force catch
-      throw new RuntimeException(e);
+    public static KeyStore createKeyStore(String pemPassPhrase) {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(null, pemPassPhrase.toCharArray());
+            return keyStore;
+        } catch (Exception e) {
+            //too many exceptions we can't handle, so brute force catch
+            throw new RuntimeException(e);
+        }
     }
-  }
 
-  //privateKey must be in the DER unencrypted PKCS#8 format. See README.md
-  public static void addPrivateKey(KeyStore keyStore, String alias, String privateKey, String certificate, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, KeyStoreException, CertificateException {
-    String wrappedCert = wrapCert(certificate);
-    byte[] decodedKey = Base64.getDecoder().decode(privateKey.getBytes());
+    //privateKey must be in the DER unencrypted PKCS#8 format. See README.md
+    public static void addPrivateKey(KeyStore keyStore, String alias, String privateKey, String certificate, String password) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, KeyStoreException, CertificateException {
+        String wrappedCert = wrapCert(certificate);
+        byte[] decodedKey = Base64.getDecoder().decode(privateKey.getBytes());
 
-    char[] passwordChars = password.toCharArray();
-    Certificate cert = certificateFactory.generateCertificate(new ByteArrayInputStream(wrappedCert.getBytes()));
-    ArrayList<Certificate> certs = new ArrayList<>();
-    certs.add(cert);
+        char[] passwordChars = password.toCharArray();
+        Certificate cert = certificateFactory.generateCertificate(new ByteArrayInputStream(wrappedCert.getBytes()));
+        ArrayList<Certificate> certs = new ArrayList<>();
+        certs.add(cert);
 
-    byte[] privKeyBytes = IOUtils.toByteArray(new ByteArrayInputStream(decodedKey));
+        byte[] privKeyBytes = IOUtils.toByteArray(new ByteArrayInputStream(decodedKey));
 
-    KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
-    RSAPrivateKey privKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(ks);
-    keyStore.setKeyEntry(alias, privKey, passwordChars, certs.toArray(new Certificate[certs.size()]));
-  }
+        KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+        RSAPrivateKey privKey = (RSAPrivateKey) KeyFactory.getInstance("RSA").generatePrivate(ks);
+        keyStore.setKeyEntry(alias, privKey, passwordChars, certs.toArray(new Certificate[certs.size()]));
+    }
 
-  private static String wrapCert(String certificate) {
-    return "-----BEGIN CERTIFICATE-----\n" + certificate + "\n-----END CERTIFICATE-----";
-  }
+    private static String wrapCert(String certificate) {
+        return "-----BEGIN CERTIFICATE-----\n" + certificate + "\n-----END CERTIFICATE-----";
+    }
 
 }

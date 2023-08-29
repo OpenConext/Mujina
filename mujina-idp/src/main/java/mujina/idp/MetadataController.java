@@ -5,11 +5,7 @@ import mujina.saml.SAMLBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.Configuration;
 import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml2.metadata.IDPSSODescriptor;
-import org.opensaml.saml2.metadata.KeyDescriptor;
-import org.opensaml.saml2.metadata.NameIDFormat;
-import org.opensaml.saml2.metadata.SingleSignOnService;
+import org.opensaml.saml2.metadata.*;
 import org.opensaml.xml.io.Marshaller;
 import org.opensaml.xml.io.MarshallingException;
 import org.opensaml.xml.security.CriteriaSet;
@@ -41,71 +37,71 @@ import static mujina.saml.SAMLBuilder.signAssertion;
 @RestController
 public class MetadataController {
 
-  @Autowired
-  private KeyManager keyManager;
+    @Autowired
+    private KeyManager keyManager;
 
-  @Autowired
-  private IdpConfiguration idpConfiguration;
+    @Autowired
+    private IdpConfiguration idpConfiguration;
 
-  @Autowired
-  Environment environment;
+    @Autowired
+    private Environment environment;
 
-  @Value("${idp.saml_binding}")
-  String samlBinding;
+    @Value("${idp.saml_binding}")
+    private String samlBinding;
 
-  @Autowired
-  @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
-  public String metadata(@Value("${idp.base_url}") String idpBaseUrl) throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
-    EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
-    entityDescriptor.setEntityID(idpConfiguration.getEntityId());
-    entityDescriptor.setID(SAMLBuilder.randomSAMLId());
-    entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
+    @Autowired
+    @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
+    public String metadata(@Value("${idp.base_url}") String idpBaseUrl) throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
+        EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
+        entityDescriptor.setEntityID(idpConfiguration.getEntityId());
+        entityDescriptor.setID(SAMLBuilder.randomSAMLId());
+        entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
 
-    Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
+        Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 
-    Credential credential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(idpConfiguration.getEntityId())));
-    signature.setSigningCredential(credential);
-    signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
-    signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
+        Credential credential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(idpConfiguration.getEntityId())));
+        signature.setSigningCredential(credential);
+        signature.setSignatureAlgorithm(SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
+        signature.setCanonicalizationAlgorithm(SignatureConstants.ALGO_ID_C14N_EXCL_OMIT_COMMENTS);
 
-    Configuration.getMarshallerFactory().getMarshaller(entityDescriptor).marshall(entityDescriptor);
+        Configuration.getMarshallerFactory().getMarshaller(entityDescriptor).marshall(entityDescriptor);
 
-    IDPSSODescriptor idpssoDescriptor = buildSAMLObject(IDPSSODescriptor.class, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+        IDPSSODescriptor idpssoDescriptor = buildSAMLObject(IDPSSODescriptor.class, IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
 
-    NameIDFormat nameIDFormat = buildSAMLObject(NameIDFormat.class, NameIDFormat.DEFAULT_ELEMENT_NAME);
-    nameIDFormat.setFormat("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
-    idpssoDescriptor.getNameIDFormats().add(nameIDFormat);
+        NameIDFormat nameIDFormat = buildSAMLObject(NameIDFormat.class, NameIDFormat.DEFAULT_ELEMENT_NAME);
+        nameIDFormat.setFormat("urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+        idpssoDescriptor.getNameIDFormats().add(nameIDFormat);
 
-    idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
+        idpssoDescriptor.addSupportedProtocol(SAMLConstants.SAML20P_NS);
 
-    SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
-    singleSignOnService.setLocation(idpBaseUrl + "/SingleSignOnService");
-    singleSignOnService.setBinding(samlBinding);
+        SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
+        singleSignOnService.setLocation(idpBaseUrl + "/SingleSignOnService");
+        singleSignOnService.setBinding(samlBinding);
 
-    idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
+        idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
 
-    X509KeyInfoGeneratorFactory keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
-    keyInfoGeneratorFactory.setEmitEntityCertificate(true);
-    KeyInfoGenerator keyInfoGenerator = keyInfoGeneratorFactory.newInstance();
+        X509KeyInfoGeneratorFactory keyInfoGeneratorFactory = new X509KeyInfoGeneratorFactory();
+        keyInfoGeneratorFactory.setEmitEntityCertificate(true);
+        KeyInfoGenerator keyInfoGenerator = keyInfoGeneratorFactory.newInstance();
 
-    KeyDescriptor encKeyDescriptor = buildSAMLObject(KeyDescriptor.class, KeyDescriptor.DEFAULT_ELEMENT_NAME);
-    encKeyDescriptor.setUse(UsageType.SIGNING);
+        KeyDescriptor encKeyDescriptor = buildSAMLObject(KeyDescriptor.class, KeyDescriptor.DEFAULT_ELEMENT_NAME);
+        encKeyDescriptor.setUse(UsageType.SIGNING);
 
-    encKeyDescriptor.setKeyInfo(keyInfoGenerator.generate(credential));
+        encKeyDescriptor.setKeyInfo(keyInfoGenerator.generate(credential));
 
-    idpssoDescriptor.getKeyDescriptors().add(encKeyDescriptor);
+        idpssoDescriptor.getKeyDescriptors().add(encKeyDescriptor);
 
-    entityDescriptor.getRoleDescriptors().add(idpssoDescriptor);
+        entityDescriptor.getRoleDescriptors().add(idpssoDescriptor);
 
-    signAssertion(entityDescriptor, credential);
+        signAssertion(entityDescriptor, credential);
 
-    return writeEntityDescriptor(entityDescriptor);
-  }
+        return writeEntityDescriptor(entityDescriptor);
+    }
 
-  private String writeEntityDescriptor(EntityDescriptor entityDescriptor) throws ParserConfigurationException, MarshallingException, TransformerException {
-    Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(entityDescriptor);
-    Element element = marshaller.marshall(entityDescriptor);
-    return XMLHelper.nodeToString(element);
-  }
+    private String writeEntityDescriptor(EntityDescriptor entityDescriptor) throws ParserConfigurationException, MarshallingException, TransformerException {
+        Marshaller marshaller = Configuration.getMarshallerFactory().getMarshaller(entityDescriptor);
+        Element element = marshaller.marshall(entityDescriptor);
+        return XMLHelper.nodeToString(element);
+    }
 
 }

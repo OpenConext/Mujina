@@ -14,15 +14,15 @@ import java.util.TreeMap;
 @Setter
 public class FederatedUserAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-  private Map<String, List<String>> attributes = new TreeMap<>();
+    private Map<String, List<String>> attributes = new TreeMap<>();
 
-  public FederatedUserAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
-    super(principal, credentials, authorities);
-  }
+    public FederatedUserAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+        super(principal, credentials, authorities);
+    }
 
-  public FederatedUserAuthenticationToken clone() {
-    FederatedUserAuthenticationToken clone = new FederatedUserAuthenticationToken(getPrincipal(), getCredentials(), getAuthorities());
-    clone.setAttributes(attributes);
-    return clone;
-  }
+    public FederatedUserAuthenticationToken clone() {
+        FederatedUserAuthenticationToken clone = new FederatedUserAuthenticationToken(getPrincipal(), getCredentials(), getAuthorities());
+        clone.setAttributes(attributes);
+        return clone;
+    }
 }

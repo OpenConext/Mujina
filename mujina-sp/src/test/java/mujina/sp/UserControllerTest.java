@@ -14,34 +14,34 @@ import static org.hamcrest.core.StringContains.containsString;
 @ActiveProfiles(profiles = "test")
 public class UserControllerTest extends AbstractIntegrationTest {
 
-  @Test
-  public void user() throws Exception {
-    doUser("/user.html");
-  }
+    @Test
+    public void user() throws Exception {
+        doUser("/user.html");
+    }
 
-  @Test
-  public void index() throws Exception {
-    doUser("/");
-  }
+    @Test
+    public void index() throws Exception {
+        doUser("/");
+    }
 
-  @Test
-  public void indexNotLoggedIn() throws Exception {
-    given()
-      .get("/")
-      .then()
-      .statusCode(SC_OK)
-      .body(containsString("Login"));
-  }
+    @Test
+    public void indexNotLoggedIn() throws Exception {
+        given()
+                .get("/")
+                .then()
+                .statusCode(SC_OK)
+                .body(containsString("Login"));
+    }
 
-  private void doUser(String path) throws Exception {
-    CookieFilter cookieFilter = login();
+    private void doUser(String path) throws Exception {
+        CookieFilter cookieFilter = login();
 
-    given()
-      .filter(cookieFilter)
-      .get(path)
-      .then()
-      .statusCode(SC_OK)
-      .body(containsString("admin"));
-  }
+        given()
+                .filter(cookieFilter)
+                .get(path)
+                .then()
+                .statusCode(SC_OK)
+                .body(containsString("admin"));
+    }
 
 }

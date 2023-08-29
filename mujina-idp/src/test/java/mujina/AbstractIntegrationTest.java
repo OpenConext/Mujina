@@ -17,35 +17,35 @@ import static org.apache.http.HttpStatus.SC_OK;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"idp.auth_method=USER"})
 public abstract class AbstractIntegrationTest {
 
-  @Autowired
-  protected IdpConfiguration idpConfiguration;
+    @Autowired
+    protected IdpConfiguration idpConfiguration;
 
-  @LocalServerPort
-  protected int serverPort;
+    @LocalServerPort
+    protected int serverPort;
 
-  @Before
-  public void before() throws Exception {
-    RestAssured.port = serverPort;
-    given()
-      .header("Content-Type", "application/json")
-      .post("/api/reset")
-      .then()
-      .statusCode(SC_OK);
-  }
+    @Before
+    public void before() throws Exception {
+        RestAssured.port = serverPort;
+        given()
+                .header("Content-Type", "application/json")
+                .post("/api/reset")
+                .then()
+                .statusCode(SC_OK);
+    }
 
-  protected CookieFilter login(String username, String password, int statusCode) throws Exception {
-    CookieFilter cookieFilter = new CookieFilter();
+    protected CookieFilter login(String username, String password, int statusCode) throws Exception {
+        CookieFilter cookieFilter = new CookieFilter();
 
-    given()
-      .formParam("username", username)
-      .formParam("password", password)
-      .filter(cookieFilter)
-      .post("/login")
-      .then()
-      .statusCode(statusCode);
+        given()
+                .formParam("username", username)
+                .formParam("password", password)
+                .filter(cookieFilter)
+                .post("/login")
+                .then()
+                .statusCode(statusCode);
 
-    return cookieFilter;
-  }
+        return cookieFilter;
+    }
 
 
 }

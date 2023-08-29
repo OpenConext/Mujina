@@ -10,17 +10,17 @@ import org.springframework.security.saml.websso.WebSSOProfileOptions;
 
 public class ConfigurableSAMLEntryPoint extends SAMLEntryPoint {
 
-  @Override
-  protected WebSSOProfileOptions getProfileOptions(SAMLMessageContext context, AuthenticationException exception) throws MetadataProviderException {
-    WebSSOProfileOptions profileOptions = super.getProfileOptions(context, exception);
-    InTransport inboundMessageTransport = context.getInboundMessageTransport();
-    if (inboundMessageTransport instanceof HttpServletRequestAdapter) {
-      HttpServletRequestAdapter messageTransport = (HttpServletRequestAdapter) inboundMessageTransport;
-      String forceAuthn = messageTransport.getParameterValue("force-authn");
-      if ("true".equals(forceAuthn)) {
-        profileOptions.setForceAuthN(true);
-      }
+    @Override
+    protected WebSSOProfileOptions getProfileOptions(SAMLMessageContext context, AuthenticationException exception) throws MetadataProviderException {
+        WebSSOProfileOptions profileOptions = super.getProfileOptions(context, exception);
+        InTransport inboundMessageTransport = context.getInboundMessageTransport();
+        if (inboundMessageTransport instanceof HttpServletRequestAdapter) {
+            HttpServletRequestAdapter messageTransport = (HttpServletRequestAdapter) inboundMessageTransport;
+            String forceAuthn = messageTransport.getParameterValue("force-authn");
+            if ("true".equals(forceAuthn)) {
+                profileOptions.setForceAuthN(true);
+            }
+        }
+        return profileOptions;
     }
-    return profileOptions;
-  }
 }
