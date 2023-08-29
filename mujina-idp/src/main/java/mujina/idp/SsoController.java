@@ -126,6 +126,7 @@ public class SsoController {
                         break;
                     case "urn:mace:dir:attribute-def:mail":
                     case "urn:mace:dir:attribute-def:eduPersonPrincipalName":
+                    case "urn:oasis:names:tc:SAML:attribute:subject-id":
                         replacements.put(key, List.of(mail));
                         break;
                 }

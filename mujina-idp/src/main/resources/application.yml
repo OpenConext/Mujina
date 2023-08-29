@@ -47,6 +47,7 @@ idp:
     [urn:mace:dir:attribute-def:mail]: "j.doe@example.com"
     [urn:mace:terena.org:attribute-def:schacHomeOrganization]: "example.com"
     [urn:mace:dir:attribute-def:eduPersonPrincipalName]: "j.doe@example.com"
+    [urn:oasis:names:tc:SAML:attribute:subject-id]: "j.doe@example.com"
 
 spring:
   mvc:
