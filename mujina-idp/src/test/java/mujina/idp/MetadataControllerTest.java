@@ -26,7 +26,9 @@ public class MetadataControllerTest extends AbstractIntegrationTest {
                 .statusCode(SC_OK)
                 .body(
                         "EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Location",
-                        equalTo(idpBaseUrl + "/SingleSignOnService"));
+                        equalTo(idpBaseUrl + "/SingleSignOnService"))
+                .body("EntityDescriptor.IDPSSODescriptor.SingleSignOnService.@Binding",
+                    equalTo("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"));;
     }
 
 }

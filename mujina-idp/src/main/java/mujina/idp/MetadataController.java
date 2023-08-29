@@ -44,7 +44,10 @@ public class MetadataController {
     private IdpConfiguration idpConfiguration;
 
     @Autowired
-    Environment environment;
+    private Environment environment;
+
+    @Value("${idp.saml_binding}")
+    private String samlBinding;
 
     @Autowired
     @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
@@ -73,7 +76,7 @@ public class MetadataController {
 
         SingleSignOnService singleSignOnService = buildSAMLObject(SingleSignOnService.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
         singleSignOnService.setLocation(idpBaseUrl + "/SingleSignOnService");
-        singleSignOnService.setBinding(SAMLConstants.SAML2_REDIRECT_BINDING_URI);
+        singleSignOnService.setBinding(samlBinding);
 
         idpssoDescriptor.getSingleSignOnServices().add(singleSignOnService);
 
