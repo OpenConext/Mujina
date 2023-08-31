@@ -1,5 +1,6 @@
 package mujina.idp;
 
+import java.util.Optional;
 import mujina.api.IdpConfiguration;
 import mujina.saml.SAMLBuilder;
 import org.joda.time.DateTime;
@@ -37,6 +38,7 @@ import static mujina.saml.SAMLBuilder.signAssertion;
 @RestController
 public class MetadataController {
 
+
     @Autowired
     private KeyManager keyManager;
 
@@ -49,13 +51,17 @@ public class MetadataController {
     @Value("${idp.saml_binding}")
     private String samlBinding;
 
+    @Value("${idp.entity_descriptor_valid_until_millis:#{null}}")
+    private Optional<Integer> entityDescriptorValidUntilMillis;
+
     @Autowired
     @RequestMapping(method = RequestMethod.GET, value = "/metadata", produces = "application/xml")
     public String metadata(@Value("${idp.base_url}") String idpBaseUrl) throws SecurityException, ParserConfigurationException, SignatureException, MarshallingException, TransformerException {
         EntityDescriptor entityDescriptor = buildSAMLObject(EntityDescriptor.class, EntityDescriptor.DEFAULT_ELEMENT_NAME);
         entityDescriptor.setEntityID(idpConfiguration.getEntityId());
         entityDescriptor.setID(SAMLBuilder.randomSAMLId());
-        entityDescriptor.setValidUntil(new DateTime().plusMillis(86400000));
+        entityDescriptorValidUntilMillis.ifPresent(
+            value -> entityDescriptor.setValidUntil(new DateTime().plusMillis(value)));
 
         Signature signature = buildSAMLObject(Signature.class, Signature.DEFAULT_ELEMENT_NAME);
 
