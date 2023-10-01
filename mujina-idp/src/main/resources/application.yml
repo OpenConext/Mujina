@@ -17,6 +17,8 @@ secure_cookie: false
 # Identity Provider
 idp:
   entity_id: http://mock-idp
+  # How long the IDP metadata is valid (default 24 hours); set to an empty value for unlimited validity
+  entity_descriptor_valid_until_millis: 86400000
   # base url
   base_url: http://localhost:8080
   # Private key used to sign the SAML response
