@@ -1,5 +1,6 @@
 package mujina.idp;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +11,12 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Comparator.comparing;
 
 @Controller
 public class UserController {
@@ -25,7 +30,9 @@ public class UserController {
 
         DefaultResourceLoader loader = new DefaultResourceLoader();
         this.samlAttributes = objectMapper.readValue(
-                loader.getResource(samlAttributesConfigFile).getInputStream(), List.class);
+                loader.getResource(samlAttributesConfigFile).getInputStream(), new TypeReference<>() {
+                });
+        this.samlAttributes.sort(comparing(m -> m.get("id")));
     }
 
     @GetMapping("/")

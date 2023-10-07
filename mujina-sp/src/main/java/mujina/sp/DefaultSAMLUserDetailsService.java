@@ -13,6 +13,7 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 public class DefaultSAMLUserDetailsService implements SAMLUserDetailsService {
@@ -28,7 +29,7 @@ public class DefaultSAMLUserDetailsService implements SAMLUserDetailsService {
                         attribute.getName(),
                         attribute.getAttributeValues().stream().map(SAMLBuilder::getStringValueFromXMLObject)
                                 .filter(Optional::isPresent).map(Optional::get).collect(toList()))).collect(toList());
-
+        attributes.sort(comparing(SAMLAttribute::getName));
         NameID nameID = credential.getNameID();
         return new SAMLPrincipal(nameID.getValue(), nameID.getFormat(), attributes);
     }

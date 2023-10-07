@@ -59,7 +59,8 @@
                 <label for="add-attribute" class="sr-only">Select attributes</label>
                 <select class="attribute-select" id="add-attribute">
                     <option value="Add attribute...">Add attribute...</option>
-                    <option th:each="attr : ${samlAttributes}" th:value="${attr.get('name')}"
+                    <option th:each="attr : ${samlAttributes}"
+                            th:value="${attr.get('name')}"
                             th:text="${attr.get('id')}"
                             th:attr="data-multiplicity=${attr.get('multiplicity')}"></option>
                 </select>
