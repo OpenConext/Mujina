@@ -33,7 +33,7 @@ public abstract class AbstractIntegrationTest {
                 .statusCode(SC_OK);
     }
 
-    protected CookieFilter login(String username, String password, int statusCode) throws Exception {
+    protected CookieFilter login(String username, String password, int statusCode) {
         CookieFilter cookieFilter = new CookieFilter();
 
         given()

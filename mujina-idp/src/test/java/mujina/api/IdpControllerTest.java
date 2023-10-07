@@ -1,5 +1,6 @@
 package mujina.api;
 
+import io.restassured.common.mapper.TypeRef;
 import mujina.AbstractIntegrationTest;
 import org.junit.Test;
 
@@ -57,12 +58,18 @@ public class IdpControllerTest extends AbstractIntegrationTest {
         api(user, "/api/users");
 
         assertTrue(idpConfiguration.getUsers().stream()
-                .filter(token -> token.getName().equals(user.getName())).findAny().isPresent());
+                .anyMatch(token -> token.getName().equals(user.getName())));
 
+        List<Map<Object, Object>> users = given()
+                .header("Content-Type", "application/json")
+                .get("/api/users")
+                .as(new TypeRef<>() {
+                });
+        assertEquals(3, users.size());
     }
 
     @Test
-    public void setAuthenticationMethod() throws Exception {
+    public void setAuthenticationMethod() {
         assertEquals(USER, idpConfiguration.getAuthenticationMethod());
 
         api(ALL.name(), "/api/authmethod");

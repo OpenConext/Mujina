@@ -54,6 +54,12 @@ public class IdpController extends SharedController {
                 "must be created", userName))).getAttributes().remove(name);
     }
 
+    @GetMapping("/users")
+    public List<FederatedUserAuthenticationToken> users() {
+        LOG.info("Request to get users");
+        return configuration().getUsers();
+    }
+
     @PutMapping("/users")
     public void addUser(@RequestBody User user) {
         LOG.info("Request to add user {}", user);
