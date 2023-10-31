@@ -4,6 +4,7 @@ import mujina.api.IdpConfiguration;
 import mujina.saml.SAMLAttribute;
 import mujina.saml.SAMLPrincipal;
 import org.opensaml.common.binding.SAMLMessageContext;
+import org.opensaml.saml2.core.AuthnContext;
 import org.opensaml.saml2.core.AuthnRequest;
 import org.opensaml.saml2.core.NameIDType;
 import org.opensaml.saml2.metadata.provider.MetadataProviderException;
@@ -58,7 +59,12 @@ public class SsoController {
         AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
 
         String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
+        Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
+        String[] authnContextClassRefs = parameterMap.get("authn-context-class-ref-value");
+
         List<SAMLAttribute> attributes = attributes(authentication);
+
+        String authnContextClassRefValue = authnContextClassRefs != null ? authnContextClassRefs[0] : AuthnContext.PASSWORD_AUTHN_CTX;
 
         SAMLPrincipal principal = new SAMLPrincipal(
                 authentication.getName(),
@@ -71,14 +77,13 @@ public class SsoController {
                 assertionConsumerServiceURL,
                 messageContext.getRelayState());
 
-        samlMessageHandler.sendAuthnResponse(principal, response);
+        samlMessageHandler.sendAuthnResponse(principal, authnContextClassRefValue, response);
     }
 
     @SuppressWarnings("unchecked")
     private List<SAMLAttribute> attributes(Authentication authentication) {
         String uid = authentication.getName();
         Map<String, List<String>> result = new HashMap<>(idpConfiguration.getAttributes());
-
 
         Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream()
                 .filter(user -> user.getPrincipal().equals(uid))
@@ -91,6 +96,9 @@ public class SsoController {
         parameterMap.forEach((key, values) -> {
             result.put(key, Arrays.asList(values));
         });
+        if (parameterMap.containsKey("authn-context-class-ref-value")) {
+            result.remove("authn-context-class-ref-value");
+        }
 
         //Check if the user wants to be persisted
         if (parameterMap.containsKey("persist-me") && "on".equalsIgnoreCase(parameterMap.get("persist-me")[0])) {
@@ -106,8 +114,8 @@ public class SsoController {
         Map<String, String> standardAttributes = idpConfiguration.getStandardAttributes().getAttributes();
         Map<String, List<String>> replacements = new HashMap<>();
         String mail = String.format("%s@%s",
-                uid.replaceAll("[^a-zA-Z0-9]", ""),
-                "example.com")
+                        uid.replaceAll("[^a-zA-Z0-9]", ""),
+                        "example.com")
                 .toLowerCase();
         String givenName = uid.substring(0, 1).toUpperCase() + uid.substring(1);
         result.keySet().forEach(key -> {

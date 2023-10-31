@@ -96,7 +96,9 @@ public class SAMLMessageHandler {
     }
 
     @SuppressWarnings("unchecked")
-    public void sendAuthnResponse(SAMLPrincipal principal, HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
+    public void sendAuthnResponse(SAMLPrincipal principal,
+                                  String authnContextClassRefValue,
+                                  HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
         Status status = buildStatus(StatusCode.SUCCESS_URI);
 
         String entityId = idpConfiguration.getEntityId();
@@ -110,7 +112,7 @@ public class SAMLMessageHandler {
         authResponse.setIssueInstant(new DateTime());
         authResponse.setInResponseTo(principal.getRequestID());
 
-        Assertion assertion = buildAssertion(principal, status, entityId);
+        Assertion assertion = buildAssertion(principal, authnContextClassRefValue, status, entityId);
         signAssertion(assertion, signingCredential);
 
         authResponse.getAssertions().add(assertion);

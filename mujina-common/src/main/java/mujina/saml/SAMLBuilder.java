@@ -83,7 +83,7 @@ public class SAMLBuilder {
         return status;
     }
 
-    public static Assertion buildAssertion(SAMLPrincipal principal, Status status, String entityId) {
+    public static Assertion buildAssertion(SAMLPrincipal principal, String authnContextClassRefValue, Status status, String entityId) {
         Assertion assertion = buildSAMLObject(Assertion.class, Assertion.DEFAULT_ELEMENT_NAME);
 
         if (status.getStatusCode().getValue().equals(StatusCode.SUCCESS_URI)) {
@@ -104,7 +104,7 @@ public class SAMLBuilder {
         conditions.getAudienceRestrictions().add(audienceRestriction);
         assertion.setConditions(conditions);
 
-        AuthnStatement authnStatement = buildAuthnStatement(new DateTime(), entityId);
+        AuthnStatement authnStatement = buildAuthnStatement(new DateTime(), entityId, authnContextClassRefValue);
 
         assertion.setIssuer(issuer);
         assertion.getAuthnStatements().add(authnStatement);
@@ -156,9 +156,9 @@ public class SAMLBuilder {
         return "_" + UUID.randomUUID().toString();
     }
 
-    private static AuthnStatement buildAuthnStatement(DateTime authnInstant, String entityID) {
+    private static AuthnStatement buildAuthnStatement(DateTime authnInstant, String entityID, String authnContextClassRefValue) {
         AuthnContextClassRef authnContextClassRef = buildSAMLObject(AuthnContextClassRef.class, AuthnContextClassRef.DEFAULT_ELEMENT_NAME);
-        authnContextClassRef.setAuthnContextClassRef(AuthnContext.PASSWORD_AUTHN_CTX);
+        authnContextClassRef.setAuthnContextClassRef(StringUtils.hasText(authnContextClassRefValue) ? authnContextClassRefValue : AuthnContext.PASSWORD_AUTHN_CTX);
 
         AuthenticatingAuthority authenticatingAuthority = buildSAMLObject(AuthenticatingAuthority.class, AuthenticatingAuthority.DEFAULT_ELEMENT_NAME);
         authenticatingAuthority.setURI(entityID);

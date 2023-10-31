@@ -55,6 +55,21 @@
                 <label class="persist-me" for="persist-me">Persist me?</label>
             </div>
 
+            <div class="authn-context-class-ref">
+                <label class="authn-context-class-ref" for="authn-context-class-ref">Select authnContextClassRef</label>
+                <input id="authn-context-class-ref-value"
+                       type="hidden"
+                       name="authn-context-class-ref-value"
+                       value="urn:oasis:names:tc:SAML:2.0:ac:classes:Password">
+                <select class="acr-select" id="authn-context-class-ref">
+                    <option selected="selected">urn:oasis:names:tc:SAML:2.0:ac:classes:Password</option>
+                    <option th:each="ref : ${authnContextClassRefs}"
+                            th:value="${ref}"
+                            th:text="${ref}">
+                    </option>
+                </select>
+            </div>
+
             <div class="add-attribute">
                 <label for="add-attribute" class="sr-only">Select attributes</label>
                 <select class="attribute-select" id="add-attribute">

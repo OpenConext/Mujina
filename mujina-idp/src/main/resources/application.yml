@@ -51,6 +51,17 @@ idp:
     [urn:mace:dir:attribute-def:eduPersonPrincipalName]: "j.doe@example.com"
     [urn:oasis:names:tc:SAML:attribute:subject-id]: "j.doe@example.com"
 
+acr:
+  values:
+    - "http://test2.surfconext.nl/assurance/loa1"
+    - "http://test2.surfconext.nl/assurance/loa1.5"
+    - "http://test2.surfconext.nl/assurance/loa2"
+    - "http://test2.surfconext.nl/assurance/loa3"
+    - "https://eduid.nl/trust/linked-institution"
+    - "https://eduid.nl/trust/validate-names"
+    - "https://eduid.nl/trust/affiliation-student"
+    - "https://refeds.org/profile/mfa"
+
 spring:
   mvc:
     favicon:
