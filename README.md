@@ -308,6 +308,15 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/authmethod
 ```
 
+Retrieving all persisted users
+---------------------------------
+
+This API is only available on the IDP.
+
+```bash
+curl -H "Content-type: application/json"  http://localhost:8080/api/users
+```
+
 Setting the Assertion Consumer Service (ACS) endpoint
 ---------------------------------
 
