@@ -4,30 +4,130 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
 
 jobs:
   deployment:
+    permissions:
+      packages: write
     environment: deploy
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 11
-        server-id: openconext-releases
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-    - name: Set up cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-    - name: Deploy with Maven
-      run: mvn --batch-mode deploy -DskipTests
-      env:
-        MAVEN_USERNAME: ${{ secrets.BUILD_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.BUILD_PASSWORD }}
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          server-id: openconext-releases
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Determine the version
+        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        id: versioncheck
+
+      - name: Exit when workflow_dispatch is triggered, and the version does not contain SNAPSHOT in it's name
+        run: |
+          echo "Only SNAPSHOT releases can be triggered with the workflow_dispatch"
+          exit 1
+        if: github.event_name == 'workflow_dispatch' && ( !endsWith(steps.versioncheck.outputs.version, '-SNAPSHOT'))
+
+      - name: Exit when a production build is triggered, and the github tag is not the same as the version in pom.xml
+        run: |
+          echo "Project version ${{ steps.versioncheck.outputs.version }} does not match git tag ${{ github.ref_name }}"
+          exit 1
+        if: github.event_name != 'workflow_dispatch' && steps.versioncheck.outputs.version != github.ref_name
+
+      - name: Set up JDK 11 for snapshots
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "temurin"
+          cache: "maven"
+          server-id: openconext-snapshots
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+        if: ( endsWith(steps.versioncheck.outputs.version, '-SNAPSHOT'))
+
+      - name: Set up JDK 11 for releases
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "temurin"
+          cache: "maven"
+          server-id: openconext-releases
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+        if: ${{!( endsWith(steps.versioncheck.outputs.version, '-SNAPSHOT')) }}
+
+      - name: Deploy with Maven
+        run: mvn --batch-mode deploy -DskipTests
+        env:
+          MAVEN_USERNAME: ${{ secrets.BUILD_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.BUILD_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker IDP
+        id: meta_idp
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/openconext/mujina/mujina-idp
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}},value=${{ steps.versioncheck.outputs.version }}
+            type=sha
+
+      - name: Extract metadata (tags, labels) for Docker SP
+        id: meta_sp
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/openconext/mujina/mujina-sp
+          flavor: |
+            latest=false
+          tags: |
+            type=ref,event=tag
+            type=semver,pattern={{version}},value=${{ steps.versioncheck.outputs.version }}
+            type=sha
+
+      - name: Build and push the mujina idp image
+        uses: docker/build-push-action@v4
+        with:
+          context: mujina-idp
+          file: mujina-idp/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta_idp.outputs.tags }}
+          labels: ${{ steps.meta_idp.outputs.labels }}
+
+      - name: Build and push the mujina sp image
+        uses: docker/build-push-action@v4
+        with:
+          context: mujina-sp
+          file: mujina-sp/docker/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta_sp.outputs.tags }}
+          labels: ${{ steps.meta_sp.outputs.labels }}
