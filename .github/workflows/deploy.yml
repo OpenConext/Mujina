@@ -14,20 +14,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: "16"
 
-      - uses: actions/setup-java@v1
+      - uses: actions/setup-java@v4
         with:
           java-version: 11
+          distribution: "temurin"
           server-id: openconext-releases
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -35,7 +36,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Determine the version
-        run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+        run: echo "version=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)" >> $GITHUB_OUTPUT
         id: versioncheck
 
       - name: Exit when workflow_dispatch is triggered, and the version does not contain SNAPSHOT in it's name
@@ -51,7 +52,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' && steps.versioncheck.outputs.version != github.ref_name
 
       - name: Set up JDK 11 for snapshots
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: "11"
           distribution: "temurin"
@@ -62,7 +63,7 @@ jobs:
         if: ( endsWith(steps.versioncheck.outputs.version, '-SNAPSHOT'))
 
       - name: Set up JDK 11 for releases
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: "11"
           distribution: "temurin"
@@ -79,10 +80,10 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.BUILD_PASSWORD }}
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -113,7 +114,7 @@ jobs:
             type=sha
 
       - name: Build and push the mujina idp image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: mujina-idp
           file: mujina-idp/docker/Dockerfile
@@ -123,7 +124,7 @@ jobs:
           labels: ${{ steps.meta_idp.outputs.labels }}
 
       - name: Build and push the mujina sp image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: mujina-sp
           file: mujina-sp/docker/Dockerfile
