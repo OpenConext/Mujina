@@ -112,6 +112,8 @@ jobs:
             type=ref,event=tag
             type=semver,pattern={{version}},value=${{ steps.versioncheck.outputs.version }}
             type=sha
+            type=raw,event=tag,value=latest
+            type=raw,event=workflow_dispatch,value=snapshot
 
       - name: Build and push the mujina idp image
         uses: docker/build-push-action@v5
