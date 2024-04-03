@@ -98,6 +98,11 @@
     "name": "urn:mace:surf.nl:attribute-def:surf-crm-id",
     "id": "surf-crm-id",
     "multiplicity": false
+  },
+  {
+    "name": "urn:mace:surf.nl:attribute-def:surf-autorisaties",
+    "id": "surf-autorisaties",
+    "multiplicity": true
   }
 
 
