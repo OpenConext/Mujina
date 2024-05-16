@@ -103,7 +103,10 @@
     "name": "urn:mace:surf.nl:attribute-def:surf-autorisaties",
     "id": "surf-autorisaties",
     "multiplicity": true
+  },
+  {
+    "name": "urn:example:unknown-attribute",
+    "id": "unknown-attribute",
+    "multiplicity": true
   }
-
-
 ]
