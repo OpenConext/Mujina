@@ -24,7 +24,7 @@ then the following has changed:
 * We no longer use Tomcat, but standalone Spring boot applications
 * The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
 
-As of version 8.0.0 we run with Java 11.
+As of version 9.0.0 we run with Java 21.
 
 Characteristics of both the IdP or SP can be runtime changed with the REST API.
 
@@ -80,7 +80,7 @@ After you override configuration you can go back to the default using the reset 
 Build Mujina
 ---------------
 
-[Maven 3](http://maven.apache.org) in combination with Java 11 is needed to build and run Mujina.
+[Maven 3](http://maven.apache.org) in combination with Java 21 is needed to build and run Mujina.
 
 ```bash
 git clone git@github.com:OpenConext/Mujina.git

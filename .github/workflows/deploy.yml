@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: 11
+          java-version: 21
           distribution: "temurin"
           server-id: openconext-releases
           server-username: MAVEN_USERNAME
@@ -51,10 +51,10 @@ jobs:
           exit 1
         if: github.event_name != 'workflow_dispatch' && steps.versioncheck.outputs.version != github.ref_name
 
-      - name: Set up JDK 11 for snapshots
+      - name: Set up JDK 21 for snapshots
         uses: actions/setup-java@v4
         with:
-          java-version: "11"
+          java-version: "21"
           distribution: "temurin"
           cache: "maven"
           server-id: openconext-snapshots
@@ -62,10 +62,10 @@ jobs:
           server-password: MAVEN_PASSWORD
         if: ( endsWith(steps.versioncheck.outputs.version, '-SNAPSHOT'))
 
-      - name: Set up JDK 11 for releases
+      - name: Set up JDK 21 for releases
         uses: actions/setup-java@v4
         with:
-          java-version: "11"
+          java-version: "21"
           distribution: "temurin"
           cache: "maven"
           server-id: openconext-releases
