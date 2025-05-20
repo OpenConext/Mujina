@@ -99,6 +99,7 @@ jobs:
           tags: |
             type=ref,event=tag
             type=semver,pattern={{version}},value=${{ steps.versioncheck.outputs.version }}
+            type=raw,event=tag,value=latest
             type=sha
 
       - name: Extract metadata (tags, labels) for Docker SP
