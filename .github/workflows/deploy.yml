@@ -120,7 +120,7 @@ jobs:
         with:
           context: mujina-idp
           file: mujina-idp/docker/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64, linux/arm64
           push: true
           tags: ${{ steps.meta_idp.outputs.tags }}
           labels: ${{ steps.meta_idp.outputs.labels }}
