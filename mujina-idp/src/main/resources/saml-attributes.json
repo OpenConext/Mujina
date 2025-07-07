@@ -70,6 +70,11 @@
     "multiplicity": true
   },
   {
+    "name": "urn:mace:dir:attribute-def:eduPersonAssurance",
+    "id": "eduPersonAssurance",
+    "multiplicity": true
+  },
+  {
     "name": "urn:mace:dir:attribute-def:eduPersonEntitlement",
     "id": "eduPersonEntitlement",
     "multiplicity": true
