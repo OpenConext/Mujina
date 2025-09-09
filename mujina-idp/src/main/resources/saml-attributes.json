@@ -37,7 +37,7 @@
   {
     "name": "urn:mace:dir:attribute-def:mail",
     "id": "mail",
-    "multiplicity": false
+    "multiplicity": true
   },
   {
     "name": "urn:mace:dir:attribute-def:ou",
