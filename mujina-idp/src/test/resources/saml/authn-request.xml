@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<saml2p:AuthnRequest xmlns:saml2p="urn:oasis:names:tc:SAML:2.0:protocol"
+                      xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+                      ID="a3481e74fdeibad179g46hdd3ha32b"
+                      Version="2.0"
+                      IssueInstant="2017-03-29T07:15:14.380Z"
+                      Destination="http://localhost:8080/SingleSignOnService"
+                      ForceAuthn="false"
+                      IsPassive="false"
+                      ProtocolBinding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
+                      AssertionConsumerServiceURL="http://localhost:9090/saml/SSO">
+    <saml2:Issuer>http://mock-sp</saml2:Issuer>
+</saml2p:AuthnRequest>

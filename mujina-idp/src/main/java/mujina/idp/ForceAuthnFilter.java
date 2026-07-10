@@ -22,7 +22,7 @@ public class ForceAuthnFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String servletPath = request.getServletPath();
-        if (servletPath == null || !servletPath.endsWith("SingleSignOnService") || request.getMethod().equalsIgnoreCase("GET")) {
+        if (servletPath == null || !servletPath.endsWith("SingleSignOnService")) {
             chain.doFilter(request, response);
             return;
         }
