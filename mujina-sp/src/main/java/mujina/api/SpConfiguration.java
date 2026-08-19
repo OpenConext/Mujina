@@ -4,8 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.stereotype.Component;
+
+import java.security.KeyStore;
 
 @Component
 @Getter
@@ -25,7 +26,7 @@ public class SpConfiguration extends SharedConfiguration {
     private String spCertificate;
 
     @Autowired
-    public SpConfiguration(JKSKeyManager keyManager,
+    public SpConfiguration(KeyStore keyStore,
                            @Value("${sp.base_url}") String spBaseUrl,
                            @Value("${sp.entity_id}") String defaultEntityId,
                            @Value("${sp.single_sign_on_service_location}") String defaultIdpSSOServiceURL,
@@ -34,7 +35,7 @@ public class SpConfiguration extends SharedConfiguration {
                            @Value("${sp.private_key}") String spPrivateKey,
                            @Value("${sp.certificate}") String spCertificate,
                            @Value("${sp.needs_signing}") boolean needsSigning) {
-        super(keyManager);
+        super(keyStore);
         this.setDefaultEntityId(defaultEntityId);
         this.setDefaultIdpSSOServiceURL(defaultIdpSSOServiceURL);
         this.setDefaultAssertionConsumerServiceURL(spBaseUrl + defaultAssertionConsumerServiceURLPath);

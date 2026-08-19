@@ -11,7 +11,7 @@
     <section class="login-container">
         <section class="login">
             <h1>Mujina Service Provider</h1>
-            <a id="user-link" class="button" th:href="@{/user.html?force-authn=false}">Login</a>
+            <a id="user-link" class="button" th:href="@{/saml2/authenticate?registrationId=idp&force-authn=false}">Login</a>
             <section class="force-authn">
                 <input type="checkbox" id="force-authn" name="force-authn"/>
                 <label for="force-authn">Force Authn request?</label>

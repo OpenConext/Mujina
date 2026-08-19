@@ -1,19 +1,18 @@
 package mujina.idp;
 
-import org.opensaml.common.binding.SAMLMessageContext;
-import org.opensaml.saml2.core.AuthnRequest;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ForceAuthnFilter extends OncePerRequestFilter {
 
-    private SAMLMessageHandler samlMessageHandler;
+    private final SAMLMessageHandler samlMessageHandler;
 
     public ForceAuthnFilter(SAMLMessageHandler samlMessageHandler) {
         this.samlMessageHandler = samlMessageHandler;
@@ -26,13 +25,20 @@ public class ForceAuthnFilter extends OncePerRequestFilter {
             chain.doFilter(request, response);
             return;
         }
-        SAMLMessageContext messageContext;
+        //This filter runs before RequestCacheAwareFilter, so on the request Spring Security replays
+        //after a login redirect, the original SAMLRequest parameter isn't visible yet here (it will
+        //be by the time SsoController runs). There's no pre-existing session to force-clear in that
+        //case anyway, since the user just authenticated specifically to satisfy this AuthnRequest.
+        if (!org.springframework.util.StringUtils.hasText(request.getParameter("SAMLRequest"))) {
+            chain.doFilter(request, response);
+            return;
+        }
+        AuthnRequest authnRequest;
         try {
-            messageContext = samlMessageHandler.extractSAMLMessageContext(request, response, request.getMethod().equalsIgnoreCase("POST"));
+            authnRequest = samlMessageHandler.parseAuthnRequest(request, request.getMethod().equalsIgnoreCase("POST"));
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
         }
-        AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
         if (authnRequest.isForceAuthn()) {
             SecurityContextHolder.getContext().setAuthentication(null);
         }

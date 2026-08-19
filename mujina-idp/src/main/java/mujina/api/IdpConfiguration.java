@@ -7,9 +7,9 @@ import mujina.idp.FederatedUserAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.saml.key.JKSKeyManager;
 import org.springframework.stereotype.Component;
 
+import java.security.KeyStore;
 import java.util.*;
 
 @Getter
@@ -28,14 +28,14 @@ public class IdpConfiguration extends SharedConfiguration {
     private final StandardAttributes standardAttributes;
 
     @Autowired
-    public IdpConfiguration(JKSKeyManager keyManager,
+    public IdpConfiguration(KeyStore keyStore,
                             @Value("${idp.entity_id}") String defaultEntityId,
                             @Value("${idp.private_key}") String idpPrivateKey,
                             @Value("${idp.certificate}") String idpCertificate,
                             @Value("${idp.auth_method}") String authMethod,
                             StandardAttributes standardAttributes) {
 
-        super(keyManager);
+        super(keyStore);
         this.defaultEntityId = defaultEntityId;
         this.idpPrivateKey = idpPrivateKey;
         this.idpCertificate = idpCertificate;

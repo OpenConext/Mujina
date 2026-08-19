@@ -1,7 +1,5 @@
 package mujina.idp;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import mujina.config.AuthnContextClassRefs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,10 +8,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +25,12 @@ public class UserController {
 
     @Autowired
     @SuppressWarnings("unchecked")
-    public UserController(ObjectMapper objectMapper,
+    public UserController(JsonMapper jsonMapper,
                           AuthnContextClassRefs authnContextClassRefs,
                           @Value("${idp.saml_attributes_config_file}") String samlAttributesConfigFile) throws IOException {
 
         DefaultResourceLoader loader = new DefaultResourceLoader();
-        this.samlAttributes = objectMapper.readValue(
+        this.samlAttributes = jsonMapper.readValue(
                 loader.getResource(samlAttributesConfigFile).getInputStream(), new TypeReference<>() {
                 });
         this.samlAttributes.sort(comparing(m -> m.get("id")));

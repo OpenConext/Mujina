@@ -4,18 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import mujina.saml.KeyStoreLocator;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.security.BasicSecurityConfiguration;
-import org.opensaml.xml.signature.SignatureConstants;
+import org.opensaml.core.config.InitializationService;
+import org.opensaml.xmlsec.SecurityConfigurationSupport;
+import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.saml.key.JKSKeyManager;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableEntryException;
 import java.util.Enumeration;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,15 +25,15 @@ public abstract class SharedConfiguration {
     @JsonIgnore
     protected static final Logger LOG = LoggerFactory.getLogger(SharedConfiguration.class);
     @JsonIgnore
-    private JKSKeyManager keyManager;
+    private KeyStore keyStore;
     private String keystorePassword = "secret";
     private boolean needsSigning;
     private String defaultSignatureAlgorithm = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
     private String signatureAlgorithm;
     private String entityId;
 
-    public SharedConfiguration(JKSKeyManager keyManager) {
-        this.keyManager = keyManager;
+    public SharedConfiguration(KeyStore keyStore) {
+        this.keyStore = keyStore;
     }
 
     public abstract void reset();
@@ -40,7 +41,6 @@ public abstract class SharedConfiguration {
     public void setEntityId(String newEntityId, boolean addTokenToStore) {
         if (addTokenToStore) {
             try {
-                KeyStore keyStore = keyManager.getKeyStore();
                 KeyStore.PasswordProtection passwordProtection = new KeyStore.PasswordProtection(keystorePassword.toCharArray());
                 KeyStore.Entry keyStoreEntry = keyStore.getEntry(this.entityId, passwordProtection);
                 keyStore.setEntry(newEntityId, keyStoreEntry, passwordProtection);
@@ -53,7 +53,6 @@ public abstract class SharedConfiguration {
 
     public void injectCredential(final String certificate, final String pemKey) {
         try {
-            KeyStore keyStore = keyManager.getKeyStore();
             if (keyStore.containsAlias(entityId)) {
                 keyStore.deleteEntry(entityId);
             }
@@ -65,7 +64,6 @@ public abstract class SharedConfiguration {
 
     protected void resetKeyStore(String alias, String privateKey, String certificate) {
         try {
-            KeyStore keyStore = keyManager.getKeyStore();
             Enumeration<String> aliases = keyStore.aliases();
             while (aliases.hasMoreElements()) {
                 keyStore.deleteEntry(aliases.nextElement());
@@ -78,6 +76,14 @@ public abstract class SharedConfiguration {
 
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
-        BasicSecurityConfiguration.class.cast(Configuration.getGlobalSecurityConfiguration()).registerSignatureAlgorithmURI("RSA", signatureAlgorithm);
+        try {
+            //Idempotent: safe (and cheap) to call even if OpenSAML was already bootstrapped elsewhere.
+            InitializationService.initialize();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        BasicSignatureSigningConfiguration config = (BasicSignatureSigningConfiguration)
+                SecurityConfigurationSupport.getGlobalSignatureSigningConfiguration();
+        config.setSignatureAlgorithms(List.of(signatureAlgorithm));
     }
 }

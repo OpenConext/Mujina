@@ -25,7 +25,7 @@ public class IdpControllerTest extends AbstractIntegrationTest {
         List<String> values = Arrays.asList("value1", "value2");
         Map<String, List<String>> attributes = Collections.singletonMap(NEW_ATTRIBUTE, values);
 
-        api(attributes, "/api/attributes/");
+        api(attributes, "/api/attributes");
 
         assertEquals(values, idpConfiguration.getAttributes().get(NEW_ATTRIBUTE));
     }

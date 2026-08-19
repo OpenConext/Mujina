@@ -21,7 +21,7 @@ public class MetadataEndPointTest extends AbstractIntegrationTest {
                 .then()
                 .statusCode(SC_OK)
                 .body(
-                        "EntityDescriptor.SPSSODescriptor.AssertionConsumerService.find { it.@isDefault == 'true'}.@Location",
+                        "EntityDescriptor.SPSSODescriptor.AssertionConsumerService.@Location",
                         equalTo("http://localhost:9090/saml/SSO"));
     }
 

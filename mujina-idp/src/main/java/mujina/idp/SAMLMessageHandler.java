@@ -1,148 +1,157 @@
 package mujina.idp;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import mujina.api.IdpConfiguration;
-import mujina.saml.ProxiedSAMLContextProviderLB;
-import mujina.saml.SAMLBuilder;
-import mujina.saml.SAMLPrincipal;
-import org.joda.time.DateTime;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.binding.decoding.SAMLMessageDecoder;
-import org.opensaml.common.binding.encoding.SAMLMessageEncoder;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.core.*;
-import org.opensaml.saml2.metadata.Endpoint;
-import org.opensaml.saml2.metadata.SingleSignOnService;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.ws.message.decoder.MessageDecodingException;
-import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.ws.security.SecurityPolicyResolver;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
-import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.SecurityException;
-import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.security.criteria.EntityIDCriteria;
-import org.opensaml.xml.signature.SignatureException;
-import org.opensaml.xml.validation.ValidationException;
-import org.opensaml.xml.validation.ValidatorSuite;
-import org.springframework.security.saml.context.SAMLMessageContext;
-import org.springframework.security.saml.key.KeyManager;
+import mujina.idp.saml.SAMLBuilder;
+import mujina.idp.saml.SAMLPrincipal;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.xml.SerializeSupport;
+import net.shibboleth.shared.xml.impl.BasicParserPool;
+import org.apache.commons.text.StringEscapeUtils;
+import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
+import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.credential.impl.KeyStoreCredentialResolver;
+import org.opensaml.security.criteria.UsageCriterion;
+import org.springframework.util.StringUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import saml.parser.EncodingUtils;
+import saml.parser.OpenSamlVelocityEngine;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
+import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
-import static java.util.Arrays.asList;
-import static mujina.saml.SAMLBuilder.*;
-import static org.opensaml.xml.Configuration.getValidatorSuite;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static mujina.idp.saml.SAMLBuilder.buildAssertion;
+import static mujina.idp.saml.SAMLBuilder.buildIssuer;
+import static mujina.idp.saml.SAMLBuilder.buildSAMLObject;
+import static mujina.idp.saml.SAMLBuilder.buildStatus;
+import static mujina.idp.saml.SAMLBuilder.randomSAMLId;
+import static mujina.idp.saml.SAMLBuilder.signAssertion;
 
 public class SAMLMessageHandler {
 
-    private final KeyManager keyManager;
-    private final Collection<SAMLMessageDecoder> decoders;
-    private final SAMLMessageEncoder encoder;
-    private final SecurityPolicyResolver resolver;
+    private final OpenSamlVelocityEngine velocityEngine = new OpenSamlVelocityEngine();
+    private final BasicParserPool parserPool;
     private final IdpConfiguration idpConfiguration;
+    private final int clockSkew;
+    private final int expires;
+    private final boolean compareEndpoints;
+    private final String idpBaseUrl;
 
-    private final List<ValidatorSuite> validatorSuites;
-    private final ProxiedSAMLContextProviderLB proxiedSAMLContextProviderLB;
-
-    public SAMLMessageHandler(KeyManager keyManager, Collection<SAMLMessageDecoder> decoders,
-                              SAMLMessageEncoder encoder, SecurityPolicyResolver securityPolicyResolver,
-                              IdpConfiguration idpConfiguration, String idpBaseUrl) throws URISyntaxException {
-        this.keyManager = keyManager;
-        this.encoder = encoder;
-        this.decoders = decoders;
-        this.resolver = securityPolicyResolver;
+    public SAMLMessageHandler(BasicParserPool parserPool,
+                              IdpConfiguration idpConfiguration,
+                              int clockSkew,
+                              int expires,
+                              boolean compareEndpoints,
+                              String idpBaseUrl) {
+        this.parserPool = parserPool;
         this.idpConfiguration = idpConfiguration;
-        this.validatorSuites = asList(
-                getValidatorSuite("saml2-core-schema-validator"),
-                getValidatorSuite("saml2-core-spec-validator"));
-        this.proxiedSAMLContextProviderLB = new ProxiedSAMLContextProviderLB(new URI(idpBaseUrl));
+        this.clockSkew = clockSkew;
+        this.expires = expires;
+        this.compareEndpoints = compareEndpoints;
+        this.idpBaseUrl = idpBaseUrl;
     }
 
-    public SAMLMessageContext extractSAMLMessageContext(HttpServletRequest request, HttpServletResponse response, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MetadataProviderException {
-        SAMLMessageContext messageContext = new SAMLMessageContext();
+    public AuthnRequest parseAuthnRequest(HttpServletRequest request, boolean postRequest) {
+        try {
+            String samlRequestParam = request.getParameter("SAMLRequest");
+            String xml = EncodingUtils.samlDecode(samlRequestParam, !postRequest);
 
-        proxiedSAMLContextProviderLB.populateGenericContext(request, response, messageContext);
+            Document document = parserPool.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
+            Element element = document.getDocumentElement();
+            AuthnRequest authnRequest = (AuthnRequest) XMLObjectProviderRegistrySupport
+                    .getUnmarshallerFactory().getUnmarshaller(element).unmarshall(element);
 
-        messageContext.setSecurityPolicyResolver(resolver);
+            Instant now = Instant.now();
+            Instant issueInstant = authnRequest.getIssueInstant();
+            if (issueInstant == null
+                    || issueInstant.isBefore(now.minusSeconds(clockSkew))
+                    || issueInstant.isAfter(now.plusSeconds(clockSkew + expires))) {
+                throw new IllegalArgumentException("AuthnRequest issue instant out of tolerance: " + issueInstant);
+            }
 
-        SAMLMessageDecoder samlMessageDecoder = samlMessageDecoder(postRequest);
-        samlMessageDecoder.decode(messageContext);
+            if (compareEndpoints) {
+                String destination = authnRequest.getDestination();
+                String expectedDestination = idpBaseUrl + "/SingleSignOnService";
+                if (destination != null && !destination.equalsIgnoreCase(expectedDestination)) {
+                    throw new IllegalArgumentException(
+                            String.format("Destination %s does not match configured base URL %s", destination, expectedDestination));
+                }
+            }
 
-        SAMLObject inboundSAMLMessage = messageContext.getInboundSAMLMessage();
-
-        AuthnRequest authnRequest = (AuthnRequest) inboundSAMLMessage;
-        //lambda is poor with Exceptions
-        for (ValidatorSuite validatorSuite : validatorSuites) {
-            validatorSuite.validate(authnRequest);
+            return authnRequest;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return messageContext;
     }
 
-    private SAMLMessageDecoder samlMessageDecoder(boolean postRequest) {
-        return decoders.stream().filter(samlMessageDecoder -> postRequest ?
-                        samlMessageDecoder.getBindingURI().equals(SAMLConstants.SAML2_POST_BINDING_URI) :
-                        samlMessageDecoder.getBindingURI().equals(SAMLConstants.SAML2_REDIRECT_BINDING_URI))
-                .findAny()
-                .orElseThrow(() -> new RuntimeException(String.format("Only %s and %s are supported",
-                        SAMLConstants.SAML2_REDIRECT_BINDING_URI,
-                        SAMLConstants.SAML2_POST_BINDING_URI)));
-    }
-
-    @SuppressWarnings("unchecked")
     public void sendAuthnResponse(SAMLPrincipal principal,
                                   String authnContextClassRefValue,
-                                  HttpServletResponse response) throws MarshallingException, SignatureException, MessageEncodingException {
-        Status status = buildStatus(StatusCode.SUCCESS_URI);
+                                  HttpServletResponse response) throws Exception {
+        Status status = buildStatus(StatusCode.SUCCESS);
 
         String entityId = idpConfiguration.getEntityId();
         Credential signingCredential = resolveCredential(entityId);
 
-        Response authResponse = buildSAMLObject(Response.class, Response.DEFAULT_ELEMENT_NAME);
+        Response authResponse = buildSAMLObject(Response.class);
         Issuer issuer = buildIssuer(entityId);
 
         authResponse.setIssuer(issuer);
-        authResponse.setID(SAMLBuilder.randomSAMLId());
-        authResponse.setIssueInstant(new DateTime());
+        authResponse.setID(randomSAMLId());
+        authResponse.setIssueInstant(Instant.now());
         authResponse.setInResponseTo(principal.getRequestID());
 
         Assertion assertion = buildAssertion(principal, authnContextClassRefValue, status, entityId);
-        signAssertion(assertion, signingCredential);
+        signAssertion(assertion, signingCredential, idpConfiguration.getSignatureAlgorithm());
 
         authResponse.getAssertions().add(assertion);
         authResponse.setDestination(principal.getAssertionConsumerServiceURL());
-
         authResponse.setStatus(status);
 
-        Endpoint endpoint = buildSAMLObject(Endpoint.class, SingleSignOnService.DEFAULT_ELEMENT_NAME);
-        endpoint.setLocation(principal.getAssertionConsumerServiceURL());
+        Element element = XMLObjectSupport.marshall(authResponse);
+        String samlResponse = SerializeSupport.nodeToString(element);
 
-        HttpServletResponseAdapter outTransport = new HttpServletResponseAdapter(response, false);
+        Map<String, Object> model = new HashMap<>();
+        model.put("action", principal.getAssertionConsumerServiceURL());
+        model.put("SAMLResponse", EncodingUtils.samlEncode(samlResponse));
+        if (StringUtils.hasText(principal.getRelayState())) {
+            model.put("RelayState", EncodingUtils.toISO8859_1(StringEscapeUtils.escapeHtml4(principal.getRelayState())));
+        }
 
-        BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
+        response.setContentType("text/html");
+        response.setCharacterEncoding(UTF_8.name());
+        response.setHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
-        messageContext.setOutboundMessageTransport(outTransport);
-        messageContext.setPeerEntityEndpoint(endpoint);
-        messageContext.setOutboundSAMLMessage(authResponse);
-        messageContext.setOutboundSAMLMessageSigningCredential(signingCredential);
-
-        messageContext.setOutboundMessageIssuer(entityId);
-        messageContext.setRelayState(principal.getRelayState());
-
-        encoder.encode(messageContext);
-
+        StringWriter out = new StringWriter();
+        velocityEngine.process(model, out);
+        response.getWriter().write(out.toString());
     }
 
     private Credential resolveCredential(String entityId) {
         try {
-            return keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(entityId)));
-        } catch (SecurityException e) {
+            KeyStoreCredentialResolver resolver = new KeyStoreCredentialResolver(
+                    idpConfiguration.getKeyStore(),
+                    Map.of(entityId, idpConfiguration.getKeystorePassword()),
+                    UsageType.SIGNING);
+            return resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion(entityId), new UsageCriterion(UsageType.SIGNING)));
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

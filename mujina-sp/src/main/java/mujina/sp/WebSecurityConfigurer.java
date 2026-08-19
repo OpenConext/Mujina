@@ -1,108 +1,100 @@
 package mujina.sp;
 
+import jakarta.servlet.SessionCookieConfig;
+import mujina.api.SpConfiguration;
 import mujina.saml.KeyStoreLocator;
-import mujina.saml.ProxiedSAMLContextProviderLB;
-import org.apache.velocity.app.VelocityEngine;
-import org.opensaml.saml2.metadata.provider.MetadataProvider;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.xml.parse.ParserPool;
-import org.opensaml.xml.parse.StaticBasicParserPool;
-import org.opensaml.xml.parse.XMLParserException;
-import org.springframework.beans.factory.annotation.Qualifier;
+import mujina.saml.SAMLAttribute;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.saml.SAMLAuthenticationProvider;
-import org.springframework.security.saml.SAMLEntryPoint;
-import org.springframework.security.saml.SAMLProcessingFilter;
-import org.springframework.security.saml.context.SAMLContextProvider;
-import org.springframework.security.saml.key.JKSKeyManager;
-import org.springframework.security.saml.metadata.*;
-import org.springframework.security.saml.parser.ParserPoolHolder;
-import org.springframework.security.saml.util.VelocityFactory;
-import org.springframework.security.saml.websso.WebSSOProfileOptions;
-import org.springframework.security.web.DefaultSecurityFilterChain;
-import org.springframework.security.web.FilterChainProxy;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml5AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
+import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
+import org.springframework.security.saml2.provider.service.web.authentication.OpenSaml5AuthenticationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
-import javax.servlet.Filter;
-import javax.servlet.SessionCookieConfig;
-import javax.xml.stream.XMLStreamException;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
-
-    @Value("${sp.idp_metadata_url}")
-    private String identityProviderMetadataUrl;
-
-    @Value("${sp.base_url}")
-    private String spBaseUrl;
-
-    @Value("${sp.entity_id}")
-    private String spEntityId;
-
-    @Value("${sp.private_key}")
-    private String spPrivateKey;
-
-    @Value("${sp.certificate}")
-    private String spCertificate;
-
-    @Value("${sp.passphrase}")
-    private String spPassphrase;
-
-    @Value("${sp.acs_location_path}")
-    private String assertionConsumerServiceURLPath;
+public class WebSecurityConfigurer {
 
     @Value("${secure_cookie}")
     private boolean secureCookie;
 
-    private final DefaultResourceLoader defaultResourceLoader = new DefaultResourceLoader();
-
     @Bean
-    public SAMLAuthenticationProvider samlAuthenticationProvider() {
-        SAMLAuthenticationProvider samlAuthenticationProvider = new RoleSAMLAuthenticationProvider();
-        samlAuthenticationProvider.setUserDetails(new DefaultSAMLUserDetailsService());
-        samlAuthenticationProvider.setForcePrincipalAsString(false);
-        samlAuthenticationProvider.setExcludeCredential(true);
-        return samlAuthenticationProvider;
+    public KeyStore spKeyStore(@Value("${sp.entity_id}") String spEntityId,
+                               @Value("${sp.private_key}") String spPrivateKey,
+                               @Value("${sp.certificate}") String spCertificate,
+                               @Value("${sp.passphrase}") String spPassphrase) throws Exception {
+        KeyStore keyStore = KeyStoreLocator.createKeyStore(spPassphrase);
+        KeyStoreLocator.addPrivateKey(keyStore, spEntityId, spPrivateKey, spCertificate, spPassphrase);
+        return keyStore;
     }
 
     @Bean
-    public SAMLEntryPoint samlEntryPoint() {
-        WebSSOProfileOptions webSSOProfileOptions = new WebSSOProfileOptions();
-        webSSOProfileOptions.setIncludeScoping(false);
+    public RelyingPartyRegistrationRepository relyingPartyRegistrationRepository(
+            SpConfiguration spConfiguration,
+            @Value("${sp.idp_metadata_url}") String idpMetadataUrl) {
+        return new MutableRelyingPartyRegistrationRepository(spConfiguration, idpMetadataUrl);
+    }
 
-        SAMLEntryPoint samlEntryPoint = new ConfigurableSAMLEntryPoint();
-        samlEntryPoint.setFilterProcessesUrl("login");
-        samlEntryPoint.setDefaultProfileOptions(webSSOProfileOptions);
-        return samlEntryPoint;
+    @Bean
+    public OpenSaml5AuthenticationRequestResolver authenticationRequestResolver(RelyingPartyRegistrationRepository repository) {
+        OpenSaml5AuthenticationRequestResolver resolver = new OpenSaml5AuthenticationRequestResolver(repository);
+        resolver.setAuthnRequestCustomizer(context -> {
+            if ("true".equals(context.getRequest().getParameter("force-authn"))) {
+                context.getAuthnRequest().setForceAuthn(true);
+            }
+        });
+        return resolver;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager() {
+        OpenSaml5AuthenticationProvider provider = new OpenSaml5AuthenticationProvider();
+        Converter<OpenSaml5AuthenticationProvider.ResponseToken, Saml2Authentication> defaultConverter =
+                OpenSaml5AuthenticationProvider.createDefaultResponseAuthenticationConverter();
+        List<GrantedAuthority> userRole = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        provider.setResponseAuthenticationConverter(responseToken -> {
+            Saml2Authentication authentication = defaultConverter.convert(responseToken);
+            Response response = responseToken.getResponse();
+            Assertion assertion = response.getAssertions().get(0);
+            NameID nameID = assertion.getSubject().getNameID();
+            List<SAMLAttribute> attributes = assertion.getAttributeStatements().stream()
+                    .flatMap(statement -> statement.getAttributes().stream())
+                    .map(attribute -> new SAMLAttribute(attribute.getName(), attributeValues(attribute)))
+                    .toList();
+            SamlPrincipal principal = new SamlPrincipal(nameID.getValue(), nameID.getFormat(), attributes);
+            return new Saml2Authentication(principal, authentication.getSaml2Response(), userRole);
+        });
+        return new ProviderManager(provider);
+    }
+
+    private List<String> attributeValues(Attribute attribute) {
+        return attribute.getAttributeValues().stream()
+                .map(value -> value instanceof XSString xsString ? xsString.getValue()
+                        : value.getDOM() != null ? value.getDOM().getTextContent() : "")
+                .toList();
     }
 
     @Bean
@@ -116,148 +108,44 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         };
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/internal/**");
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/", "/metadata", "/favicon.ico", "/*.css", "/sp.js", "/api/**", assertionConsumerServiceURLPath + "/**").permitAll()
-                .anyRequest().hasRole("USER")
-                .and()
-                .httpBasic().authenticationEntryPoint(samlEntryPoint())
-                .and()
-                .csrf().disable()
-                .addFilterBefore(metadataGeneratorFilter(), ChannelProcessingFilter.class)
-                .addFilterAfter(samlFilter(), BasicAuthenticationFilter.class)
-                .logout()
-                .logoutSuccessUrl("/");
-    }
-
-    // Handler deciding where to redirect user after successful login
     @Bean
-    public SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler() {
-        SavedRequestAwareAuthenticationSuccessHandler successRedirectHandler =
-                new SavedRequestAwareAuthenticationSuccessHandler();
-        successRedirectHandler.setDefaultTargetUrl("/user.html");
-        return successRedirectHandler;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(samlAuthenticationProvider());
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring().requestMatchers("/internal/**");
     }
 
     @Bean
-    public MetadataDisplayFilter metadataDisplayFilter() {
-        DefaultMetadataDisplayFilter displayFilter = new DefaultMetadataDisplayFilter();
-        displayFilter.setFilterProcessesUrl("metadata");
-        return displayFilter;
-    }
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           RelyingPartyRegistrationRepository relyingPartyRegistrationRepository,
+                                           OpenSaml5AuthenticationRequestResolver authenticationRequestResolver,
+                                           AuthenticationManager authenticationManager,
+                                           @Value("${sp.acs_location_path}") String assertionConsumerServiceURLPath) throws Exception {
 
-    @Bean
-    public SimpleUrlAuthenticationFailureHandler authenticationFailureHandler() {
+        SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+        successHandler.setDefaultTargetUrl("/user.html");
+
         SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
         failureHandler.setUseForward(true);
         failureHandler.setDefaultFailureUrl("/error");
-        return failureHandler;
-    }
 
-    @Bean
-    public SAMLProcessingFilter samlWebSSOProcessingFilter() throws Exception {
-        SAMLProcessingFilter samlWebSSOProcessingFilter = new SAMLProcessingFilter();
-        samlWebSSOProcessingFilter.setFilterProcessesUrl("saml/SSO");
-        samlWebSSOProcessingFilter.setAuthenticationManager(authenticationManager());
-        samlWebSSOProcessingFilter.setAuthenticationSuccessHandler(successRedirectHandler());
-        samlWebSSOProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
-        return samlWebSSOProcessingFilter;
-    }
+        http
+                .authenticationManager(authenticationManager)
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/metadata", "/favicon.ico", "/*.css", "/sp.js", "/api/**",
+                                assertionConsumerServiceURLPath + "/**").permitAll()
+                        .anyRequest().hasRole("USER"))
+                .saml2Login(saml2 -> saml2
+                        .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository)
+                        .loginProcessingUrl(assertionConsumerServiceURLPath)
+                        .authenticationRequestResolver(authenticationRequestResolver)
+                        .authenticationManager(authenticationManager)
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler))
+                .saml2Metadata(meta -> meta.metadataUrl("/metadata"))
+                .securityContext(context -> context.securityContextRepository(new HttpSessionSecurityContextRepository()))
+                .logout(logout -> logout.logoutSuccessUrl("/"));
 
-    @Bean
-    public MetadataGeneratorFilter metadataGeneratorFilter() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
-        return new MetadataGeneratorFilter(metadataGenerator());
-    }
-
-    @Bean
-    public FilterChainProxy samlFilter() throws Exception {
-        List<SecurityFilterChain> chains = new ArrayList<>();
-        chains.add(chain("/login/**", samlEntryPoint()));
-        chains.add(chain("/metadata/**", metadataDisplayFilter()));
-        chains.add(chain(assertionConsumerServiceURLPath + "/**", samlWebSSOProcessingFilter()));
-        return new FilterChainProxy(chains);
-    }
-
-    private DefaultSecurityFilterChain chain(String pattern, Filter entryPoint) {
-        return new DefaultSecurityFilterChain(new AntPathRequestMatcher(pattern), entryPoint);
-    }
-
-    @Bean
-    public ExtendedMetadata extendedMetadata() {
-        ExtendedMetadata extendedMetadata = new ExtendedMetadata();
-        extendedMetadata.setIdpDiscoveryEnabled(false);
-        extendedMetadata.setSignMetadata(true);
-        return extendedMetadata;
-    }
-
-    @Bean
-    public MetadataProvider identityProvider() throws MetadataProviderException, XMLParserException {
-        Resource resource = defaultResourceLoader.getResource(identityProviderMetadataUrl);
-        ResourceMetadataProvider resourceMetadataProvider = new ResourceMetadataProvider(resource);
-        resourceMetadataProvider.setParserPool(parserPool());
-        ExtendedMetadataDelegate extendedMetadataDelegate = new ExtendedMetadataDelegate(resourceMetadataProvider, extendedMetadata());
-        extendedMetadataDelegate.setMetadataTrustCheck(true);
-        extendedMetadataDelegate.setMetadataRequireSignature(true);
-        return extendedMetadataDelegate;
-    }
-
-    @Bean
-    @Qualifier("metadata")
-    public CachingMetadataManager metadata() throws MetadataProviderException, XMLParserException {
-        List<MetadataProvider> providers = new ArrayList<>();
-        providers.add(identityProvider());
-
-        return new CachingMetadataManager(providers);
-    }
-
-    @Bean
-    public VelocityEngine velocityEngine() {
-        return VelocityFactory.getEngine();
-    }
-
-    @Bean(initMethod = "initialize")
-    public ParserPool parserPool() {
-        return new StaticBasicParserPool();
-    }
-
-    @Bean(name = "parserPoolHolder")
-    public ParserPoolHolder parserPoolHolder() {
-        return new ParserPoolHolder();
-    }
-
-    @Bean
-    public SAMLContextProvider contextProvider() throws URISyntaxException {
-        return new ProxiedSAMLContextProviderLB(new URI(spBaseUrl));
-    }
-
-    @Bean
-    public MetadataGenerator metadataGenerator() throws NoSuchAlgorithmException, CertificateException, InvalidKeySpecException, KeyStoreException, IOException, XMLStreamException {
-        MetadataGenerator metadataGenerator = new MetadataGenerator();
-        metadataGenerator.setEntityId(spEntityId);
-        metadataGenerator.setEntityBaseURL(spBaseUrl);
-        metadataGenerator.setExtendedMetadata(extendedMetadata());
-        metadataGenerator.setIncludeDiscoveryExtension(false);
-        metadataGenerator.setKeyManager(keyManager());
-        return metadataGenerator;
-    }
-
-    @Bean
-    public JKSKeyManager keyManager() throws InvalidKeySpecException, CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, XMLStreamException {
-        KeyStore keyStore = KeyStoreLocator.createKeyStore(spPassphrase);
-        KeyStoreLocator.addPrivateKey(keyStore, spEntityId, spPrivateKey, spCertificate, spPassphrase);
-        return new JKSKeyManager(keyStore, Collections.singletonMap(spEntityId, spPassphrase), spEntityId);
+        return http.build();
     }
 
 }

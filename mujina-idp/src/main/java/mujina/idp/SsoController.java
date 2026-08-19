@@ -1,19 +1,13 @@
 package mujina.idp;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import mujina.api.IdpConfiguration;
+import mujina.idp.saml.SAMLPrincipal;
 import mujina.saml.SAMLAttribute;
-import mujina.saml.SAMLPrincipal;
-import org.opensaml.common.binding.SAMLMessageContext;
-import org.opensaml.saml2.core.AuthnContext;
-import org.opensaml.saml2.core.AuthnRequest;
-import org.opensaml.saml2.core.NameIDType;
-import org.opensaml.saml2.metadata.provider.MetadataProviderException;
-import org.opensaml.ws.message.decoder.MessageDecodingException;
-import org.opensaml.ws.message.encoder.MessageEncodingException;
-import org.opensaml.xml.io.MarshallingException;
-import org.opensaml.xml.security.SecurityException;
-import org.opensaml.xml.signature.SignatureException;
-import org.opensaml.xml.validation.ValidationException;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,10 +17,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.*;
 
 import static java.util.Collections.singletonList;
@@ -42,21 +32,18 @@ public class SsoController {
     private IdpConfiguration idpConfiguration;
 
     @GetMapping("/SingleSignOnService")
-    public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException, MetadataProviderException, ServletException {
+    public void singleSignOnServiceGet(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws Exception {
         doSSO(request, response, authentication, false);
     }
 
     @PostMapping("/SingleSignOnService")
-    public void singleSignOnServicePost(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException, MarshallingException, SignatureException, MessageEncodingException, ValidationException, SecurityException, MessageDecodingException, MetadataProviderException, ServletException {
+    public void singleSignOnServicePost(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws Exception {
         doSSO(request, response, authentication, true);
     }
 
     @SuppressWarnings("unchecked")
-    private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws ValidationException, SecurityException, MessageDecodingException, MarshallingException, SignatureException, MessageEncodingException, MetadataProviderException, IOException, ServletException {
-        SAMLMessageContext messageContext = samlMessageHandler.extractSAMLMessageContext(request, response, postRequest);
-        AuthnRequest authnRequest = (AuthnRequest) messageContext.getInboundSAMLMessage();
+    private void doSSO(HttpServletRequest request, HttpServletResponse response, Authentication authentication, boolean postRequest) throws Exception {
+        AuthnRequest authnRequest = samlMessageHandler.parseAuthnRequest(request, postRequest);
 
         String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
         Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
@@ -75,7 +62,7 @@ public class SsoController {
                 authnRequest.getIssuer().getValue(),
                 authnRequest.getID(),
                 assertionConsumerServiceURL,
-                messageContext.getRelayState());
+                request.getParameter("RelayState"));
 
         samlMessageHandler.sendAuthnResponse(principal, authnContextClassRefValue, response);
     }

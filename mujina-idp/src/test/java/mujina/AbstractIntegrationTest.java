@@ -3,24 +3,27 @@ package mujina;
 import io.restassured.RestAssured;
 import io.restassured.filter.cookie.CookieFilter;
 import mujina.api.IdpConfiguration;
+import mujina.idp.saml.SAMLBuilder;
 import mujina.saml.KeyStoreLocator;
-import mujina.saml.SAMLBuilder;
-import org.opensaml.Configuration;
-import org.opensaml.saml2.core.AuthnRequest;
-import org.opensaml.xml.io.Unmarshaller;
-import org.opensaml.xml.parse.BasicParserPool;
-import org.opensaml.xml.security.CriteriaSet;
-import org.opensaml.xml.security.credential.Credential;
-import org.opensaml.xml.security.criteria.EntityIDCriteria;
-import org.opensaml.xml.signature.SignatureConstants;
-import org.opensaml.xml.util.XMLHelper;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import net.shibboleth.shared.xml.SerializeSupport;
+import net.shibboleth.shared.xml.impl.BasicParserPool;
+import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.Unmarshaller;
+import org.opensaml.core.xml.util.XMLObjectSupport;
+import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.credential.impl.KeyStoreCredentialResolver;
+import org.opensaml.security.criteria.UsageCriterion;
+import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.security.saml.key.JKSKeyManager;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,6 +38,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.Deflater;
 
 import static io.restassured.RestAssured.given;
@@ -75,8 +79,9 @@ public abstract class AbstractIntegrationTest {
 
         KeyStore keyStore = KeyStoreLocator.createKeyStore(idpPassphrase);
         KeyStoreLocator.addPrivateKey(keyStore, idpEntityId, idpPrivateKey, idpCertificate, idpPassphrase);
-        JKSKeyManager keyManager = new JKSKeyManager(keyStore, Collections.singletonMap(idpEntityId, idpPassphrase), idpEntityId);
-        signingCredential = keyManager.resolveSingle(new CriteriaSet(new EntityIDCriteria(idpEntityId)));
+        KeyStoreCredentialResolver resolver = new KeyStoreCredentialResolver(
+                keyStore, Map.of(idpEntityId, idpPassphrase), UsageType.SIGNING);
+        signingCredential = resolver.resolveSingle(new CriteriaSet(new EntityIdCriterion(idpEntityId), new UsageCriterion(UsageType.SIGNING)));
     }
 
     protected CookieFilter login(String username, String password, int statusCode) {
@@ -98,9 +103,9 @@ public abstract class AbstractIntegrationTest {
     protected List<String[]> redirectBindingParams(boolean forceAuthn) throws Exception {
         AuthnRequest authnRequest = loadAuthnRequest();
         authnRequest.setForceAuthn(forceAuthn);
-        Configuration.getMarshallerFactory().getMarshaller(authnRequest).marshall(authnRequest);
+        Element element = XMLObjectSupport.marshall(authnRequest);
 
-        String xml = XMLHelper.nodeToString(authnRequest.getDOM());
+        String xml = SerializeSupport.nodeToString(element);
         String samlRequest = Base64.getEncoder().encodeToString(deflate(xml));
         String sigAlg = SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256;
 
@@ -120,9 +125,9 @@ public abstract class AbstractIntegrationTest {
     protected List<String[]> postBindingParams(boolean forceAuthn) throws Exception {
         AuthnRequest authnRequest = loadAuthnRequest();
         authnRequest.setForceAuthn(forceAuthn);
-        SAMLBuilder.signAssertion(authnRequest, signingCredential);
+        SAMLBuilder.signAssertion(authnRequest, signingCredential, SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
 
-        String xml = XMLHelper.nodeToString(authnRequest.getDOM());
+        String xml = SerializeSupport.nodeToString(authnRequest.getDOM());
         String samlRequest = Base64.getEncoder().encodeToString(xml.getBytes(StandardCharsets.UTF_8));
 
         return Collections.singletonList(new String[]{"SAMLRequest", samlRequest});
@@ -131,10 +136,11 @@ public abstract class AbstractIntegrationTest {
     private AuthnRequest loadAuthnRequest() throws Exception {
         BasicParserPool parserPool = new BasicParserPool();
         parserPool.setNamespaceAware(true);
+        parserPool.initialize();
         try (InputStream inputStream = getClass().getResourceAsStream("/saml/authn-request.xml")) {
             Document document = parserPool.parse(inputStream);
             Element element = document.getDocumentElement();
-            Unmarshaller unmarshaller = Configuration.getUnmarshallerFactory().getUnmarshaller(element);
+            Unmarshaller unmarshaller = XMLObjectProviderRegistrySupport.getUnmarshallerFactory().getUnmarshaller(element);
             return (AuthnRequest) unmarshaller.unmarshall(element);
         }
     }

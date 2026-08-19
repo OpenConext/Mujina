@@ -39,10 +39,6 @@ sp:
   compare_endpoints: true
 
 
-spring:
-  velocity:
-    check-template-location: False
-
 # used by the git plugin
 info:
   build:

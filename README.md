@@ -24,6 +24,8 @@ then the following has changed:
 * We no longer use Tomcat, but standalone Spring boot applications
 * The API has changed for all end-points requiring a single value (e.g. String or boolean) and only that value is required in the request body. See the API documentation below.
 
+As of version 10.0.0 we run with Spring Boot 4, spring-security-saml2-service-provider and the custom IdP library https://github.com/OpenConext/openconext-saml-java
+
 As of version 9.0.0 we run with Java 21.
 
 Characteristics of both the IdP or SP can be runtime changed with the REST API.
