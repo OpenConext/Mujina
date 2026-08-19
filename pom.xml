@@ -46,6 +46,11 @@
       <name>shibboleth</name>
       <url>https://build.shibboleth.net/maven/releases/</url>
     </repository>
+    <repository>
+      <id>openconext-releases</id>
+      <name>OpenConext public releases repository</name>
+      <url>https://build.openconext.org/repository/public/releases</url>
+    </repository>
   </repositories>
 
   <build>
