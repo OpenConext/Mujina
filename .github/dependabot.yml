@@ -1,11 +1,9 @@
 version: 2
 updates:
   - package-ecosystem: npm
-    directory: "/**"
+    directory: "/e2e"
     schedule:
       interval: "weekly"
-    allow:
-      - dependency-type: "production"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

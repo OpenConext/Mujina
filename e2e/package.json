@@ -1,0 +1,15 @@
+{
+  "name": "mujina-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright end-to-end tests driving a real browser through the mujina-sp / mujina-idp SAML login flow",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^22.10.5"
+  }
+}

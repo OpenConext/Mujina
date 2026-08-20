@@ -115,6 +115,31 @@ mvn spring-boot:run
 Then, go to http://localhost:9090/. You can access the secure page and will be redirected to the IdP, where you can
 login with username admin and password secret.
 
+Run the E2E tests
+------------------
+
+The `e2e` directory contains Playwright browser tests (Node/TypeScript) that drive a real SP-initiated SAML
+login flow across both running applications.
+
+Requirements: Node 22+ and a `mvn install -DskipTests` of the reactor (so `mujina-sp`/`mujina-idp` can resolve
+`mujina-common` when started via `spring-boot:run`).
+
+```bash
+mvn clean install -DskipTests
+cd e2e
+npm ci
+npx playwright install --with-deps chromium
+npx playwright test
+```
+
+Playwright automatically starts both `mujina-idp` (:8080) and `mujina-sp` (:9090) before the tests run and shuts
+them down afterwards, so you don't need to start them manually first. Useful variants for local debugging:
+
+```bash
+npx playwright test --headed   # watch the tests run in a real browser window
+npx playwright test --ui       # interactive UI mode
+```
+
 ## [Private signing key and public certificate](#signing-keys)
 
 The SAML Spring Security library needs a private DSA key / public certificate pair for the IdP / SP which can be re-generated
