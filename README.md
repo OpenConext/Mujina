@@ -66,6 +66,7 @@ The default Identity Provider configuration is as follows:
     * "urn:mace:dir:attribute-def:mail" is "j.doe@example.com"
     * "urn:mace:terena.org:attribute-def:schacHomeOrganization" is "example.com"
     * "urn:mace:dir:attribute-def:eduPersonPrincipalName" is "j.doe@example.com"
+    * "urn:oasis:names:tc:SAML:attribute:subject-id" is "j.doe@example.com"
 * There is a default certificate and private key available
 * By default the ACS endpoint should be provided by the SP as an attribute in the AuthnRequest.
   If the ACS endpoint is set using the IdP api this is not necessary. Use of the api overrides values set in AuthnRequests
@@ -90,8 +91,8 @@ cd Mujina
 mvn clean install
 ```
 
-The build dependencies are hosted on https://build.openconext.org/repository/public/
-(and will be fetched automatically by Maven).
+The build dependencies are hosted on https://build.openconext.org/repository/public/releases
+and https://build.shibboleth.net/maven/releases/ (and will be fetched automatically by Maven).
 
 Run the IDP
 -----------------------
@@ -257,6 +258,18 @@ curl -v -H "Accept: application/json" \
         http://localhost:8080/api/signing-credential
 ```
 
+Setting whether the SAMLRequest / SAMLResponse needs to be signed
+-------------------------------------------------------------------------
+
+This API is available on both the IDP and the SP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d "true" \
+        http://localhost:8080/api/needs-signing
+```
+
 Adding a user
 -------------
 
@@ -283,6 +296,18 @@ curl -v -H "Accept: application/json" \
 Or to test the UTF-8 encoding:
 ```bash
 curl -v -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '["髙橋 大輔"]' https://mujina-idp.test2.surfconext.nl/api/attributes/urn:mace:dir:attribute-def:cn
+```
+
+Replacing all attributes at once
+---------------------------------
+
+This API is only available on the IDP. **Note:** This replaces the entire attribute map, not just one attribute.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d '{"urn:mace:dir:attribute-def:cn": ["bar"]}' \
+        http://localhost:8080/api/attributes
 ```
 
 Setting attribute for specific user
@@ -347,6 +372,8 @@ curl -H "Content-type: application/json"  http://localhost:8080/api/users
 Setting the Assertion Consumer Service (ACS) endpoint
 ---------------------------------
 
+This API is only available on the IDP.
+
 ```bash
 curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
@@ -359,10 +386,10 @@ The authentication method API has two possible values.
 * USER
 * ALL
 
-The setting is configurable in the application.yml
+The setting is configurable in the application.yml. **ALL is the default.**
 ```
 # Authentication method ALL for every username / password combination and USER for the configured users
-auth_method: USER
+auth_method: ALL
 ```
 
 The USER setting requires a valid user to be known in Mujina's IdP and the ALL accepts everything.
@@ -380,4 +407,28 @@ curl -v -H "Accept: application/json" \
         -H "Content-type: application/json" \
         -X PUT -d "http://localhost:8080/SingleSignOnService/vo:test" \
         http://localhost:9090/api/ssoServiceURL
+```
+
+Setting the protocol binding
+-------------
+
+This API is only available on the SP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" \
+        http://localhost:9090/api/protocolBinding
+```
+
+Setting the Assertion Consumer Service URL
+-------------
+
+This API is only available on the SP.
+
+```bash
+curl -v -H "Accept: application/json" \
+        -H "Content-type: application/json" \
+        -X PUT -d "http://localhost:9090/saml/SSO" \
+        http://localhost:9090/api/assertionConsumerServiceURL
 ```
