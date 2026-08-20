@@ -15,8 +15,9 @@ server:
 secure_cookie: false
 
 sp:
-  # base url
-  base_url: http://localhost:9090
+  # base url. Defaults to the configured server.port so it tracks e.g. a SERVER_PORT env var override;
+  # set explicitly when behind a load balancer / reverse proxy or a different external port is used.
+  base_url: http://localhost:${server.port}
   # Entity ID of the SP
   entity_id: http://mock-sp
   # Private key used to sign the SAML response

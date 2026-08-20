@@ -47,7 +47,11 @@ import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
 import static org.apache.http.HttpStatus.SC_OK;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//sp.base_url defaults to ${server.port}, which resolves to the literal "0" under RANDOM_PORT
+//(Spring never rewrites server.port to the real ephemeral port). Pin it to the fixed value the
+//test fixtures/assertions already assume (e.g. MetadataEndPointTest), independent of the actual random port.
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = {"sp.base_url=http://localhost:9090"})
 public abstract class AbstractIntegrationTest {
 
     @Autowired

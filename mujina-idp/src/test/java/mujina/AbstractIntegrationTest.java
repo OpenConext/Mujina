@@ -45,7 +45,11 @@ import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_OK;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"idp.auth_method=USER"})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        //idp.base_url defaults to ${server.port}, which resolves to the literal "0" under RANDOM_PORT
+        //(Spring never rewrites server.port to the real ephemeral port). Pin it to the fixed value the
+        //test fixtures/assertions already assume, independent of the actual random port used.
+        properties = {"idp.auth_method=USER", "idp.base_url=http://localhost:8080"})
 public abstract class AbstractIntegrationTest {
 
     @Autowired
