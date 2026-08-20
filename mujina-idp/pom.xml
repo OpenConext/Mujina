@@ -130,27 +130,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.5.7</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- rest-assured 5.5.7 is only validated against Groovy 4.x; pin explicitly to override
-             Spring Boot 4.1.0's BOM-managed Groovy 5, which breaks rest-assured's Groovy closure dispatch. -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>4.0.32</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-xml</artifactId>
-            <version>4.0.32</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-json</artifactId>
-            <version>4.0.32</version>
+            <version>6.0.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
