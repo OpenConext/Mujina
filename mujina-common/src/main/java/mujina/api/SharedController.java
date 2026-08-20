@@ -25,7 +25,9 @@ public class SharedController {
     @PutMapping("/entityid")
     public void setEntityID(@RequestBody String entityID) {
         LOG.info("Request to set entityID {}", entityID);
-        configuration.setEntityId(entityID);
+        //Must re-key the keystore entry to the new alias too (not the 1-arg setter), otherwise the
+        //signing credential becomes unresolvable under the new entityId - see GH-99.
+        configuration.setEntityId(entityID, true);
     }
 
     @PostMapping("/signing-credential")
