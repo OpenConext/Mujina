@@ -117,7 +117,7 @@ jobs:
             type=raw,event=workflow_dispatch,value=snapshot
 
       - name: Build and push the mujina idp image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: mujina-idp
           file: mujina-idp/docker/Dockerfile
@@ -127,7 +127,7 @@ jobs:
           labels: ${{ steps.meta_idp.outputs.labels }}
 
       - name: Build and push the mujina sp image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: mujina-sp
           file: mujina-sp/docker/Dockerfile
