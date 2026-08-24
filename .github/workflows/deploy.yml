@@ -91,7 +91,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker IDP
         id: meta_idp
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/openconext/mujina/mujina-idp
           flavor: |
@@ -104,7 +104,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker SP
         id: meta_sp
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ghcr.io/openconext/mujina/mujina-sp
           flavor: |
