@@ -8,7 +8,7 @@ target/
 .project
 .settings
 application.t03.yml
-
+spieldata
 # Playwright E2E (e2e/)
 e2e/node_modules/
 e2e/test-results/

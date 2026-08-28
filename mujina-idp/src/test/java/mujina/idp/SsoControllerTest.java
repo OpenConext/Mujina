@@ -41,6 +41,42 @@ public class SsoControllerTest extends AbstractIntegrationTest {
         assertForcedReauthentication(doSingleSignOn(true, true));
     }
 
+    // Regression test: a ForceAuthn AuthnRequest sent via HTTP-Redirect binding stays embedded in the
+    // URL that Spring Security replays after the forced re-login. Without ForceAuthnFilter remembering
+    // it already forced re-authentication for this exact AuthnRequest ID, that replay was treated as a
+    // brand new ForceAuthn request, clearing the freshly established session again and bouncing back to
+    // /login forever.
+    @Test
+    public void singleSignOnServiceGetForceAuthnCompletesOnReplayAfterReLogin() throws Exception {
+        CookieFilter cookieFilter = login("admin", "secret", SC_MOVED_TEMPORARILY);
+        List<String[]> requestParams = redirectBindingParams(true);
+
+        // First visit: the pre-existing session is forcibly cleared and the user is sent to /login,
+        // exactly like singleSignOnServiceGetForceAuthn above.
+        assertForcedReauthentication(singleSignOnServiceRequest(requestParams, cookieFilter));
+
+        // The user re-authenticates within the same browser session (same cookieFilter).
+        given()
+                .formParam("username", "admin")
+                .formParam("password", "secret")
+                .filter(cookieFilter)
+                .post("/login")
+                .then()
+                .statusCode(SC_MOVED_TEMPORARILY);
+
+        // Spring Security replays the exact same SingleSignOnService request (same AuthnRequest ID,
+        // still present in the URL) - this must now complete SSO, not force yet another re-login.
+        assertSuccessfulSSO(singleSignOnServiceRequest(requestParams, cookieFilter));
+    }
+
+    private Response singleSignOnServiceRequest(List<String[]> requestParams, CookieFilter cookieFilter) {
+        RequestSpecification requestSpecification = given();
+        requestParams.forEach(param -> requestSpecification.param(param[0], param[1]));
+        // GET requests would otherwise auto-follow a 302 to /login, masking the forced re-authentication.
+        requestSpecification.filter(cookieFilter).redirects().follow(false);
+        return requestSpecification.get("/SingleSignOnService");
+    }
+
     private Response doSingleSignOn(boolean post, boolean forceAuthn) throws Exception {
         CookieFilter cookieFilter = login("admin", "secret", SC_MOVED_TEMPORARILY);
 
