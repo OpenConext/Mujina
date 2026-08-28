@@ -46,12 +46,12 @@ public class SsoController {
         AuthnRequest authnRequest = samlMessageHandler.parseAuthnRequest(request, postRequest);
 
         String assertionConsumerServiceURL = idpConfiguration.getAcsEndpoint() != null ? idpConfiguration.getAcsEndpoint() : authnRequest.getAssertionConsumerServiceURL();
-        Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
-        String[] authnContextClassRefs = parameterMap.get("authn-context-class-ref-value");
+        Map<String, List<String>> parameterMap = (Map<String, List<String>>) authentication.getDetails();
+        List<String> authnContextClassRefs = parameterMap.get("authn-context-class-ref-value");
 
         List<SAMLAttribute> attributes = attributes(authentication);
 
-        String authnContextClassRefValue = authnContextClassRefs != null ? authnContextClassRefs[0] : AuthnContext.PASSWORD_AUTHN_CTX;
+        String authnContextClassRefValue = authnContextClassRefs != null ? authnContextClassRefs.get(0) : AuthnContext.PASSWORD_AUTHN_CTX;
 
         SAMLPrincipal principal = new SAMLPrincipal(
                 authentication.getName(),
@@ -79,16 +79,14 @@ public class SsoController {
         optionalMap.ifPresent(result::putAll);
 
         //See SAMLAttributeAuthenticationFilter#setDetails
-        Map<String, String[]> parameterMap = (Map<String, String[]>) authentication.getDetails();
-        parameterMap.forEach((key, values) -> {
-            result.put(key, Arrays.asList(values));
-        });
+        Map<String, List<String>> parameterMap = (Map<String, List<String>>) authentication.getDetails();
+        result.putAll(parameterMap);
         if (parameterMap.containsKey("authn-context-class-ref-value")) {
             result.remove("authn-context-class-ref-value");
         }
 
         //Check if the user wants to be persisted
-        if (parameterMap.containsKey("persist-me") && "on".equalsIgnoreCase(parameterMap.get("persist-me")[0])) {
+        if (parameterMap.containsKey("persist-me") && "on".equalsIgnoreCase(parameterMap.get("persist-me").get(0))) {
             result.remove("persist-me");
             FederatedUserAuthenticationToken token = new FederatedUserAuthenticationToken(
                     uid,

@@ -4,6 +4,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -11,9 +13,9 @@ public class SAMLAttributeAuthenticationFilter extends UsernamePasswordAuthentic
 
     @Override
     protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authRequest) {
-        Map<String, String[]> parameterMap = request.getParameterMap().entrySet().stream()
+        Map<String, List<String>> parameterMap = request.getParameterMap().entrySet().stream()
                 .filter(e -> !getPasswordParameter().equals(e.getKey()) && !getUsernameParameter().equals(e.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> Arrays.asList(e.getValue())));
         authRequest.setDetails(parameterMap);
     }
 }
