@@ -1,5 +1,6 @@
 package mujina.config;
 
+import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "idp")
 public class StandardAttributes {
 
+    @Getter
     private Map<String, String> attributes;
 
     private final Pattern escapedValuePattern = Pattern.compile("\\[(.*)]");
@@ -27,7 +29,4 @@ public class StandardAttributes {
         this.attributes = processedAttributes;
     }
 
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
 }

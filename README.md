@@ -32,6 +32,15 @@ Characteristics of both the IdP or SP can be runtime changed with the REST API.
 
 Mujina is used to test the SURFconext middleware which enables Dutch educational services to use cloud based SAAS-services.
 
+Security
+--------
+Mujina is a test tool, not a production identity provider, and its defaults reflect that:
+
+* **The `/api/**` REST endpoints on both the IdP and SP are intentionally unauthenticated.** Anyone who can reach them can replace the signing key/certificate, change the entity ID, add or modify users and attributes, and redirect the SP's SSO endpoint or the IdP's ACS endpoint. Only run Mujina on a trusted/private network — never expose it to the open internet or a shared multi-tenant host.
+* The shipped private key, certificate, and keystore passphrase (`secret`) in `application.yml` are fixed, publicly-known test fixtures shared between the IdP and SP. Rotate them (via `PUT /api/signing-credential` or environment/property overrides) if an instance is ever reachable outside a throwaway test environment.
+* `secure_cookie: false` is the default for local/dev convenience (so two localhost instances don't clash on cookie name). Set it to `true` when running behind TLS.
+* Verbose `DEBUG` logging of Mujina/Spring Security internals (which can include full authentication details) is off by default. Enable it only when needed with `-Dlogging.level.mujina=DEBUG -Dlogging.level.org.springframework.security=DEBUG` or the equivalent `LOGGING_LEVEL_*` environment variables.
+
 Features
 --------
 - A SAML2-compliant Identity Provider. The IdP will authenticate known users, providing known attributes to the SP. The REST api allows for the manipulation of:
@@ -396,6 +405,7 @@ The USER setting requires a valid user to be known in Mujina's IdP and the ALL a
 
 The ALL setting allows any username and password combination.
 As a side effect, the urn:mace:dir:attribute-def:uid attribute is set to the username each time a user logs in.
+**Every user authenticated this way is also granted `ROLE_ADMIN` in addition to `ROLE_USER`** — see [Security](#security).
 
 Setting the SSO Service URL
 -------------

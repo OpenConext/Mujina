@@ -32,7 +32,7 @@ public class SharedController {
 
     @PostMapping("/signing-credential")
     public void setSigningCredential(@RequestBody Credential credential) {
-        LOG.info("Request to set signing credential {}", credential);
+        LOG.info("Request to set signing credential");
         configuration.injectCredential(credential.getCertificate(), credential.getKey());
     }
 

@@ -1,5 +1,6 @@
 package mujina.idp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,7 @@ import java.util.TreeMap;
 
 @Getter
 @Setter
+@JsonIgnoreProperties({"credentials"})
 public class FederatedUserAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
     private Map<String, List<String>> attributes = new TreeMap<>();

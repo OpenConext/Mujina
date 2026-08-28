@@ -7,8 +7,10 @@
     </encoder>
   </appender>
 
-  <logger name="mujina" level="DEBUG"/>
-  <logger name="org.springframework.security" level="DEBUG"/>
+  <!-- Enable via -Dlogging.level.mujina=DEBUG / LOGGING_LEVEL_MUJINA=DEBUG env var when needed;
+       not on by default since it can log full authentication details. -->
+  <!--<logger name="mujina" level="DEBUG"/>-->
+  <!--<logger name="org.springframework.security" level="DEBUG"/>-->
 
   <root level="INFO">
     <appender-ref ref="STDOUT"/>

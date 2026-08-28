@@ -15,6 +15,7 @@ import java.util.List;
 public class User implements Serializable {
 
     private String name;
+    @ToString.Exclude
     private String password;
     private List<String> authorities;
 }

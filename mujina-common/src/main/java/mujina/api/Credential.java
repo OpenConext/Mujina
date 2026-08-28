@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class Credential implements Serializable {
 
     private String certificate;
+    @ToString.Exclude
     private String key;
 
 }

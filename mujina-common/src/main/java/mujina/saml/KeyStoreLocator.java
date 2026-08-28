@@ -20,7 +20,7 @@ import java.util.Base64;
 
 public class KeyStoreLocator {
 
-    private static CertificateFactory certificateFactory;
+    private static final CertificateFactory certificateFactory;
 
     static {
         try {

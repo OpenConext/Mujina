@@ -78,9 +78,6 @@ info:
 
 # We disable all endpoints except health for the load-balancer and info for git information.
 management:
-  health:
-    mail:
-      enabled: false
   endpoints:
     web:
       exposure:
@@ -88,7 +85,7 @@ management:
       base-path: "/internal"
   endpoint:
     info:
-      enabled: true
+      access: unrestricted
   info:
     git:
       mode: full

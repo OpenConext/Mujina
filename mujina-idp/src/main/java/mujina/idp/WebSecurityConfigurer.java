@@ -91,7 +91,8 @@ public class WebSecurityConfigurer {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new ForceAuthnFilter(samlMessageHandler), SAMLAttributeAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css", "/*.js").permitAll()
+                        .requestMatchers("/", "/metadata", "/favicon.ico", "/api/**", "/*.css", "/*.js")
+                        .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().hasRole("USER"))
                 .formLogin(form -> form
