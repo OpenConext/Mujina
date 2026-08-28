@@ -9,6 +9,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,8 @@ import static io.restassured.RestAssured.given;
 import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @TestPropertySource(properties = {"idp.expires:" + (Integer.MAX_VALUE / 2 - 1), "idp.clock_skew: " + (Integer.MAX_VALUE / 2 - 1)})
@@ -69,6 +72,67 @@ public class SsoControllerTest extends AbstractIntegrationTest {
         assertSuccessfulSSO(singleSignOnServiceRequest(requestParams, cookieFilter));
     }
 
+    // Regression test: SAMLAttributeAuthenticationFilter#setDetails stashes every /login form field
+    // (except username/password) verbatim into the Authentication's Details, including the
+    // authn-context-class-ref-value hidden field. SsoController#attributes must strip that entry back
+    // out again so it isn't sent to the SP as a bogus SAML attribute, while the value itself still
+    // drives the AuthnContextClassRef of the response.
+    @Test
+    public void singleSignOnServiceRemovesAuthnContextClassRefValueFromAttributes() throws Exception {
+        String customAuthnContextClassRef = "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport";
+        CookieFilter cookieFilter = loginWithExtraParams("admin", "secret",
+                Map.of("authn-context-class-ref-value", customAuthnContextClassRef));
+
+        String samlResponse = decodeSAMLResponse(singleSignOnServiceRequest(redirectBindingParams(false), cookieFilter));
+
+        assertTrue(samlResponse.contains(customAuthnContextClassRef));
+        assertFalse(samlResponse.contains("authn-context-class-ref-value"));
+    }
+
+    // Regression test: when the 'Persist me' checkbox is submitted on /login, SsoController#attributes
+    // must replace the existing configured user with a new FederatedUserAuthenticationToken carrying the
+    // attributes entered on the login form, so a subsequent login reuses them without re-entering them.
+    @Test
+    public void singleSignOnServicePersistsUserWhenPersistMeChecked() throws Exception {
+        CookieFilter cookieFilter = loginWithExtraParams("user", "secret", Map.of(
+                "persist-me", "on",
+                "urn:mace:dir:attribute-def:new", "value1"));
+
+        singleSignOnServiceRequest(redirectBindingParams(false), cookieFilter).then().statusCode(SC_OK);
+
+        List<FederatedUserAuthenticationToken> users = idpConfiguration.getUsers();
+        assertEquals(2, users.size());
+        FederatedUserAuthenticationToken persisted = users.stream()
+                .filter(user -> "user".equals(user.getPrincipal()))
+                .findFirst()
+                .orElseThrow();
+        assertTrue(persisted.getAttributes().get("urn:mace:dir:attribute-def:new").contains("value1"));
+    }
+
+    private CookieFilter loginWithExtraParams(String username, String password, Map<String, String> extraParams) {
+        CookieFilter cookieFilter = new CookieFilter();
+
+        RequestSpecification requestSpecification = given()
+                .formParam("username", username)
+                .formParam("password", password);
+        extraParams.forEach(requestSpecification::formParam);
+        requestSpecification
+                .filter(cookieFilter)
+                .post("/login")
+                .then()
+                .statusCode(SC_MOVED_TEMPORARILY);
+
+        return cookieFilter;
+    }
+
+    private String decodeSAMLResponse(Response response) {
+        response.then().statusCode(SC_OK);
+        String html = response.getBody().asString();
+        Matcher matcher = Pattern.compile("name=\"SAMLResponse\" value=\"(.*?)\"").matcher(html);
+        matcher.find();
+        return new String(Base64.getDecoder().decode(matcher.group(1)));
+    }
+
     private Response singleSignOnServiceRequest(List<String[]> requestParams, CookieFilter cookieFilter) {
         RequestSpecification requestSpecification = given();
         requestParams.forEach(param -> requestSpecification.param(param[0], param[1]));
@@ -96,13 +160,7 @@ public class SsoControllerTest extends AbstractIntegrationTest {
     }
 
     private void assertSuccessfulSSO(Response response) {
-        response.then().statusCode(SC_OK);
-
-        String html = response.getBody().asString();
-        Matcher matcher = Pattern.compile("name=\"SAMLResponse\" value=\"(.*?)\"").matcher(html);
-        matcher.find();
-        String samlResponse = new String(Base64.getDecoder().decode(matcher.group(1)));
-        assertTrue(samlResponse.contains("admin@example.com"));
+        assertTrue(decodeSAMLResponse(response).contains("admin@example.com"));
     }
 
     private void assertForcedReauthentication(Response response) {
