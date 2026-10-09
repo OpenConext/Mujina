@@ -3,6 +3,10 @@ body {
     font-size: 100%;
 }
 
+[hidden] {
+    display: none !important;
+}
+
 ul {
     list-style: none;
 }
@@ -274,4 +278,130 @@ a.close:focus {
     position: absolute;
     white-space: nowrap;
     width: 1px;
+}
+
+div.save-persona {
+    margin-top: 15px;
+}
+
+button.save-persona-button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+    line-height: 1;
+    border-radius: 3px;
+    border: 1px solid #e4e4e4;
+    background-color: white;
+    box-shadow: inset 0 1px 3px #e6e6e6;
+    cursor: pointer;
+}
+
+button.save-persona-button:hover {
+    background-color: #f3f6f8;
+    border-color: #4DB3CF;
+}
+
+div.persona-name-row {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+}
+
+div.persona-name-row input[type="text"] {
+    flex-grow: 2;
+    padding: 8px;
+    border-radius: 3px;
+    margin: 0 8px 0 0;
+    font-size: 16px;
+    border: 1px solid #e4e4e4;
+    box-shadow: inset 0 1px 3px #e6e6e6;
+}
+
+button.persona-name-action {
+    border: none;
+    border-radius: 3px;
+    background-color: #4DB3CF;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button.persona-name-action:hover {
+    background-color: #4fa9c5;
+}
+
+button.persona-name-action.cancel {
+    background-color: #e4e4e4;
+    color: #333;
+}
+
+button.persona-name-action.cancel:hover {
+    background-color: #d5d5d5;
+}
+
+div.personas {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin-top: 25px;
+}
+
+@media screen and (max-width: 420px) {
+    div.personas {
+        width: 90vw;
+    }
+}
+
+span.personas-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4DB3CF;
+    margin-bottom: 5px;
+}
+
+ul.persona-list {
+    margin: 0;
+    padding: 0;
+}
+
+li.persona {
+    display: flex;
+    align-items: center;
+}
+
+button.persona-load {
+    flex-grow: 2;
+    min-width: 0;
+    text-align: left;
+    background: none;
+    border: none;
+    color: #4DB3CF;
+    font-size: 16px;
+    padding: 4px 0;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+button.persona-load:hover {
+    text-decoration: underline;
+}
+
+button.persona-copy, button.persona-delete {
+    background: none;
+    border: none;
+    font-size: 16px;
+    padding: 4px;
+    color: #333;
+    cursor: pointer;
+}
+
+button.persona-copy:hover {
+    color: #4fa9c5;
+}
+
+button.persona-delete:hover {
+    color: #940000;
 }

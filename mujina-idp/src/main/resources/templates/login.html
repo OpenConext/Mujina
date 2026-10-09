@@ -82,10 +82,22 @@
                 <div class="help"><span class="explain-link">?</span></div>
             </div>
             <ul id="attribute-list" class="attribute-list"></ul>
+            <div class="save-persona" id="save-persona" hidden>
+                <button class="save-persona-button" type="button" id="save-persona-button" title="Save persona">💾</button>
+                <div class="persona-name-row" id="persona-name-row" hidden>
+                    <input type="text" id="persona-name" placeholder="Persona name"/>
+                    <button class="persona-name-action" type="button" id="persona-name-save">Save</button>
+                    <button class="persona-name-action cancel" type="button" id="persona-name-cancel">Cancel</button>
+                </div>
+            </div>
             <section class="powered-by">
                 <a href="https://openconext.org/" target="_blank" rel="noreferrer noopener">Copyright © 2018 OpenConext</a>
             </section>
         </form>
+        <div class="personas" id="personas" hidden>
+            <span class="personas-title">Personas</span>
+            <ul id="persona-list" class="persona-list"></ul>
+        </div>
     </div>
 </main>
 </body>
