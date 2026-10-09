@@ -32,6 +32,15 @@ public class UserControllerTest extends AbstractIntegrationTest {
                 .body(containsString("Login"));
     }
 
+    @Test
+    public void loginPage() throws Exception {
+        given()
+                .get("/login")
+                .then()
+                .statusCode(SC_OK)
+                .body(containsString("Mujina Identity Provider"));
+    }
+
     private void doUser(String path) throws Exception {
         CookieFilter cookieFilter = login("admin", "secret", SC_MOVED_TEMPORARILY);
 
