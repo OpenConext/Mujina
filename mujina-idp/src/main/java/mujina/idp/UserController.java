@@ -42,23 +42,28 @@ public class UserController {
                 });
         this.samlAttributes.sort(comparing(m -> m.get("id")));
         this.authnContextClassRefs = authnContextClassRefs;
-        this.filePersonasJson = loadFilePersonas(jsonMapper, loader);
+        Resource[] resources = new Resource[DEFAULT_PERSONAS_LOCATIONS.length];
+        for (int i = 0; i < DEFAULT_PERSONAS_LOCATIONS.length; i++) {
+            resources[i] = loader.getResource(DEFAULT_PERSONAS_LOCATIONS[i]);
+        }
+        this.filePersonasJson = loadFilePersonas(jsonMapper, resources);
     }
 
-    private String loadFilePersonas(JsonMapper jsonMapper, DefaultResourceLoader loader) {
+    private static final String[] DEFAULT_PERSONAS_LOCATIONS = {"file:./personas.json", "classpath:personas.json"};
+
+    static String loadFilePersonas(JsonMapper jsonMapper, Resource[] resources) {
         // A personas.json bind-mounted into the container's working directory (the same
         // way application.yml / logback.xml are overridden) takes precedence over the one
         // bundled inside the JAR. If neither is present there are no bundled personas.
-        for (String location : new String[]{"file:./personas.json", "classpath:personas.json"}) {
-            Resource resource = loader.getResource(location);
+        for (Resource resource : resources) {
             if (!resource.exists()) {
                 continue;
             }
             try (InputStream in = resource.getInputStream()) {
                 return jsonMapper.writeValueAsString(jsonMapper.readValue(in, new TypeReference<>() {
                 }));
-            } catch (IOException e) {
-                LOG.warn("Optional personas.json could not be read from {}: {}", location, e.getMessage());
+            } catch (Exception e) {
+                LOG.warn("Optional personas.json could not be read: {}", e.getMessage());
             }
         }
         return null;
