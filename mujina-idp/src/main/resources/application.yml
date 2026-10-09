@@ -40,6 +40,7 @@ idp:
   compare_endpoints: true
   # SAML configuration file. To use an external file, prefix path with "file:".
   saml_attributes_config_file: classpath:saml-attributes.json
+  personas_file: classpath:personas.json
   # Default attributes and values. Escaped to prevent filtering of the ':' character
   attributes:
     [urn:mace:dir:attribute-def:uid]: "john.doe"
