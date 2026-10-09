@@ -213,9 +213,10 @@ its personas are listed at the **bottom** of the persona list. Bundled personas 
 read-only — they cannot be copied or deleted — and each shows a mouseover description
 from its `description` field. If no `personas.json` is present, nothing extra is listed.
 
-The file is a JSON array of objects. The IdP reads it from the location configured by
-`idp.personas_file` (default `classpath:personas.json`, i.e. bundled inside the JAR). An
-example ships in `mujina-idp/src/main/resources/personas.json`:
+The file is a JSON array of objects. The IdP looks for `personas.json` in the working
+directory first (so a file bind-mounted into the container wins — the same way
+`application.yml` and `logback.xml` are overridden) and falls back to the copy bundled
+inside the JAR. An example ships in `mujina-idp/src/main/resources/personas.json`:
 
 ```json
 [
@@ -240,31 +241,32 @@ used.
 Overriding the personas file in Docker
 --------------------------------------
 
-The bundled `personas.json` lives inside the application JAR, so it cannot be mounted
-directly. Instead point `idp.personas_file` at a filesystem path (with the `file:`
-prefix) and mount your own file. This replaces the bundled example with the mounted one:
+Just like `application.yml` and `logback.xml`, `personas.json` is overridden by a
+bind mount into the container's working directory — no environment variable needed. The
+mounted file takes precedence over the copy bundled inside the JAR:
 
-docker-compose:
+```ansible
+mounts:
+  - source: "{{ mujina_idp_dir_docker }}/personas.json"
+    target: "/personas.json"
+    type: "bind"
+```
+
+The same works with docker-compose / `docker run` volumes:
 
 ```yaml
 services:
   mujina-idp:
-    environment:
-      - idp.personas_file=file:/etc/mujina/personas.json
     volumes:
-      - ./my-personas.json:/etc/mujina/personas.json
+      - ./my-personas.json:/personas.json
 ```
-
-docker run:
 
 ```bash
-docker run -e idp.personas_file=file:/etc/mujina/personas.json \
-  -v ./my-personas.json:/etc/mujina/personas.json \
-  mujina-idp:latest
+docker run -v ./my-personas.json:/personas.json mujina-idp:latest
 ```
 
-If the configured file does not exist the IdP starts normally without any bundled
-personas.
+If no `personas.json` is mounted (and none is bundled) the IdP starts normally without
+any bundled personas.
 
 ## [Private signing key and public certificate](#signing-keys)
 

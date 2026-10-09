@@ -34,8 +34,7 @@ public class UserController {
     @SuppressWarnings("unchecked")
     public UserController(JsonMapper jsonMapper,
                           AuthnContextClassRefs authnContextClassRefs,
-                          @Value("${idp.saml_attributes_config_file}") String samlAttributesConfigFile,
-                          @Value("${idp.personas_file:classpath:personas.json}") String personasFileConfig) throws IOException {
+                          @Value("${idp.saml_attributes_config_file}") String samlAttributesConfigFile) throws IOException {
 
         DefaultResourceLoader loader = new DefaultResourceLoader();
         this.samlAttributes = jsonMapper.readValue(
@@ -43,21 +42,26 @@ public class UserController {
                 });
         this.samlAttributes.sort(comparing(m -> m.get("id")));
         this.authnContextClassRefs = authnContextClassRefs;
-        this.filePersonasJson = loadFilePersonas(jsonMapper, loader, personasFileConfig);
+        this.filePersonasJson = loadFilePersonas(jsonMapper, loader);
     }
 
-    private String loadFilePersonas(JsonMapper jsonMapper, DefaultResourceLoader loader, String configPath) {
-        Resource resource = loader.getResource(configPath);
-        if (!resource.exists()) {
-            return null;
+    private String loadFilePersonas(JsonMapper jsonMapper, DefaultResourceLoader loader) {
+        // A personas.json bind-mounted into the container's working directory (the same
+        // way application.yml / logback.xml are overridden) takes precedence over the one
+        // bundled inside the JAR. If neither is present there are no bundled personas.
+        for (String location : new String[]{"file:./personas.json", "classpath:personas.json"}) {
+            Resource resource = loader.getResource(location);
+            if (!resource.exists()) {
+                continue;
+            }
+            try (InputStream in = resource.getInputStream()) {
+                return jsonMapper.writeValueAsString(jsonMapper.readValue(in, new TypeReference<>() {
+                }));
+            } catch (IOException e) {
+                LOG.warn("Optional personas.json could not be read from {}: {}", location, e.getMessage());
+            }
         }
-        try (InputStream in = resource.getInputStream()) {
-            return jsonMapper.writeValueAsString(jsonMapper.readValue(in, new TypeReference<>() {
-            }));
-        } catch (IOException e) {
-            LOG.warn("Optional personas.json could not be read: {}", e.getMessage());
-            return null;
-        }
+        return null;
     }
 
     @GetMapping("/")
