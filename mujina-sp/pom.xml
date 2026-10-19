@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
   Copyright 2012 SURFnet bv, The Netherlands
 
@@ -13,21 +14,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>org.openconext</groupId>
         <artifactId>mujina</artifactId>
-        <version>10.0.2-SNAPSHOT</version>
+        <version>10.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
     <artifactId>mujina-sp</artifactId>
     <packaging>jar</packaging>
-
     <dependencies>
         <dependency>
             <groupId>org.openconext</groupId>
@@ -93,7 +89,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -102,5 +97,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
