@@ -1,0 +1,27 @@
+[
+    {
+        "name": "student",
+        "description": "A student of example.com with a student affiliation",
+        "username": "student",
+        "password": "secret",
+        "persistMe": false,
+        "acr": "urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
+        "attributes": [
+            { "name": "urn:mace:dir:attribute-def:eduPersonAffiliation", "value": "student" },
+            { "name": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "value": "student@example.com" }
+        ]
+    },
+    {
+        "name": "teacher",
+        "description": "A teacher of example.com with a faculty affiliation",
+        "username": "teacher",
+        "password": "secret",
+        "persistMe": false,
+        "acr": "urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
+        "attributes": [
+            { "name": "urn:mace:dir:attribute-def:eduPersonAffiliation", "value": "faculty" },
+            { "name": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "value": "faculty@example.com" },
+            { "name": "urn:mace:dir:attribute-def:eduPersonTargetedID", "value": "teacher@example.com" }
+        ]
+    }
+]
