@@ -128,5 +128,10 @@
     "name": "urn:example:unknown-attribute",
     "id": "unknown-attribute",
     "multiplicity": true
+  },
+  {
+    "name": "urn:mace:dir:attribute-def:uid",
+    "id": "uid",
+    "multiplicity": true
   }
 ]
