@@ -150,6 +150,124 @@ npx playwright test --headed   # watch the tests run in a real browser window
 npx playwright test --ui       # interactive UI mode
 ```
 
+Personas
+--------
+
+The IdP login page supports **personas**: named, saved copies of the entire login form
+(username, password, "persist me", the `authnContextClassRef` selection, and all the
+dynamically added attribute fields with their values). Everything is handled in the
+browser — no server state, no API. Personas you save are kept in the browser's
+`localStorage` under the key `mujina.personas`.
+
+Saving a persona
+----------------
+
+On the login page fill in the username, password and any attributes. As soon as at least
+one attribute row is present, a small save button (💾) appears below the attribute list.
+Clicking it opens an inline name field pre-filled with a suggestion: the current
+username, or `settings-YYYY-MM-DD` when the username is empty.
+
+* If a persona with that name already exists, the *suggestion* is incremented
+  (`jdoe` → `jdoe-1` → `jdoe-2`).
+* Saving always uses the *entered* name. If a persona with that name already exists it is
+  **overwritten** — no suffixed copies are created.
+
+Restoring a persona
+-------------------
+
+Saved personas are listed below the form. Clicking a persona's name fills the form with
+its stored values (username, password, "persist me", `authnContextClassRef`, and all
+attribute rows — order and duplicate values for multi-valued attributes are preserved).
+The form is not submitted; you click **Log in** as usual. The Enter key keeps its default
+action (login) everywhere, including in the persona name field.
+
+Copying a persona to another browser
+------------------------------------
+
+Each saved persona has a copy button (📋). It copies a URL to the clipboard:
+
+```
+http://localhost:8080/login#data=<base64 of the persona as JSON>
+```
+
+Opening that URL in any browser (e.g. on another machine or an incognito window) saves the
+persona under the name embedded in the URL (overwriting an existing persona of the same
+name, so re-opening the same link is idempotent), shows it in the list and loads it
+straight into the form. The `#data` fragment is removed from the address bar afterwards,
+so a refresh does not re-import it.
+
+> **Note:** the password is stored in `localStorage` in plain text and is also recoverable
+> from a shared `#data` URL. Mujina is a test tool, but treat shared persona links as
+> credentials.
+
+Deleting a persona
+------------------
+
+Each saved persona has a delete button (×) that removes it from `localStorage`.
+
+Bundled (file-based) personas
+-----------------------------
+
+Personas can also be shipped with the IdP itself. If a `personas.json` file is present,
+its personas are listed at the **bottom** of the persona list. Bundled personas are
+read-only — they cannot be copied or deleted — and each shows a mouseover description
+from its `description` field. If no `personas.json` is present, nothing extra is listed.
+
+The file is a JSON array of objects. The IdP looks for `personas.json` in the working
+directory first (so a file bind-mounted into the container wins — the same way
+`application.yml` and `logback.xml` are overridden) and falls back to the copy bundled
+inside the JAR. An example ships in `mujina-idp/src/main/resources/personas.json`:
+
+```json
+[
+    {
+        "name": "student",
+        "description": "A student of example.com with a student affiliation",
+        "username": "student",
+        "password": "secret",
+        "persistMe": false,
+        "acr": "urn:oasis:names:tc:SAML:2.0:ac:classes:Password",
+        "attributes": [
+            { "name": "urn:mace:dir:attribute-def:eduPersonAffiliation", "value": "student" },
+            { "name": "urn:mace:dir:attribute-def:eduPersonScopedAffiliation", "value": "student@example.com" }
+        ]
+    }
+]
+```
+
+The `acr` value may be omitted; the login page's default `authnContextClassRef` is then
+used.
+
+Overriding the personas file in Docker
+--------------------------------------
+
+Just like `application.yml` and `logback.xml`, `personas.json` is overridden by a
+bind mount into the container's working directory — no environment variable needed. The
+mounted file takes precedence over the copy bundled inside the JAR:
+
+```ansible
+mounts:
+  - source: "{{ mujina_idp_dir_docker }}/personas.json"
+    target: "/personas.json"
+    type: "bind"
+```
+
+The same works with docker-compose / `docker run` volumes:
+
+```yaml
+services:
+  mujina-idp:
+    volumes:
+      - ./my-personas.json:/personas.json
+```
+
+```bash
+docker run -v ./my-personas.json:/personas.json mujina-idp:latest
+```
+
+If no `personas.json` is mounted (and none is bundled) the IdP starts normally without
+any bundled personas.
+
 ## [Private signing key and public certificate](#signing-keys)
 
 The SAML Spring Security library needs a private DSA key / public certificate pair for the IdP / SP which can be re-generated

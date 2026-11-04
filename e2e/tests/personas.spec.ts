@@ -33,16 +33,18 @@ test.describe('IdP login personas (client-side saved settings)', () => {
     await expect(nameInput).toHaveValue('jdoe');
     await page.click('#persona-name-save');
 
-    // The persona shows up in the list below the form.
-    await expect(page.locator('li.persona')).toHaveCount(1);
-    await expect(page.locator('button.persona-load')).toHaveText('jdoe');
+    // The persona shows up in the list below the form. Only personas saved in
+// this browser carry a delete button; the bundled ones do not.
+    const saved = page.locator('li.persona', { has: page.locator('button.persona-delete') });
+    await expect(saved).toHaveCount(1);
+    await expect(saved.locator('button.persona-load')).toHaveText('jdoe');
     await expect(page.locator('#save-persona-button')).toBeVisible();
 
     // The suggested name is incremented while a persona with the same name exists.
     await page.click('#save-persona-button');
     await expect(nameInput).toHaveValue('jdoe-1');
     await page.click('#persona-name-save');
-    await expect(page.locator('li.persona')).toHaveCount(2);
+    await expect(saved).toHaveCount(2);
     await expect(page.locator('button.persona-load', { hasText: /^jdoe-1$/ })).toBeVisible();
 
     // ...and once more for jdoe-2.
@@ -56,13 +58,13 @@ test.describe('IdP login personas (client-side saved settings)', () => {
     await page.click('#save-persona-button');
     await nameInput.fill('jdoe');
     await page.click('#persona-name-save');
-    await expect(page.locator('li.persona')).toHaveCount(3);
+    await expect(saved).toHaveCount(3);
 
     // Drop the two duplicates again.
     await page.locator('li.persona', { hasText: /^jdoe-2/ }).locator('button.persona-delete').click();
     await page.locator('li.persona', { hasText: /^jdoe-1/ }).locator('button.persona-delete').click();
-    await expect(page.locator('li.persona')).toHaveCount(1);
-    const personaEntry = page.locator('li.persona');
+    await expect(saved).toHaveCount(1);
+    const personaEntry = page.locator('li.persona', { hasText: 'jdoe' });
 
     // Clear the form and load the (overwritten) persona back in.
     await page.fill('#username', '');
@@ -85,10 +87,10 @@ test.describe('IdP login personas (client-side saved settings)', () => {
     await expect(page.locator('li.persona', { hasText: 'jdoe' })).toBeVisible();
     await expect(page.locator('#attribute-list .attribute-value')).toHaveCount(0);
 
-    // Delete the persona - the list disappears again.
+    // Delete the persona - only the bundled personas remain in the list.
     await page.locator('li.persona', { hasText: 'jdoe' }).locator('button.persona-delete').click();
-    await expect(page.locator('li.persona')).toHaveCount(0);
-    await expect(page.locator('#personas')).toBeHidden();
+    await expect(saved).toHaveCount(0);
+    await expect(page.locator('li.persona')).toHaveCount(2);
   });
 
   test('copying a persona produces a shareable URL that imports in a fresh browser', async ({ page, context, browser }) => {
@@ -142,9 +144,40 @@ test.describe('IdP login personas (client-side saved settings)', () => {
 
     // Re-opening the same URL overwrites the existing persona instead of duplicating it.
     await freshPage.goto(url);
-    await expect(freshPage.locator('li.persona')).toHaveCount(1);
+    await expect(freshPage.locator('li.persona', { hasText: 'shared' })).toHaveCount(1);
 
     await freshContext.close();
+  });
+
+  test('bundled personas are listed at the bottom, loadable, and not removable', async ({ page }) => {
+    await page.goto(IDP_LOGIN);
+
+    // The shipped example personas.json provides a student and a teacher persona.
+    const items = page.locator('li.persona');
+    await expect(items).toHaveCount(2);
+    await expect(items.nth(0)).toContainText('student');
+    await expect(items.nth(1)).toContainText('teacher');
+
+    const student = page.locator('li.persona', { hasText: 'student' });
+    // Bundled personas have a mouseover description and no copy or delete button.
+    await expect(student.locator('button.persona-load')).toHaveAttribute('title', /student/i);
+    await expect(student.locator('button.persona-copy')).toHaveCount(0);
+    await expect(student.locator('button.persona-delete')).toHaveCount(0);
+
+    // Loading a bundled persona fills the form, including its attribute rows.
+    await student.locator('button.persona-load').click();
+    await expect(page.locator('#username')).toHaveValue('student');
+    await expect(page.locator('#password')).toHaveValue('secret');
+    await expect(page.locator('#attribute-list .attribute-value')).toHaveCount(2);
+
+    // Personas saved in this browser are listed above the bundled ones.
+    await page.click('#save-persona-button');
+    await page.fill('#persona-name', 'alpha');
+    await page.click('#persona-name-save');
+    await expect(items).toHaveCount(3);
+    await expect(items.nth(0)).toContainText('alpha');
+    await expect(items.nth(1)).toContainText('student');
+    await expect(items.nth(2)).toContainText('teacher');
   });
 
   test('pressing Enter in the persona name field submits the login form', async ({ page }) => {
