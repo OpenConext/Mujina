@@ -69,7 +69,16 @@ public class SsoController {
 
     @SuppressWarnings("unchecked")
     private List<SAMLAttribute> attributes(Authentication authentication) {
-        String uid = authentication.getName();
+        String uidValue = authentication.getName();
+        //See SAMLAttributeAuthenticationFilter#setDetails
+        Map<String, List<String>> parameterMap = (Map<String, List<String>>) authentication.getDetails();
+        if (parameterMap.containsKey("urn:mace:dir:attribute-def:uid")) {
+            List<String> uidValues = parameterMap.get("urn:mace:dir:attribute-def:uid");
+            if (!CollectionUtils.isEmpty(uidValues)) {
+                uidValue = uidValues.getFirst();
+            }
+        }
+        final String uid = uidValue;
         Map<String, List<String>> result = new HashMap<>(idpConfiguration.getAttributes());
 
         Optional<Map<String, List<String>>> optionalMap = idpConfiguration.getUsers().stream()
@@ -78,8 +87,7 @@ public class SsoController {
                 .map(FederatedUserAuthenticationToken::getAttributes);
         optionalMap.ifPresent(result::putAll);
 
-        //See SAMLAttributeAuthenticationFilter#setDetails
-        Map<String, List<String>> parameterMap = (Map<String, List<String>>) authentication.getDetails();
+
         result.putAll(parameterMap);
         if (parameterMap.containsKey("authn-context-class-ref-value")) {
             result.remove("authn-context-class-ref-value");

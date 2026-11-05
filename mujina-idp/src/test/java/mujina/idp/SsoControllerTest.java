@@ -89,6 +89,22 @@ public class SsoControllerTest extends AbstractIntegrationTest {
         assertFalse(samlResponse.contains("authn-context-class-ref-value"));
     }
 
+    // Regression test: SsoController#attributes must derive the uid used for attribute generation
+    // (mail, givenName, cn, ...) and for matching a persisted FederatedUserAuthenticationToken from the
+    // urn:mace:dir:attribute-def:uid form field when it is submitted on /login, rather than always from
+    // authentication.getName(). This lets a federated/proxied login override the SAML uid independently
+    // of the local username used to authenticate.
+    @Test
+    public void singleSignOnServiceUsesSubmittedUidAttributeForAttributeGeneration() throws Exception {
+        CookieFilter cookieFilter = loginWithExtraParams("admin", "secret",
+                Map.of("urn:mace:dir:attribute-def:uid", "janesmith"));
+
+        String samlResponse = decodeSAMLResponse(singleSignOnServiceRequest(redirectBindingParams(false), cookieFilter));
+
+        assertTrue(samlResponse.contains("janesmith@example.com"));
+        assertFalse(samlResponse.contains("admin@example.com"));
+    }
+
     // Regression test: when the 'Persist me' checkbox is submitted on /login, SsoController#attributes
     // must replace the existing configured user with a new FederatedUserAuthenticationToken carrying the
     // attributes entered on the login form, so a subsequent login reuses them without re-entering them.
