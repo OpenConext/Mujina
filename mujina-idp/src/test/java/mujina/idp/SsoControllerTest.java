@@ -105,6 +105,20 @@ public class SsoControllerTest extends AbstractIntegrationTest {
         assertFalse(samlResponse.contains("admin@example.com"));
     }
 
+    // Regression test: an empty urn:mace:dir:attribute-def:uid form field (the login form submits
+    // attribute inputs even when left blank) must be ignored, falling back to authentication.getName().
+    // Otherwise uid becomes "" and SsoController#attributes crashes on uid.substring(0, 1),
+    // returning HTTP 500 and no SAML response at all.
+    @Test
+    public void singleSignOnServiceIgnoresEmptySubmittedUidAttribute() throws Exception {
+        CookieFilter cookieFilter = loginWithExtraParams("admin", "secret",
+                Map.of("urn:mace:dir:attribute-def:uid", ""));
+
+        String samlResponse = decodeSAMLResponse(singleSignOnServiceRequest(redirectBindingParams(false), cookieFilter));
+
+        assertTrue(samlResponse.contains("admin@example.com"));
+    }
+
     // Regression test: when the 'Persist me' checkbox is submitted on /login, SsoController#attributes
     // must replace the existing configured user with a new FederatedUserAuthenticationToken carrying the
     // attributes entered on the login form, so a subsequent login reuses them without re-entering them.
