@@ -74,7 +74,7 @@ public class SsoController {
         Map<String, List<String>> parameterMap = (Map<String, List<String>>) authentication.getDetails();
         if (parameterMap.containsKey("urn:mace:dir:attribute-def:uid")) {
             List<String> uidValues = parameterMap.get("urn:mace:dir:attribute-def:uid");
-            if (!CollectionUtils.isEmpty(uidValues)) {
+            if (!CollectionUtils.isEmpty(uidValues) && StringUtils.hasText(uidValues.getFirst())) {
                 uidValue = uidValues.getFirst();
             }
         }
